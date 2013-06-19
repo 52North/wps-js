@@ -1,0 +1,17 @@
+<web-app version="3.0">
+	<display-name>Archetype Created Web Application</display-name>
+	<servlet>
+		<servlet-name>ws_servlet</servlet-name>
+		<servlet-class>org.n52.wps.client.WsServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+		<async-supported>true</async-supported>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ws_servlet</servlet-name>
+		<url-pattern>/websocket</url-pattern>
+	</servlet-mapping>
+
+	<welcome-file-list>
+		<welcome-file>/html/test-index.html</welcome-file>
+	</welcome-file-list>
+</web-app>
