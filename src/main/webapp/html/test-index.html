@@ -4,7 +4,7 @@
 	<script src="../js/jquery/jquery.1.8.3.min.js"></script>
 	<script src="../js/jquery/jquery-ui.1.8.3.min.js"></script>
 	<script src="../js/wps-js/wps-js.${project.version}.js"></script>
-	<link type="text/css" rel="stylesheet" href="css/test-index.css">
+	<link type="text/css" rel="stylesheet" href="../css/wps-js.css">
 	<title>WPS Client Test</title>
 
 </head>
@@ -22,7 +22,7 @@
 	<script type="text/javascript">
 		$('#wpscaller').click(function() {
 			$('#capabilitiesByClick').wpsCall({
-				url: "http://localhost/wps-js/xml/GetCapabilities.xml",
+				url: "http://localhost/wps-js/target/wps-js-1.0.0-SNAPSHOT/xml/Capabilities.xml",
 				requestType: GET_CAPABILITIES_TYPE
 			});
 		});

@@ -1,0 +1,17 @@
+div.wps-success div.wps-generic-success {
+	background-image:url('../images/Success-64.png');
+	width:64px;
+	height:64px;
+}
+
+div.wps-error div.wps-generic-error {
+	background-image:url('../images/Error-64.png');
+	width:64px;
+	height:64px;
+}
+
+div.wps-waiting {
+	background-image:url('../images/ajax-loader.gif');
+	width:32px;
+	height:32px;
+}
