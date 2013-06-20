@@ -1,3 +1,4 @@
+
 var BaseRequest = Class.extend({
 	init : function(settings) {
 		this.settings = settings;
@@ -7,16 +8,21 @@ var BaseRequest = Class.extend({
 		return this.settings;
 	},
 
-	execute : function() {
+	execute : function(callback) {
+		/*
+		 * define a callback which gets called after finishing the request
+		 */
+		this.callback = callback;
+		
 		this.preRequestExecution();
 
-		xmlResponse = this.executeHTTPCall();
+		this.executeHTTPCall();
 
 		this.postRequestExecution();
 	},
 
 	preRequestExecution : function() {
-		this.changeElementContent("<div>waiting...</div>");
+		this.changeElementContent('<div class="wps-waiting"></div>');
 	},
 
 	postRequestExecution : function() {
@@ -24,7 +30,7 @@ var BaseRequest = Class.extend({
 	},
 
 	processResponse : function(xml) {
-		return "<div>Success!</div>";
+		return '<div class="wps-success"><div class="wps-generic-success"></div></div>';
 	},
 
 	changeElementContent : function(htmlContent) {
@@ -33,11 +39,17 @@ var BaseRequest = Class.extend({
 
 	executeHTTPCall : function() {
 		var self = this;
-		var jqxhr = $.get(this.settings.url, function(data){
-			htmlContent = self.processResponse(data);
-			self.changeElementContent(htmlContent);
+		
+		$.get(this.settings.url, function(data){
+			if (self.callback) {
+				self.callback(data, this.settings.domElement);
+			} else {
+				htmlContent = self.processResponse(data);
+				self.changeElementContent(htmlContent);	
+			}
 		}).fail(function() {
-			alert("error");
+			self.changeElementContent('<div class="wps-error">An error occured while connecting to '+
+					self.settings.url +'</div>');
 		});
 	}
 });

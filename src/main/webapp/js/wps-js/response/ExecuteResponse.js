@@ -1,5 +1,5 @@
 
-var GetCapabilitiesRequest = BaseRequest.extend({
+var ExecuteResponse = BaseResponse.extend({
 
 	processResponse : function(xml) {
 		var provName = xml.getElementsByTagNameNS(OWS_11_NAMESPACE, "ProviderName");

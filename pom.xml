@@ -16,20 +16,36 @@
 				<version>1.5.2</version>
 				<executions>
 					<execution>
-						<id>greenland</id>
+						<id>wps-js-minify</id>
 						<phase>process-resources</phase>
+						<goals>
+							<goal>minify</goal>
+						</goals>
 						<configuration>
 							<jsSourceDir>js/wps-js</jsSourceDir>
 							<jsSourceFiles>
-								<!-- Simple Class Inheritance -->
-								<jsSourceFile>inheritance/classes.js</jsSourceFile>
+								<!-- third-party libs -->
+								<jsSourceFile>lib/Class.js</jsSourceFile>
+								<jsSourceFile>lib/purl.js</jsSourceFile>
 
 								<!-- constants -->
 								<jsSourceFile>Constants.js</jsSourceFile>
+								
+								<!-- Utility -->
+								<jsSourceFile>Utility.js</jsSourceFile>
+								
+								<!-- Response class -->
+								<jsSourceFiles>response/BaseResponse.js</jsSourceFiles>
+								<jsSourceFiles>response/CapabilitiesResponse.js</jsSourceFiles>
+								<jsSourceFiles>response/DescribeProcessResponse.js</jsSourceFiles>
+								<jsSourceFiles>response/ExecuteResponse.js</jsSourceFiles>
+								<jsSourceFiles>response/ResponseFactory.js</jsSourceFiles>
 
 								<!-- Request classes -->
 								<jsSourceFile>request/BaseRequest.js</jsSourceFile>
 								<jsSourceFile>request/GetCapabilitiesRequest.js</jsSourceFile>
+								<jsSourceFile>request/ExecuteRequest.js</jsSourceFile>
+								<jsSourceFile>request/DescribeProcessRequest.js</jsSourceFile>
 								
 								<!-- Entry point -->
 								<jsSourceFile>wps-js.js</jsSourceFile>
@@ -38,9 +54,6 @@
 							<jsTargetDir>js/wps-js</jsTargetDir>
 							<jsFinalFile>wps-js.${project.version}.js</jsFinalFile>
 						</configuration>
-						<goals>
-							<goal>minify</goal>
-						</goals>
 					</execution>
 				</executions>
 			</plugin>

@@ -10,18 +10,26 @@
 </head>
 <body>
 	<div id="wrapper">
-		<a href="#" id="wpscaller">Call WPS</a>
-		<div id="container">
+		<div>
+			<h3>Capabilities <a href="#" id="wpscaller">Call By Click</a></h3>
+			<div id="capabilitiesByClick"></div>
+		</div>
+		<div>
+			<h3>DescribeProcess Call via URL</h3>
+			<div id="describeProcessViaURL"></div>
 		</div>
 	</div>
-	<div>
-		another div
-	</div>
 	<script type="text/javascript">
-		$('#wpscaller').click(function () {
-			$('#container').wpsCall({
-				url: "http://localhost/git/WebProcessingService.xml",
-				requestType: DESCRIBE_PROCESS_TYPE});
+		$('#wpscaller').click(function() {
+			$('#capabilitiesByClick').wpsCall({
+				url: "http://localhost/wps-js/xml/GetCapabilities.xml",
+				requestType: GET_CAPABILITIES_TYPE
+			});
+		});
+		$(document).ready(function () {
+			$('#describeProcessViaURL').wpsCall({
+				viaUrl: true
+			});	
 		});
 	</script>
 </body>
