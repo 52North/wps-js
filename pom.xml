@@ -27,6 +27,7 @@
 								<!-- third-party libs -->
 								<jsSourceFile>lib/Class.js</jsSourceFile>
 								<jsSourceFile>lib/purl.js</jsSourceFile>
+								<jsSourceFile>lib/jquery.tmpl.1.0.0pre.js</jsSourceFile>
 
 								<!-- constants -->
 								<jsSourceFile>Constants.js</jsSourceFile>

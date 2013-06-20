@@ -10,7 +10,7 @@ function resolveRequest(type, method, settings) {
 		return new PostRequest(settings);
 	}
 	
-	return new BaseRequest(settings);
+	return new GetRequest(settings);
 }
 
 function resolveGetParameters() {
@@ -42,6 +42,9 @@ function callbackOnResponseParsed(responseData, domElement) {
 	}
 }
 
+/*
+ * jQuery plugin definitions
+ */
 (function($) {
 
     $.fn.wpsCall = function( options ) {
@@ -74,6 +77,18 @@ function callbackOnResponseParsed(responseData, domElement) {
     	}
     	
     	return this.each();
+    }
+    
+    $.fn.wpsSetupTemplates = function(templates) {
+    	if (templates.capabilities && typeof templates.capabilities == 'string' ) {
+    		TEMPLATE_CAPABILITIES_MARKUP = templates.capabilities;
+    	}
+    	if (templates.processDescription && typeof templates.processDescription == 'string' ) {
+    		TEMPLATE_PROCESS_DESCRIPTION_MARKUP = templates.processDescription;
+    	}
+    	if (templates.executeResponse && typeof templates.executeResponse == 'string' ) {
+    		TEMPLATE_EXECUTE_RESPONSE_MARKUP = templates.executeResponse;
+    	}
     }
 
 }(jQuery));
