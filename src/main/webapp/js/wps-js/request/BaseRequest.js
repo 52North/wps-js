@@ -16,7 +16,7 @@ var BaseRequest = Class.extend({
 		
 		this.preRequestExecution();
 
-		this.executeHTTPCall();
+		this.executeHTTPRequest(this.prepareHTTPRequest());
 
 		this.postRequestExecution();
 	},
@@ -36,20 +36,30 @@ var BaseRequest = Class.extend({
 	changeElementContent : function(htmlContent) {
 		this.settings.domElement.html(htmlContent);
 	},
+	
+	prepareHTTPRequest : function() {
+		return null;
+	},
 
-	executeHTTPCall : function() {
+	executeHTTPRequest : function(requestSettings) {
 		var self = this;
 		
-		$.get(this.settings.url, function(data){
-			if (self.callback) {
-				self.callback(data, this.settings.domElement);
-			} else {
-				htmlContent = self.processResponse(data);
-				self.changeElementContent(htmlContent);	
+		var combinedRequestSettings = $.extend({
+			success : function(data) {
+				if (self.callback) {
+					self.callback(data, self.settings.domElement);
+				} else {
+					htmlContent = self.processResponse(data);
+					self.changeElementContent(htmlContent);	
+				}
+			},
+			error: function() {
+				self.changeElementContent('<div class="wps-error"><div class="wps-generic-error"></div>'+
+						'<div>An error occured while connecting to '+
+						self.settings.url +'</div></div>');
 			}
-		}).fail(function() {
-			self.changeElementContent('<div class="wps-error">An error occured while connecting to '+
-					self.settings.url +'</div>');
-		});
+		}, requestSettings);
+		
+		$.ajax(this.settings.url, combinedRequestSettings);
 	}
 });

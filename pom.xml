@@ -43,9 +43,8 @@
 
 								<!-- Request classes -->
 								<jsSourceFile>request/BaseRequest.js</jsSourceFile>
-								<jsSourceFile>request/GetCapabilitiesRequest.js</jsSourceFile>
-								<jsSourceFile>request/ExecuteRequest.js</jsSourceFile>
-								<jsSourceFile>request/DescribeProcessRequest.js</jsSourceFile>
+								<jsSourceFile>request/GetRequest.js</jsSourceFile>
+								<jsSourceFile>request/PostRequest.js</jsSourceFile>
 								
 								<!-- Entry point -->
 								<jsSourceFile>wps-js.js</jsSourceFile>

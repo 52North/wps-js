@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd" xml:lang="en-US" service="WPS" version="1.0.0"><ProcessDescription xmlns:ows="http://www.opengis.net/ows/1.1" xmlns:xlink="http://www.w3.org/1999/xlink" wps:processVersion="2" storeSupported="true" statusSupported="false">
+<wps:ProcessDescriptions xmlns:wps="http://www.opengis.net/wps/1.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0 http://schemas.opengis.net/wps/1.0.0/wpsDescribeProcess_response.xsd"
+	xml:lang="en-US" service="WPS" version="1.0.0">
+	<ProcessDescription xmlns:ows="http://www.opengis.net/ows/1.1"
+		xmlns:xlink="http://www.w3.org/1999/xlink" wps:processVersion="2"
+		storeSupported="true" statusSupported="false">
 		<ows:Identifier>org.n52.wps.conflation.ConflationProcessWithISOProvenance</ows:Identifier>
 		<ows:Title>ConflationProcess</ows:Title>
 		<ows:Abstract>Process for conflating two different datasources located at Monterey, CA, US</ows:Abstract>
-		<ows:Metadata xlink:title="conflation"/>
+		<ows:Metadata xlink:title="conflation" />
 		<DataInputs>
 			<Input minOccurs="1" maxOccurs="1">
 				<ows:Identifier>source-wfs</ows:Identifier>
@@ -121,4 +127,5 @@
 				</ComplexOutput>
 			</Output>
 		</ProcessOutputs>
-	</ProcessDescription></wps:ProcessDescriptions>
+	</ProcessDescription>
+</wps:ProcessDescriptions>

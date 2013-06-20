@@ -1,13 +1,13 @@
 
 function resolveRequest(type, method, settings) {
 	if (type == GET_CAPABILITIES_TYPE) {
-		return new GetCapabilitiesRequest(settings);
+		return new GetRequest(settings);
 	}
 	else if (type == DESCRIBE_PROCESS_TYPE) {
-		return new DescribeProcessRequest(settings);
+		return new GetRequest(settings);
 	}
 	else if (type == EXECUTE_TYPE && method == METHOD_POST) {
-		return new ExecuteRequest(settings);
+		return new PostRequest(settings);
 	}
 	
 	return new BaseRequest(settings);
@@ -35,10 +35,10 @@ function assertValidState(settings) {
 
 function callbackOnResponseParsed(responseData, domElement) {
 	var factory = new ResponseFactory();
-	var responseHandler = factory.resolveResponseHandler(responseData, domElement);
+	var responseHandler = factory.resolveResponseHandler(responseData);
 	
 	if (responseHandler) {
-		
+		domElement.html(responseHandler.createMarkup());
 	}
 }
 
