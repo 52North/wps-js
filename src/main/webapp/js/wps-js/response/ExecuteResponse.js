@@ -1,15 +1,20 @@
 var TEMPLATE_EXECUTE_RESPONSE_MARKUP = '\
 	<div class="wps-execute-response"> \
+	<div class="wps-execute-autoUpdate" id="wps-execute-autoUpdate" style="${updateSwitchEnabled}"></div> \
 		<div class="wps-execute-response-process"> \
 			<ul class="wps-execute-response-list"> \
-				<li class="wps-execute-response-list-entry">${identifier}</li> \
-				<li class="wps-execute-response-list-entry">${title}</li> \
+				<li class="wps-execute-response-list-entry"> \
+					<label class="wps-item-label">Identifier</label><span class="wps-item-value">${identifier}</span></li> \
+				<li class="wps-execute-response-list-entry"> \
+					<label class="wps-item-label">Title</label><span class="wps-item-value">${title}</span></li> \
 			</ul> \
 		</div> \
 		<div class="wps-execute-response-status"> \
 			<ul class="wps-execute-response-list"> \
-				<li class="wps-execute-response-list-entry">${status}</li> \
-				<li class="wps-execute-response-list-entry">${creationTime}</li> \
+				<li class="wps-execute-response-list-entry"> \
+					<label class="wps-item-label">Status</label><span class="wps-item-value">${status}</span></li> \
+				<li class="wps-execute-response-list-entry"> \
+					<label class="wps-item-label">Created on </label><span class="wps-item-value">${creationTime}</span></li> \
 			</ul> \
 		</div> \
 	</div>';
@@ -33,10 +38,18 @@ var ExecuteResponse = BaseResponse.extend({
 			if (accepted && accepted.length > 0) {
 				statusText = $(accepted).text();
 			}
-			else {
+			if (!statusText) {
 				var started = status[0].getElementsByTagNameNS(WPS_100_NAMESPACE, "ProcessStarted");
-				var percent = started[0].getAttribute("percentCompleted");
-				statusText = "Process started (" + percent + " % complete)";
+				if (started && started.length > 0) {
+					var percent = started[0].getAttribute("percentCompleted");
+					statusText = "Process started (" + percent + " % complete)";	
+				}
+			}
+			if (!statusText) {
+				var succeeded = status[0].getElementsByTagNameNS(WPS_100_NAMESPACE, "ProcessSucceeded");
+				if (succeeded && succeeded.length > 0) {
+					statusText = "Process succeeded";
+				}
 			}
 			
 			var time = status[0].getAttribute("creationTime");	
@@ -45,12 +58,31 @@ var ExecuteResponse = BaseResponse.extend({
 			    time = d.toLocaleString();
 			}
 			
+			var updateSwitch;
+			if (this.originalRequest.updateSwitch) {
+				updateSwitch = '';
+			}
+			else {
+				updateSwitch = 'display:none';
+			}
+			
 			properties = {
 					identifier : identifier,
 					title : title,
 					status : statusText,
-					creationTime : time
+					creationTime : time,
+					updateSwitchEnabled : updateSwitch
 			};
+		}
+		
+		var statusLocation = this.xmlResponse.documentElement.getAttribute("statusLocation");
+		/*
+		 * Make this updateable and NOT execute two times.
+		 */
+		if (statusLocation) {
+			var factory = new ResponseFactory();
+			this.originalRequest.settings.url = statusLocation;
+			this.originalRequest = new GetRequest(this.originalRequest.settings);
 		}
 		
 		var result = $.tmpl(TEMPLATE_EXECUTE_RESPONSE_MARKUP, properties);

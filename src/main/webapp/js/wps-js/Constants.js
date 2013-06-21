@@ -10,3 +10,7 @@ var METHOD_POST = "POST";
 var METHOD_GET = "GET";
 var PARAM_WPS_REQUEST_URL = "wpsRequestUrl";
 var PARAM_WPS_REQUEST_TYPE = "wpsRequestType";
+
+var USE_PROXY = false;
+var PROXY_URL = "";
+var PROXY_TYPE = "";

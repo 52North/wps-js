@@ -8,11 +8,13 @@ var BaseRequest = Class.extend({
 		return this.settings;
 	},
 
-	execute : function(callback) {
+	execute : function(callback, updateSwitch) {
 		/*
 		 * define a callback which gets called after finishing the request
 		 */
 		this.callback = callback;
+		
+		this.updateSwitch = updateSwitch;
 		
 		this.preRequestExecution();
 
@@ -47,7 +49,7 @@ var BaseRequest = Class.extend({
 		var combinedRequestSettings = $.extend({
 			success : function(data) {
 				if (self.callback) {
-					self.callback(data, self.settings.domElement);
+					self.callback(data, self.settings.domElement, self, self.updateSwitch);
 				} else {
 					htmlContent = self.processResponse(data);
 					self.changeElementContent(htmlContent);	
@@ -60,6 +62,18 @@ var BaseRequest = Class.extend({
 			}
 		}, requestSettings);
 		
-		$.ajax(this.settings.url, combinedRequestSettings);
+		var targetUrl;
+		if (USE_PROXY) {
+			if (PROXY_TYPE == "parameter") {
+				targetUrl = PROXY_URL + encodeURIComponent(this.settings.url);
+			}
+			else {
+				//TODO split URL into host-base + query and create new
+				targetUrl = this.settings.url;
+			} 
+		} else {
+			targetUrl = this.settings.url;
+		}
+		$.ajax(targetUrl, combinedRequestSettings);
 	}
 });

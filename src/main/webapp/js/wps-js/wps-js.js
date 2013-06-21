@@ -33,12 +33,27 @@ function assertValidState(settings) {
 	return settings.url && settings.requestType && settings.method && dataValid;
 }
 
-function callbackOnResponseParsed(responseData, domElement) {
+function callbackOnResponseParsed(responseData, domElement, originalRequest) {
 	var factory = new ResponseFactory();
-	var responseHandler = factory.resolveResponseHandler(responseData);
+	var responseHandler = factory.resolveResponseHandler(responseData, originalRequest);
 	
 	if (responseHandler) {
 		domElement.html(responseHandler.createMarkup());
+	}
+	
+	if (originalRequest.updateSwitch) {
+		if (!originalRequest.updateSwitch.callback) {
+			originalRequest.updateSwitch.callback = callbackOnResponseParsed;
+		}
+		if (!originalRequest.updateSwitch.element) {
+			originalRequest.updateSwitch.element = "wps-execute-autoUpdate";
+		}
+		
+		$('#'+originalRequest.updateSwitch.element).click(function() {
+			alert(originalRequest.settings.url);
+			originalRequest.execute(originalRequest.updateSwitch.callback, originalRequest.updateSwitch);
+		});
+		$('#'+originalRequest.updateSwitch.element).css( 'cursor', 'pointer' );
 	}
 }
 
@@ -46,6 +61,7 @@ function callbackOnResponseParsed(responseData, domElement) {
  * jQuery plugin definitions
  */
 (function($) {
+
 
     $.fn.wpsCall = function( options ) {
     	var settings;
@@ -63,7 +79,7 @@ function callbackOnResponseParsed(responseData, domElement) {
                 method: METHOD_GET
             }, options);
     	}
-
+    	
     	if (assertValidState(settings)) {
     		return this.each( function() {
             	var requestSettings = $.extend({
@@ -72,22 +88,31 @@ function callbackOnResponseParsed(responseData, domElement) {
             	
             	var request = resolveRequest(requestSettings.requestType, requestSettings.method,
             			requestSettings);
-            	request.execute(callbackOnResponseParsed);
+            	request.execute(callbackOnResponseParsed, options.updateSwitch);
             });	
     	}
     	
     	return this.each();
     }
     
-    $.fn.wpsSetupTemplates = function(templates) {
-    	if (templates.capabilities && typeof templates.capabilities == 'string' ) {
-    		TEMPLATE_CAPABILITIES_MARKUP = templates.capabilities;
+    $.wpsSetup = function(setup) {
+    	if (setup.templates) {
+    		var templates = setup.templates;
+    		if (templates.capabilities && typeof templates.capabilities == 'string' ) {
+        		TEMPLATE_CAPABILITIES_MARKUP = templates.capabilities;
+        	}
+        	if (templates.processDescription && typeof templates.processDescription == 'string' ) {
+        		TEMPLATE_PROCESS_DESCRIPTION_MARKUP = templates.processDescription;
+        	}
+        	if (templates.executeResponse && typeof templates.executeResponse == 'string' ) {
+        		TEMPLATE_EXECUTE_RESPONSE_MARKUP = templates.executeResponse;
+        	}
     	}
-    	if (templates.processDescription && typeof templates.processDescription == 'string' ) {
-    		TEMPLATE_PROCESS_DESCRIPTION_MARKUP = templates.processDescription;
-    	}
-    	if (templates.executeResponse && typeof templates.executeResponse == 'string' ) {
-    		TEMPLATE_EXECUTE_RESPONSE_MARKUP = templates.executeResponse;
+    	
+    	if (setup.proxy) {
+    		USE_PROXY = true;
+    		PROXY_URL = setup.proxy.url;
+    		PROXY_TYPE = setup.proxy.type;
     	}
     }
 

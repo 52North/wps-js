@@ -5,20 +5,20 @@ var ResponseFactory = Class.extend({
 		this.settings = settings;
 	},
 	
-	resolveResponseHandler : function(xmlResponse) {
+	resolveResponseHandler : function(xmlResponse, originalRequest) {
 		var rootElement = xmlResponse.documentElement;
 		
 		if (rootElement.localName == "Capabilities") {
-			return new CapabilitiesResponse(xmlResponse);
+			return new CapabilitiesResponse(xmlResponse, originalRequest);
 		}
 		else if (rootElement.localName == "ProcessDescriptions") {
-			return new DescribeProcessResponse(xmlResponse);
+			return new DescribeProcessResponse(xmlResponse, originalRequest);
 		}
 		else if (rootElement.localName == "ExecuteResponse") {
-			return new ExecuteResponse(xmlResponse);
+			return new ExecuteResponse(xmlResponse, originalRequest);
 		}
 		else if (rootElement.localName == "ExceptionReport") {
-			return new ExceptionReportResponse(xmlResponse);
+			return new ExceptionReportResponse(xmlResponse, originalRequest);
 		}
 		
 		return null;

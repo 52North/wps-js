@@ -1,9 +1,9 @@
 
 var BaseResponse = Class.extend({
 	
-	init : function(xmlResponse, outputElement) {
+	init : function(xmlResponse, originalRequest) {
 		this.xmlResponse = xmlResponse;
-		this.outputElement = outputElement;
+		this.originalRequest = originalRequest;
 	},
 	
 	createMarkup : function() {
