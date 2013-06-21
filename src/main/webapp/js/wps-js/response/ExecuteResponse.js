@@ -17,16 +17,49 @@ var TEMPLATE_EXECUTE_RESPONSE_MARKUP = '\
 					<label class="wps-item-label">Created on </label><span class="wps-item-value">${creationTime}</span></li> \
 			</ul> \
 		</div> \
+		<div id="wps-execute-response-extension"></div> \
 	</div>';
 
+var TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP = '\
+	<div> \
+			<label class="wps-item-label">${key}</label><span class="wps-item-value"><a href="${value}">download</a></span></li> \
+	</div>';
+	
 
 var ExecuteResponse = BaseResponse.extend({
-
+	
+	resolveProcessOutputs : function(processOutputs) {
+		var outputs = processOutputs.getElementsByTagNameNS(WPS_100_NAMESPACE, "Output");
+		
+		var array = new Array(outputs.length);
+		for (var i = 0; i < outputs.length; i++) {
+			var element = outputs[i];
+			var identifier = element.getElementsByTagNameNS(OWS_11_NAMESPACE, "Identifier");
+			var reference = element.getElementsByTagNameNS(WPS_100_NAMESPACE, "Reference");
+			var value;
+			if (reference && reference.length > 0) {
+				value = reference[0].getAttribute("href");
+			}
+			else {
+				value = "n/a";
+			}
+			array[i] = {
+					key : $(identifier).text(),
+					value : value
+			};
+		}
+		
+		var result = {outputs : array};
+		
+		return result;
+	},
+	
 	createMarkup : function() {
 		var process = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "Process");
 		var status = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "Status");
 		
 		var properties;
+		var extensions = {};
 		
 		if (process && process[0] && status && status[0]) {
 			var identifier = $(process[0].getElementsByTagNameNS(OWS_11_NAMESPACE, "Identifier")).text();
@@ -49,6 +82,10 @@ var ExecuteResponse = BaseResponse.extend({
 				var succeeded = status[0].getElementsByTagNameNS(WPS_100_NAMESPACE, "ProcessSucceeded");
 				if (succeeded && succeeded.length > 0) {
 					statusText = "Process succeeded";
+					var processOutputs = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "ProcessOutputs");
+					if (processOutputs && processOutputs.length > 0) {
+						extensions = $.extend(this.resolveProcessOutputs(processOutputs[0]), extensions);	
+					}
 				}
 			}
 			
@@ -86,6 +123,14 @@ var ExecuteResponse = BaseResponse.extend({
 		}
 		
 		var result = $.tmpl(TEMPLATE_EXECUTE_RESPONSE_MARKUP, properties);
+		
+		if (extensions && !$.isEmptyObject(extensions)) {
+			var extensionDiv = result.children('#wps-execute-response-extension');
+			if (extensions.outputs) {
+				$.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP, extensions.outputs).appendTo(extensionDiv);
+			}
+		}
+		
 		return result;
 	}
 

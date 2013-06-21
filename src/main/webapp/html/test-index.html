@@ -27,12 +27,6 @@
 			});
 		});
 		$(document).ready(function () {
-			$.wpsSetup({
-				proxy : {
-					url : "http://localhost:8080/jprox/parameter?targetUrl=",
-					type : "parameter"
-				}
-			});
 			$('#describeProcessViaURL').wpsCall({
 				viaUrl: true,
 				updateSwitch: {}

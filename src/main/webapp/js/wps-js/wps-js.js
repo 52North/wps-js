@@ -50,7 +50,6 @@ function callbackOnResponseParsed(responseData, domElement, originalRequest) {
 		}
 		
 		$('#'+originalRequest.updateSwitch.element).click(function() {
-			alert(originalRequest.settings.url);
 			originalRequest.execute(originalRequest.updateSwitch.callback, originalRequest.updateSwitch);
 		});
 		$('#'+originalRequest.updateSwitch.element).css( 'cursor', 'pointer' );
@@ -62,58 +61,62 @@ function callbackOnResponseParsed(responseData, domElement, originalRequest) {
  */
 (function($) {
 
-
-    $.fn.wpsCall = function( options ) {
-    	var settings;
-    	if (options && options.viaUrl) {
-    		/*
-    		 * Call via GET parameters
-    		 */
-    		settings = $.extend(resolveGetParameters(), {method: METHOD_GET});
-    	}
-    	else {
-            /*
-             * Custom User Call
-             */
-            settings = $.extend({
-                method: METHOD_GET
-            }, options);
-    	}
-    	
-    	if (assertValidState(settings)) {
-    		return this.each( function() {
-            	var requestSettings = $.extend({
-                    domElement: $(this)
-                }, settings);
-            	
-            	var request = resolveRequest(requestSettings.requestType, requestSettings.method,
-            			requestSettings);
-            	request.execute(callbackOnResponseParsed, options.updateSwitch);
-            });	
-    	}
-    	
-    	return this.each();
-    }
+	$.fn.extend({
+		wpsCall : function( options ) {
+	    	var settings;
+	    	if (options && options.viaUrl) {
+	    		/*
+	    		 * Call via GET parameters
+	    		 */
+	    		settings = $.extend(resolveGetParameters(), {method: METHOD_GET});
+	    	}
+	    	else {
+	            /*
+	             * Custom User Call
+	             */
+	            settings = $.extend({
+	                method: METHOD_GET
+	            }, options);
+	    	}
+	    	
+	    	if (assertValidState(settings)) {
+	    		return this.each( function() {
+	            	var requestSettings = $.extend({
+	                    domElement: $(this)
+	                }, settings);
+	            	
+	            	var request = resolveRequest(requestSettings.requestType, requestSettings.method,
+	            			requestSettings);
+	            	request.execute(callbackOnResponseParsed, options.updateSwitch);
+	            });	
+	    	}
+	    	
+	    	return this.each();
+	    }
+	});
+	
+	$.extend({
+		wpsSetup : function(setup) {
+	    	if (setup.templates) {
+	    		var templates = setup.templates;
+	    		if (templates.capabilities && typeof templates.capabilities == 'string' ) {
+	        		TEMPLATE_CAPABILITIES_MARKUP = templates.capabilities;
+	        	}
+	        	if (templates.processDescription && typeof templates.processDescription == 'string' ) {
+	        		TEMPLATE_PROCESS_DESCRIPTION_MARKUP = templates.processDescription;
+	        	}
+	        	if (templates.executeResponse && typeof templates.executeResponse == 'string' ) {
+	        		TEMPLATE_EXECUTE_RESPONSE_MARKUP = templates.executeResponse;
+	        	}
+	    	}
+	    	
+	    	if (setup.proxy) {
+	    		USE_PROXY = true;
+	    		PROXY_URL = setup.proxy.url;
+	    		PROXY_TYPE = setup.proxy.type;
+	    	}
+	    }
+	});
     
-    $.wpsSetup = function(setup) {
-    	if (setup.templates) {
-    		var templates = setup.templates;
-    		if (templates.capabilities && typeof templates.capabilities == 'string' ) {
-        		TEMPLATE_CAPABILITIES_MARKUP = templates.capabilities;
-        	}
-        	if (templates.processDescription && typeof templates.processDescription == 'string' ) {
-        		TEMPLATE_PROCESS_DESCRIPTION_MARKUP = templates.processDescription;
-        	}
-        	if (templates.executeResponse && typeof templates.executeResponse == 'string' ) {
-        		TEMPLATE_EXECUTE_RESPONSE_MARKUP = templates.executeResponse;
-        	}
-    	}
-    	
-    	if (setup.proxy) {
-    		USE_PROXY = true;
-    		PROXY_URL = setup.proxy.url;
-    		PROXY_TYPE = setup.proxy.type;
-    	}
-    }
 
 }(jQuery));
