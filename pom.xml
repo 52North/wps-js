@@ -31,10 +31,10 @@
 
 								<!-- constants -->
 								<jsSourceFile>Constants.js</jsSourceFile>
-								
+
 								<!-- Utility -->
 								<jsSourceFile>Utility.js</jsSourceFile>
-								
+
 								<!-- Response class -->
 								<jsSourceFiles>response/BaseResponse.js</jsSourceFiles>
 								<jsSourceFiles>response/CapabilitiesResponse.js</jsSourceFiles>
@@ -46,7 +46,7 @@
 								<jsSourceFile>request/BaseRequest.js</jsSourceFile>
 								<jsSourceFile>request/GetRequest.js</jsSourceFile>
 								<jsSourceFile>request/PostRequest.js</jsSourceFile>
-								
+
 								<!-- Entry point -->
 								<jsSourceFile>wps-js.js</jsSourceFile>
 							</jsSourceFiles>
@@ -66,11 +66,12 @@
 							<directory>src/main/webapp</directory>
 							<includes>
 								<include>html/**</include>
+								<include>jstestdriver/**</include>
 							</includes>
 							<filtering>true</filtering>
 						</resource>
 					</webResources>
-					 <warSourceExcludes>js/wps-js/**</warSourceExcludes>
+					<warSourceExcludes>js/wps-js/**</warSourceExcludes>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -110,4 +111,59 @@
 			<version>1.7.5</version>
 		</dependency>
 	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>js-unit-tests</id>
+			<activation>
+				<property>
+					<name>!disable-js-unit-tests</name>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>build-helper-maven-plugin</artifactId>
+						<version>1.7</version>
+						<executions>
+							<execution>
+								<id>reserve-ports</id>
+								<phase>initialize</phase>
+								<goals>
+									<goal>reserve-network-port</goal>
+								</goals>
+								<configuration>
+									<portNames>
+										<portName>jstestdriverPort</portName>
+									</portNames>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>com.googlecode.jstd-maven-plugin</groupId>
+						<artifactId>jstd-maven-plugin</artifactId>
+						<version>1.3.5.1</version>
+						<configuration>
+							<verbose>true</verbose>
+							<!-- You might need to adjust this depending on your OS, comma-separated -->
+							<browser>/usr/bin/chromium-browser</browser>
+							<config>${project.build.directory}/${project.artifactId}-${project.version}/jstestdriver/jsTestDriver.conf</config>
+							<port>${jstestdriverPort}</port>
+						</configuration>
+						<executions>
+							<execution>
+								<id>run-js-tests</id>
+								<goals>
+									<goal>test</goal>
+								</goals>
+								<phase>integration-test</phase>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
