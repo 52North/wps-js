@@ -122,7 +122,15 @@ var ExecuteResponse = BaseResponse.extend({
 			this.originalRequest = new GetRequest(this.originalRequest.settings);
 		}
 		
-		var result = $.tmpl(TEMPLATE_EXECUTE_RESPONSE_MARKUP, properties);
+		var template;
+		if (USER_TEMPLATE_EXECUTE_RESPONSE_MARKUP != null) {
+			template = USER_TEMPLATE_EXECUTE_RESPONSE_MARKUP;
+		}
+		else {
+			template = TEMPLATE_EXECUTE_RESPONSE_MARKUP;
+		}
+		
+		var result = $.tmpl(template, properties);
 		
 		if (extensions && !$.isEmptyObject(extensions)) {
 			var extensionDiv = result.children('#wps-execute-response-extension');

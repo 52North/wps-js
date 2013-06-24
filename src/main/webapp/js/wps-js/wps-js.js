@@ -97,16 +97,27 @@ function callbackOnResponseParsed(responseData, domElement, originalRequest) {
 	
 	$.extend({
 		wpsSetup : function(setup) {
+			if (setup.reset) {
+				wpsResetSetup();
+				return;
+			}
+			
 	    	if (setup.templates) {
 	    		var templates = setup.templates;
-	    		if (templates.capabilities && typeof templates.capabilities == 'string' ) {
-	        		TEMPLATE_CAPABILITIES_MARKUP = templates.capabilities;
+	    		if (templates.capabilities) {
+	    			if (typeof templates.capabilities == 'string') {
+	    				USER_TEMPLATE_CAPABILITIES_MARKUP = templates.capabilities;
+	    			}
 	        	}
-	        	if (templates.processDescription && typeof templates.processDescription == 'string' ) {
-	        		TEMPLATE_PROCESS_DESCRIPTION_MARKUP = templates.processDescription;
+	        	if (templates.processDescription) {
+	        		if (typeof templates.processDescription == 'string') {
+	        			USER_TEMPLATE_PROCESS_DESCRIPTION_MARKUP = templates.processDescription;
+	        		}
 	        	}
-	        	if (templates.executeResponse && typeof templates.executeResponse == 'string' ) {
-	        		TEMPLATE_EXECUTE_RESPONSE_MARKUP = templates.executeResponse;
+	        	if (templates.executeResponse) {
+	        		if (typeof templates.executeResponse == 'string') {
+	        			USER_TEMPLATE_EXECUTE_RESPONSE_MARKUP = templates.executeResponse;
+	        		}
 	        	}
 	    	}
 	    	
