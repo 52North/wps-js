@@ -4,6 +4,7 @@
 	<script src="js/jquery/jquery.1.8.3.min.js"></script>
 	<script src="js/jquery/jquery-ui.1.8.3.min.js"></script>
 	<script src="js/wps-js/wps-js.${project.version}.js"></script>
+	<script src="http://openlayers.org/api/OpenLayers.js"></script>
 	<link type="text/css" rel="stylesheet" href="css/wps-js.css">
 	<title>WPS Client Test</title>
 
@@ -18,18 +19,28 @@
 			<h3>DescribeProcess Call via URL</h3>
 			<div class="wps-container"><div id="describeProcessViaURL"></div></div>
 		</div>
+		<div>
+			<h3>Excecute Process</h3>
+			<div class="wps-container"><div id="executeProcessVia"></div></div>
+			<div>
+            	<select id="processes"><option>Select a process</option></select>
+            	<p id="abstract"></p>
+            	<div id="input"></div>
+            	<div id="output"></div>
+        	</div>
+		</div>
 	</div>
 	<script type="text/javascript">
 		$('#wpscaller').click(function() {
 			$('#capabilitiesByClick').wpsCall({
-				url: "http://localhost/wps-js/target/wps-js-1.0.0-SNAPSHOT/xml/ExecuteResponse_accepted.xml",
+				url: "http://localhost:8080/wps-testclient/xml/ExecuteResponse_accepted.xml",
 				requestType: EXECUTE_TYPE
 			});
 		});
 		$(document).ready(function () {
 			$.wpsSetup({
 				proxy : {
-					url : "http://localhost:8080/jprox/parameter?targetUrl=",
+					url : "http://localhost:8080/wps_proxy/wps_proxy?url=",
 					type : "parameter"
 				}
 			});
@@ -38,6 +49,19 @@
 				updateSwitch: {}
 			});
 		});
+		
+
+		var wps = "http://geoprocessing.demo.52north.org:8080/52n-wps-webapp-3.2.0-SNAPSHOT/WebProcessingService",
+   		capabilities, // the capabilities, read by Format.WPSCapabilities::read
+    	process; // the process description from Format.WPSDescribeProcess::read
+
+		// add behavior to html elements
+		document.getElementById("processes").onchange = describeProcess;
+		
+		OpenLayers.ProxyHost = "../wps_proxy/wps_proxy?url=";
+
+		// get some capabilities
+		getCapabilities();
 	</script>
 </body>
 </html>
