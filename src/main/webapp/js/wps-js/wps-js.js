@@ -56,6 +56,15 @@ function callbackOnResponseParsed(responseData, domElement, originalRequest) {
 	}
 }
 
+function handleResponse(responseData, domElement, originalRequest) {
+	var factory = new ResponseFactory();
+	var responseHandler = factory.resolveResponseHandler(responseData, originalRequest);
+	
+	if (responseHandler) {
+		domElement.html(responseHandler.createMarkup());
+	}
+}
+
 // using OpenLayers.Format.WPSCapabilities to read the capabilities
 function getCapabilities() {
     OpenLayers.Request.GET({
@@ -72,12 +81,10 @@ function getCapabilities() {
             var offerings = capabilities.processOfferings, option;
             // populate the dropdown
             for (var p in offerings) {
-				if((p.indexOf("JTS") !== -1)){
                 option = document.createElement("option");
                 option.innerHTML = offerings[p].identifier;
                 option.value = p;
-                dropdown.appendChild(option);
-				}
+                dropdown.appendChild(option);				
             }
         }
     });
@@ -347,13 +354,15 @@ function execute() {
         }
     }
     process.responseForm = {
-        rawDataOutput: {
-            identifier: output.identifier
+        responseDocument: {
+        	storeExecuteResponse: true,
+        	outputs: [{
+        		asReference: true,
+        		mimeType: "application/PDF",
+        		identifier: output.identifier
+            }]
         }
     };
-    if (output.complexOutput && output.complexOutput.supported.formats["application/wkt"]) {
-        process.responseForm.rawDataOutput.mimeType = "application/wkt";
-    }
     OpenLayers.Request.POST({
         url: wps,
         data: new OpenLayers.Format.WPSExecute().write(process),
@@ -363,6 +372,11 @@ function execute() {
 
 // add the process's output to the page
 function showOutput(response) {
+
+	var statusLocation = response.responseXML.documentElement.getAttribute("statusLocation");
+
+	handleResponse(response.responseXML, '#capabilitiesByClick', statusLocation);
+
     var result = document.getElementById("output");
     result.innerHTML = "<h3>Output:</h3>";
     var features;
