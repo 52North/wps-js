@@ -12,6 +12,13 @@
 <body>
 	<div id="wrapper">
 		<div>
+            <select id="wps">
+            	<option>Select a WPS</option>
+            	<option>http://geoviqua.dev.52north.org/wps/WebProcessingService</option>
+            	<option>http://localhost:8080/wps/WebProcessingService</option>
+            </select>
+        </div>
+		<div>
 			<h3>Capabilities <a href="#" id="wpscaller">Call By Click</a></h3>
 			<div class="wps-container"><div id="capabilitiesByClick"></div></div>
 		</div>
@@ -33,7 +40,8 @@
 	<script type="text/javascript">	
 
 		//var wps = "http://localhost:8080/wps/WebProcessingService",
-		var wps = "http://geoviqua.dev.52north.org/wps/WebProcessingService",
+		//var wps = "http://geoviqua.dev.52north.org/wps/WebProcessingService",
+		var wps,
    		capabilities, // the capabilities, read by Format.WPSCapabilities::read
     	process; // the process description from Format.WPSDescribeProcess::read
     	
@@ -50,7 +58,7 @@
 					type : "parameter"
 				}
 			});
-			$('#describeProcessViaURL').wpsCall({
+			$('#executeProcessVia').wpsCall({
 				viaUrl: true,
 				updateSwitch: {}
 			});
@@ -58,11 +66,9 @@
 
 		// add behavior to html elements
 		document.getElementById("processes").onchange = describeProcess;
+		document.getElementById("wps").onchange = getCapabilities;
 		
-		OpenLayers.ProxyHost = "../wps_proxy/wps_proxy?url=";
-
-		// get some capabilities
-		getCapabilities();
+		OpenLayers.ProxyHost = "../wps_proxy/wps_proxy?url=";		
 		
 	</script>
 </body>

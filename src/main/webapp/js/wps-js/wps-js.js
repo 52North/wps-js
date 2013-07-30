@@ -76,8 +76,27 @@ function handleResponse(responseData, domElement, originalRequest) {
 	}
 }
 
+function removePocessesFromSelectFast(){
+	var selectObj = document.getElementById("processes");
+	var selectParentNode = selectObj.parentNode;
+	var newSelectObj = selectObj.cloneNode(false); // Make a shallow copy
+	selectParentNode.replaceChild(newSelectObj, selectObj);
+    
+    var option = document.createElement("option");
+    option.innerHTML = "Select a process";
+    option.value = "Select a process";
+    newSelectObj.appendChild(option);	
+    newSelectObj.onchange = describeProcess;
+	return newSelectObj;
+}
+
 // using OpenLayers.Format.WPSCapabilities to read the capabilities
 function getCapabilities() {
+    
+    wps = this.options[this.selectedIndex].value;
+    
+    removePocessesFromSelectFast();
+    
     OpenLayers.Request.GET({
         url: wps,
         params: {
@@ -251,8 +270,6 @@ function addRasterInput(input) {
     var name = input.identifier;
     var field = document.createElement("input");
     field.title = input["abstract"];
-    var url = window.location.href.split("?")[0];
-    field.value = url.substr(0, url.lastIndexOf("/")+1) + "data/tazdem.tiff";
     document.getElementById("input").appendChild(field);
     (field.onblur = function() {
         input.reference = {
@@ -354,6 +371,8 @@ function addValueHandlers(field, onblur) {
 }
 
 // execute the process
+// use OpenLayers functionality to build the execute request
+// send it off and handle the response with our own functionality 
 function execute() {
     var output = process.processOutputs[0];
     var input;
@@ -379,7 +398,7 @@ function execute() {
     var settings = {
 			url: wps,
 			method: "post",
-			domElement: $('#executeProcessVia'),
+			domElement: $('#executeProcessVia'),//TODO
 			data: new OpenLayers.Format.WPSExecute().write(process),
 			requestType: "Execute",
 	}
@@ -387,69 +406,6 @@ function execute() {
 	var originalRequest = new PostRequest(settings);
 
 	originalRequest.execute(callbackOnResponseParsed, {});
-    
-    //    OpenLayers.Request.POST({
-    //        url: wps,
-    //        data: new OpenLayers.Format.WPSExecute().write(process),
-    //        success: showOutput2
-    //});
-}
-
-// add the process's output to the page
-function showOutput2(response, url, data) {
-
-	var settings = {
-			url: wps,
-			method: "POST",
-			domElement: $('#executeProcessVia'),
-			data: new OpenLayers.Format.WPSExecute().write(process),
-			requestType: "Execute",
-			updateSwitch: true
-	}
-
-	var originalRequest = new PostRequest(settings);
-	
-	//var statusLocation = response.responseXML.documentElement.getAttribute("statusLocation");
-
-	handleResponse(response.responseXML, $('#executeProcessVia'), originalRequest);
-
-    var result = document.getElementById("output");
-    result.innerHTML = "<h3>Output:</h3>";
-    var features;
-    var contentType = response.getResponseHeader("Content-Type");
-    if (contentType == "application/wkt") {
-        features = new OpenLayers.Format.WKT().read(response.responseText);
-    } else if (contentType == "text/xml; subtype=wfs-collection/1.0") {
-        features = new OpenLayers.Format.WFST.v1_0_0().read(response.responseText);
-    }
-    if (features && (features instanceof OpenLayers.Feature.Vector || features.length)) {
-        layer.addFeatures(features);
-        result.innerHTML += "The result should also be visible on the map.";
-    }
-    result.innerHTML += "<textarea>" + response.responseText + "</textarea>";
-}
-
-// add the process's output to the page
-function showOutput(response) {
-
-	var statusLocation = response.responseXML.documentElement.getAttribute("statusLocation");
-
-	handleResponse(response.responseXML, '#capabilitiesByClick', statusLocation);
-
-    var result = document.getElementById("output");
-    result.innerHTML = "<h3>Output:</h3>";
-    var features;
-    var contentType = response.getResponseHeader("Content-Type");
-    if (contentType == "application/wkt") {
-        features = new OpenLayers.Format.WKT().read(response.responseText);
-    } else if (contentType == "text/xml; subtype=wfs-collection/1.0") {
-        features = new OpenLayers.Format.WFST.v1_0_0().read(response.responseText);
-    }
-    if (features && (features instanceof OpenLayers.Feature.Vector || features.length)) {
-        layer.addFeatures(features);
-        result.innerHTML += "The result should also be visible on the map.";
-    }
-    result.innerHTML += "<textarea>" + response.responseText + "</textarea>";
 }
 
 /*
