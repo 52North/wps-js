@@ -366,8 +366,41 @@ function execute() {
     OpenLayers.Request.POST({
         url: wps,
         data: new OpenLayers.Format.WPSExecute().write(process),
-        success: showOutput
+        success: showOutput2
     });
+}
+
+// add the process's output to the page
+function showOutput2(response, url, data) {
+
+	var settings = {
+			url: wps,
+			method: "POST",
+			domElement: $('#capabilitiesByClick'),
+			data: new OpenLayers.Format.WPSExecute().write(process),
+			requestType: "Execute"
+	}
+
+	var originalRequest = new PostRequest(settings);
+
+	//var statusLocation = response.responseXML.documentElement.getAttribute("statusLocation");
+
+	handleResponse(response.responseXML, $('#capabilitiesByClick'), originalRequest);
+
+    var result = document.getElementById("output");
+    result.innerHTML = "<h3>Output:</h3>";
+    var features;
+    var contentType = response.getResponseHeader("Content-Type");
+    if (contentType == "application/wkt") {
+        features = new OpenLayers.Format.WKT().read(response.responseText);
+    } else if (contentType == "text/xml; subtype=wfs-collection/1.0") {
+        features = new OpenLayers.Format.WFST.v1_0_0().read(response.responseText);
+    }
+    if (features && (features instanceof OpenLayers.Feature.Vector || features.length)) {
+        layer.addFeatures(features);
+        result.innerHTML += "The result should also be visible on the map.";
+    }
+    result.innerHTML += "<textarea>" + response.responseText + "</textarea>";
 }
 
 // add the process's output to the page
