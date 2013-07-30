@@ -50,7 +50,18 @@ function callbackOnResponseParsed(responseData, domElement, originalRequest) {
 		}
 		
 		$('#'+originalRequest.updateSwitch.element).click(function() {
-			originalRequest.execute(originalRequest.updateSwitch.callback, originalRequest.updateSwitch);
+			
+			var updateSwitch = originalRequest.updateSwitch;
+			
+			var getSettings = {
+				url : originalRequest.settings.url,
+				requestType : originalRequest.settings.requestType,
+				type : "GET",
+				domElement : originalRequest.settings.domElement
+			};
+			
+			originalRequest = new GetRequest(getSettings);
+			originalRequest.execute(updateSwitch.callback, updateSwitch);
 		});
 		$('#'+originalRequest.updateSwitch.element).css( 'cursor', 'pointer' );
 	}
@@ -358,16 +369,30 @@ function execute() {
         	storeExecuteResponse: true,
         	outputs: [{
         		asReference: true,
+        		//identifier: "ComplexOutputData"
         		mimeType: "application/PDF",
         		identifier: output.identifier
             }]
         }
     };
-    OpenLayers.Request.POST({
-        url: wps,
-        data: new OpenLayers.Format.WPSExecute().write(process),
-        success: showOutput2
-    });
+    
+    var settings = {
+			url: wps,
+			method: "post",
+			domElement: $('#executeProcessVia'),
+			data: new OpenLayers.Format.WPSExecute().write(process),
+			requestType: "Execute",
+	}
+
+	var originalRequest = new PostRequest(settings);
+
+	originalRequest.execute(callbackOnResponseParsed, {});
+    
+    //    OpenLayers.Request.POST({
+    //        url: wps,
+    //        data: new OpenLayers.Format.WPSExecute().write(process),
+    //        success: showOutput2
+    //});
 }
 
 // add the process's output to the page
@@ -376,16 +401,17 @@ function showOutput2(response, url, data) {
 	var settings = {
 			url: wps,
 			method: "POST",
-			domElement: $('#capabilitiesByClick'),
+			domElement: $('#executeProcessVia'),
 			data: new OpenLayers.Format.WPSExecute().write(process),
-			requestType: "Execute"
+			requestType: "Execute",
+			updateSwitch: true
 	}
 
 	var originalRequest = new PostRequest(settings);
-
+	
 	//var statusLocation = response.responseXML.documentElement.getAttribute("statusLocation");
 
-	handleResponse(response.responseXML, $('#capabilitiesByClick'), originalRequest);
+	handleResponse(response.responseXML, $('#executeProcessVia'), originalRequest);
 
     var result = document.getElementById("output");
     result.innerHTML = "<h3>Output:</h3>";

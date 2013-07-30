@@ -21,20 +21,26 @@
 		</div>
 		<div>
 			<h3>Excecute Process</h3>
-			<div class="wps-container"><div id="executeProcessVia"></div></div>
 			<div>
             	<select id="processes"><option>Select a process</option></select>
             	<p id="abstract"></p>
             	<div id="input"></div>
             	<div id="output"></div>
         	</div>
+			<div class="wps-container"><div id="executeProcessVia"></div></div>
 		</div>
 	</div>
-	<script type="text/javascript">
+	<script type="text/javascript">	
+
+		//var wps = "http://localhost:8080/wps/WebProcessingService",
+		var wps = "http://geoviqua.dev.52north.org/wps/WebProcessingService",
+   		capabilities, // the capabilities, read by Format.WPSCapabilities::read
+    	process; // the process description from Format.WPSDescribeProcess::read
+    	
 		$('#wpscaller').click(function() {
 			$('#capabilitiesByClick').wpsCall({
-				url: "http://localhost:8080/wps-testclient/xml/ExecuteResponse_accepted.xml",
-				requestType: EXECUTE_TYPE
+				url: wps + "?Request=GetCapabilities&Service=WPS",
+				requestType: GET_CAPABILITIES_TYPE
 			});
 		});
 		$(document).ready(function () {
@@ -49,12 +55,6 @@
 				updateSwitch: {}
 			});
 		});
-		
-
-		//var wps = "http://geoprocessing.demo.52north.org:8080/52n-wps-webapp-3.3.0-SNAPSHOT/WebProcessingService",
-		var wps = "http://geoviqua.dev.52north.org/wps/WebProcessingService",
-   		capabilities, // the capabilities, read by Format.WPSCapabilities::read
-    	process; // the process description from Format.WPSDescribeProcess::read
 
 		// add behavior to html elements
 		document.getElementById("processes").onchange = describeProcess;
@@ -63,6 +63,7 @@
 
 		// get some capabilities
 		getCapabilities();
+		
 	</script>
 </body>
 </html>

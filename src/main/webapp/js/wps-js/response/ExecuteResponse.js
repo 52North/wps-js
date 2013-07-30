@@ -117,9 +117,16 @@ var ExecuteResponse = BaseResponse.extend({
 		 * Make this updateable and NOT execute two times.
 		 */
 		if (statusLocation) {
-			var factory = new ResponseFactory();
 			this.originalRequest.settings.url = statusLocation;
-			this.originalRequest = new GetRequest(this.originalRequest.settings);
+			//this.originalRequest = new GetRequest(this.originalRequest.settings);
+			
+			var getSettings = {
+				url : this.originalRequest.settings.url,
+				requestType : this.originalRequest.settings.requestType,
+				type : "GET" 
+			};
+			
+			this.originalRequest = new GetRequest(getSettings);
 		}
 		
 		var template;
