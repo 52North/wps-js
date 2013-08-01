@@ -20,7 +20,7 @@ var TEMPLATE_EXECUTE_RESPONSE_MARKUP = '\
 
 var TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP = '\
 	<div> \
-			<label class="wps-item-label">${key}</label><span class="wps-item-value"><a href="${value}">download</a></span></li> \
+			<label class="wps-extension-item-label">${key}</label><span class="wps-item-value"><a href="${value}">download</a></span></li> \
 	</div>';
 
 var TEMPLATE_EXECUTE_RESPONSE_STATUS_NORMAL_MARKUP = '\
@@ -28,6 +28,7 @@ var TEMPLATE_EXECUTE_RESPONSE_STATUS_NORMAL_MARKUP = '\
 			<label class="wps-item-label">Status</label><span class="wps-item-value">${status}</span> \
 	</li>';
 
+//TODO add functionalities to show exception
 var TEMPLATE_EXECUTE_RESPONSE_STATUS_FAILED_MARKUP = '\
 	<li class="wps-execute-response-list-entry"> \
 			<label class="wps-item-label">Status</label><span class="wps-item-error-value">${status}</span> \

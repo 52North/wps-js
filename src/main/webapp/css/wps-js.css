@@ -49,6 +49,30 @@ label.wps-item-label {
 	border-radius: 5px;
 }
 
+label.wps-input-item-label {
+	font-variant:small-caps;
+	margin-right: 0.5em;
+	padding: 0.1em;
+	background-color: #66C5E4;
+	display: inline-block;
+	border: 1px solid #66C5E4;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
+label.wps-extension-item-label {
+	font-variant:small-caps;
+	margin-right: 0.5em;
+	padding: 0.1em;
+	background-color: #66C5E4;
+	display: inline-block;
+	border: 1px solid #66C5E4;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+}
+
 span.wps-item-value {
 
 }
