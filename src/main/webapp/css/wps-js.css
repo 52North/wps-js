@@ -53,6 +53,10 @@ span.wps-item-value {
 
 }
 
+span.wps-item-error-value {
+	color: red;
+}
+
 div.wps-execute-autoUpdate {
 	background-image:url('../images/Update-16.png');
 	width: 16px;
