@@ -4,7 +4,9 @@
 	<script src="js/jquery/jquery.1.8.3.min.js"></script>
 	<script src="js/jquery/jquery-ui.1.8.3.min.js"></script>
 	<script src="js/wps-js/wps-js.${project.version}.js"></script>
-	<script src="http://openlayers.org/api/OpenLayers.js"></script>
+	<!--script src="http://openlayers.org/api/OpenLayers.js"></script-->
+	<script src="js/openlayers/OpenLayers-closure.js"></script>
+	<!--script src="js/openlayers/OpenLayers.js"></script-->
 	<link type="text/css" rel="stylesheet" href="css/wps-js.css">
 	<title>WPS Client Test</title>
 
@@ -28,12 +30,13 @@
 		</div>
 		<div>
 			<h3>Excecute Process</h3>
-			<div>
+			<div class="wps-container">
             	<select id="processes"><option>Select a process</option></select>
             	<p id="abstract"></p>
             	<div id="input"></div>
             	<div id="output"></div>
         	</div>
+        	<p></p>
 			<div class="wps-container"><div id="executeProcessVia"></div></div>
 		</div>
 	</div>
