@@ -282,8 +282,14 @@ function addComplexInput(input, previousSibling) {
     field.className = "wps-complex-input-textarea";
     field.title = input["abstract"];
     
+    var number = "";
+    
     if(input.maxOccurs > 1){
-    	field.id = name + (input.occurrence || 1) + "-input-textarea";
+    	number = (input.occurrence || 1);
+    } 
+    
+    if(input.maxOccurs > 1){
+    	field.id = name + number + "-input-textarea";
     }else {
     	field.id = name + "-input-textarea";    
     }
@@ -292,17 +298,26 @@ function addComplexInput(input, previousSibling) {
     var label = document.createElement("label");
     label.className = "wps-input-item-label";
     if(input.maxOccurs > 1){
-    	label.innerHTML = input.identifier + "(" + (input.occurrence || 1) + "/" + input.maxOccurs + ")";
+    	label.innerHTML = input.identifier + "(" + number + "/" + input.maxOccurs + ")";
     }else{
     	label.innerHTML = input.identifier;
     }
             
     var formats = input.complexData.supported.formats;
     		
-    var formatDropBox = createFormatDropBox(name + (input.occurrence || 1) + "formats", formats);    
+    var formatDropBox = createFormatDropBox(name + number + "formats", formats);    
     
     previousSibling && previousSibling.nextSibling ? addLabelFieldAndDropBoxBeforeSibling(container, field, label, formatDropBox, previousSibling):
     addLabelFieldAndDropBox(container, field, label, formatDropBox);
+    	
+	var checkBox = document.createElement("input");
+    checkBox.type = "checkbox";
+    checkBox.id = name + number + "-checkbox";
+    checkBox.value = "asReference";
+    
+    container.appendChild(checkBox);
+    
+    container.appendChild(document.createTextNode("asReference"));
     
     if(!previousSibling){
     	//add this button just one time
@@ -511,8 +526,10 @@ function createComplexData(id, number){
     var encoding = selectedFormat.encoding;	
     var schema = selectedFormat.schema;
     
-    //TODO check whether reference
-    var reference = true;
+    var checkBox = document.getElementById(id + number + "-checkbox");
+    
+    //check whether reference
+    var reference = checkBox.checked;
     
     var complexData;        			
     
