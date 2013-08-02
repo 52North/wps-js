@@ -136,7 +136,7 @@ function describeProcess() {
 // dynamically create a form from the process description
 function buildForm() {
     document.getElementById("abstract").innerHTML = process["abstract"];
-    document.getElementById("input").innerHTML = "<h3>Input:</h3>";
+    document.getElementById("input").innerHTML = "<h3>Inputs:</h3>";
     
     document.getElementById("output").innerHTML = "";
 
@@ -178,6 +178,12 @@ function buildForm() {
         }
         document.getElementById("input").appendChild(document.createElement("p"));
     }
+    
+    var outputH3 = document.createElement("h3");
+    
+    outputH3.innerHTML = "Outputs:"; 
+    
+    document.getElementById("input").appendChild(outputH3);
     
     addOutputs();
     
