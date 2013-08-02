@@ -140,32 +140,42 @@ function buildForm() {
     
     document.getElementById("output").innerHTML = "";
 
-    var inputs = process.dataInputs, supported = true,
-        sld = "text/xml; subtype=sld/1.0.0",
+ 	var supported = addInputs();
+    
+    var outputH3 = document.createElement("h3");
+    
+    outputH3.innerHTML = "Outputs:"; 
+    
+    document.getElementById("input").appendChild(outputH3);
+    
+    //TODO also check whether supported outputs?
+    addOutputs();
+        
+    document.getElementById("input").appendChild(document.createElement("p"));
+    
+    if (supported) {
+        var executeButton = document.createElement("button");
+        executeButton.innerHTML = "Execute";
+        document.getElementById("input").appendChild(executeButton);
+        executeButton.onclick = execute;
+    } else {
+        document.getElementById("input").innerHTML = '<span class="notsupported">' +
+            "Sorry, this client does not support the selected process." +
+            "</span>";
+    }
+}
+
+function addInputs(){
+    
+    var container = document.getElementById("input");
+    var inputs = process.dataInputs, supported = true,       
         input;
     for (var i=0,ii=inputs.length; i<ii; ++i) {
         input = inputs[i];
         if (input.complexData) {
-            var formats = input.complexData.supported.formats;
-    		for (var j = 0; j < formats.length; j++) {
-    			var format = formats[j];
-            	var mimeType = format.mimeType;
-            if (mimeType == "application/wkt") {
-                addWKTInput(input);
-                supported = true;
-                break;
-            } else if (mimeType == "text/xml; subtype=wfs-collection/1.0") {
-                addWFSCollectionInput(input);
-                supported = true;
-                break;
-            } else if (mimeType == "image/tiff") {
-                addRasterInput(input);
-                supported = true;
-                break;
-            } else {
-                supported = false;
-            }
-           }
+    		
+    		addComplexInput(input);
+           
         } else if (input.boundingBoxData) {
             addBoundingBoxInput(input);
         } else if (input.literalData) {
@@ -179,24 +189,7 @@ function buildForm() {
         document.getElementById("input").appendChild(document.createElement("p"));
     }
     
-    var outputH3 = document.createElement("h3");
-    
-    outputH3.innerHTML = "Outputs:"; 
-    
-    document.getElementById("input").appendChild(outputH3);
-    
-    addOutputs();
-    
-    if (supported) {
-        var executeButton = document.createElement("button");
-        executeButton.innerHTML = "Execute";
-        document.getElementById("input").appendChild(executeButton);
-        executeButton.onclick = execute;
-    } else {
-        document.getElementById("input").innerHTML = '<span class="notsupported">' +
-            "Sorry, this client does not support the selected process." +
-            "</span>";
-    }
+    return supported;	
 }
 
 function addOutputs(){
@@ -271,110 +264,29 @@ function createFormatDropBox(id, formats){
 	return field;
 }
 
-// helper function to dynamically create a textarea for geometry (WKT) data
-// input
-function addWKTInput(input, previousSibling) {
-    var name = input.identifier;
-    var container = document.getElementById("input");
-    var label = document.createElement("label");
-    label["for"] = name;
-    label.title = input["abstract"];
-    label.innerHTML = name + " (select feature, then click field):";
-    previousSibling && previousSibling.nextSibling ?
-        container.insertBefore(label, previousSibling.nextSibling) :
-        container.appendChild(label);
-    var field = document.createElement("textarea");
-    field.onclick = function () {
-        if (layer.selectedFeatures.length) {
-            this.innerHTML = new OpenLayers.Format.WKT().write(
-                layer.selectedFeatures[0]
-            );
-        }
-        createCopy(input, this, addWKTInput);
-    };
-    field.onblur = function() {
-        input.data = field.value ? {
-            complexData: {
-                mimeType: "application/wkt",
-                value: this.value
-            }
-        } : undefined;
-    };
-    field.title = input["abstract"];
-    field.id = name;
-    previousSibling && previousSibling.nextSibling ?
-        container.insertBefore(field, previousSibling.nextSibling.nextSibling) :
-        container.appendChild(field);
-}
-
 // helper function for xml input
-function addXMLInput(input, type) {
+function addComplexInput(input) {
     var container = document.getElementById("input");
     var name = input.identifier;
-    var field = document.createElement("input");
+    var field = document.createElement("textarea");
+    field.className = "wps-complex-input-textarea";
     field.title = input["abstract"];
-    //field.value = name + " (" + type + ")";
-    field.onblur = function() {
-        input.data = field.value ? {
-            complexData: {
-                mimeType: type,
-                value: this.value
-            }
-        } : undefined;
-    };
+    field.id = name + "-input-textarea";
     
     var label = document.createElement("label");
     label.className = "wps-input-item-label";
     label.innerHTML = input.identifier;
     
     container.appendChild(label);
-    container.appendChild(field);
-}
-
-// helper function to dynamically create a WFS collection reference input
-function addWFSCollectionInput(input) {
-    var name = input.identifier;
-    var field = document.createElement("input");
-    field.title = input["abstract"];
-    //field.value = name + " (layer on demo server)";
-    addValueHandlers(field, function() {
-        input.reference = field.value ? {
-            mimeType: "text/xml; subtype=wfs-collection/1.0",
-            href: "http://geoserver/wfs",
-            method: "POST",
-            body: {
-                wfs: {
-                    version: "1.0.0",
-                    outputFormat: "GML2",
-                    featureType: field.value
-                }
-            }
-        } : undefined;
-    });
-    document.getElementById("input").appendChild(field);
-}
-
-// helper function to dynamically create a raster (GeoTIFF) url input
-function addRasterInput(input) {
-    var container = document.getElementById("input");
-    var name = input.identifier;
-    var field = document.createElement("input");
-    field.title = input["abstract"];
-    field.value = "http://localhost:8080/testdata/testdata2.tif";
-    
-    var label = document.createElement("label");
-    label.className = "wps-input-item-label";
-    label.innerHTML = input.identifier;
-    
-    container.appendChild(label);
-    container.appendChild(field);
-    (field.onblur = function() {
-        input.reference = {
-            mimeType: "image/tiff",
-            href: field.value,
-            method: "GET"
-        };
-    })();
+    container.appendChild(field);   
+            
+    var formats = input.complexData.supported.formats;
+        	
+    document.getElementById("input").appendChild(document.createElement("p"));
+    		
+    var formatDropBox = createFormatDropBox(name + "formats", formats);
+    		
+    container.appendChild(formatDropBox);
 }
 
 // helper function to dynamically create a bounding box input
@@ -391,12 +303,6 @@ function addBoundingBoxInput(input) {
     
     container.appendChild(label);
     container.appendChild(field);
-    addValueHandlers(field, function() {
-        input.boundingBoxData = {
-            projection: "EPSG:4326",
-            bounds: OpenLayers.Bounds.fromString(field.value)
-        };
-    });
 }
 
 // helper function to create a literal input textfield or dropdown
@@ -406,12 +312,24 @@ function addLiteralInput(input, previousSibling) {
     var anyValue = input.literalData.anyValue;
     // anyValue means textfield, otherwise we create a dropdown
     var field = document.createElement(anyValue ? "input" : "select");
-    field.id = name;
+    
+    if(input.maxOccurs > 1){
+    	field.id = name + (input.occurrence || 1);
+    }else {
+    	field.id = name;    
+    }
     field.title = input["abstract"];
     
-    previousSibling && previousSibling.nextSibling ?
-        container.insertBefore(field, previousSibling.nextSibling) :
-        container.appendChild(field);
+    var label = document.createElement("label");
+    label.className = "wps-input-item-label";
+    if(input.maxOccurs > 1){
+    	label.innerHTML = input.identifier + "(" + (input.occurrence || 1) + "/" + input.maxOccurs + ")";
+    }else{
+    	label.innerHTML = input.identifier;
+    }
+    
+    previousSibling && previousSibling.nextSibling ? addLabelAndFieldBeforeSibling(container, field, label, previousSibling):
+    addLabelAndField(container, field, label);
     if (anyValue) {
         var dataType = input.literalData.dataType;
         //field.value = name + (dataType ? " (" + dataType + ")" : "");
@@ -444,24 +362,33 @@ function addLiteralInput(input, previousSibling) {
         };
     }
     
-    var label = document.createElement("label");
-    label.className = "wps-input-item-label";
-    label.innerHTML = input.identifier;
-    
+}
+
+function addLabelAndFieldBeforeSibling(container, field, label, previousSibling){	
+    container.insertBefore(field, previousSibling.nextSibling.nextSibling);
+    container.insertBefore(label, field);
+    container.insertBefore(field.nextSibling, document.createElement("p"));
+}
+
+function addLabelAndField(container, field, label){	
     container.appendChild(label);
     container.appendChild(field);
-    
 }
 
 // if maxOccurs is > 1, this will add a copy of the field
 function createCopy(input, field, fn) {
     if (input.maxOccurs && input.maxOccurs > 1 && !field.userSelected) {
-        // add another copy of the field - we don't check maxOccurs
+        // add another copy of the field - check maxOccurs
+        if(input.occurrence && input.occurrence >= input.maxOccurs){
+        	return;
+        }
         field.userSelected = true;
         var newInput = OpenLayers.Util.extend({}, input);
         // we recognize copies by the occurrence property
-        newInput.occurrence = (input.occurrence || 0) + 1;
-        process.dataInputs.push(newInput);
+        //newInput.occurrence = (input.occurrence || 1) + 1;
+        input.occurrence = (input.occurrence || 1) + 1;
+        newInput.occurrence = input.occurrence;
+        //process.dataInputs.push(newInput);
         fn(newInput, field);
     }
 }
@@ -483,19 +410,71 @@ function addValueHandlers(field, onblur) {
     };
 }
 
+function getComplexInputTextarea(id, number){
+  return document.getElementById(id + "-input-textarea" + number);
+}
+
+function getLiteralInputField(id, number){
+  return document.getElementById(id + number);
+}
+
 // execute the process
 // use OpenLayers functionality to build the execute request
 // send it off and handle the response with our own functionality 
 function execute() {
-    //var output = process.processOutputs[0];
+    
+    var finalInputs = [];
+    
     var input;
     // remove occurrences that the user has not filled out
     for (var i=process.dataInputs.length-1; i>=0; --i) {
         input = process.dataInputs[i];
-        if ((input.minOccurs === 0 || input.occurrence) && !input.data && !input.reference) {
-            OpenLayers.Util.removeItem(process.dataInputs, input);
+        
+        var id = input.identifier;
+        
+        if(input.occurrence > 1){
+        	//get multiple inputs
+        	for(var j = 1; j <= input.occurrence; j++){
+        		if(input.complexData){
+        			var textarea = getComplexInputTextarea(id, j);
+        			
+        			var value = textarea.value;
+        			
+        			//TODO check whether reference
+        		}else{
+        			var inputField = getLiteralInputField(id, j);
+        			var value;        			
+        			if(inputField.options){
+        				//assume select
+        				value = inputField.options[inputField.selectedIndex].value;
+        			}else{
+        				value = inputField.value;
+        			}
+        			
+        			if(value && !(value == "")){
+        			
+        				var literalData = {
+        					identifier : id,
+        					data: {
+        						literalData: {
+                    				value: value
+                				}
+        					}
+        				};
+        			finalInputs.push(literalData);
+        			}
+        		}        		
+        	}
         }
+        
+        //if ((input.minOccurs === 0 || input.occurrence) && !input.data && !input.reference) {
+        //    OpenLayers.Util.removeItem(process.dataInputs, input);
+        //}
     }
+    
+    var finalProcess = JSON.parse(JSON.stringify(process)) 
+    
+    finalProcess.dataInputs = finalInputs;
     
     var outputs = process.processOutputs;
     
@@ -546,7 +525,7 @@ function execute() {
     	
     }
     
-    process.responseForm = {
+    finalProcess.responseForm = {
         responseDocument: {
         	storeExecuteResponse: true,
         	outputs: checkedOutputs
@@ -557,7 +536,7 @@ function execute() {
 			url: wps,
 			method: "post",
 			domElement: $('#executeProcessVia'),//TODO
-			data: new OpenLayers.Format.WPSExecute().write(process),
+			data: new OpenLayers.Format.WPSExecute().write(finalProcess),
 			requestType: "Execute",
 	}
 

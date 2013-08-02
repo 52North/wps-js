@@ -81,6 +81,10 @@ span.wps-item-error-value {
 	color: red;
 }
 
+textarea.wps-complex-input-textarea {
+	height: 17px;
+}
+
 div.wps-execute-autoUpdate {
 	background-image:url('../images/Update-16.png');
 	width: 16px;
