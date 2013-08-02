@@ -1,3 +1,14 @@
+var TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP = '\
+	<div class="wps-execute-complex-inputs"> \
+		<div class="wps-execute-response-process"> \
+			<ul class="wps-execute-response-list"> \
+				<li class="wps-execute-response-list-entry"> \
+					<label class="wps-item-label">${identifier}</label>${inputField}${asReference}</li> \
+				<li class="wps-execute-response-list-entry"> \
+					${formats}</li> \
+			</ul> \
+		</div> \
+	</div>';
 
 function resolveRequest(type, method, settings) {
 	if (type == GET_CAPABILITIES_TYPE) {
@@ -140,7 +151,9 @@ function buildForm() {
     
     document.getElementById("output").innerHTML = "";
 
- 	var supported = addInputs();
+ 	var supported = true;
+ 	
+ 	getInputs();
     
     var outputH3 = document.createElement("h3");
     
@@ -163,6 +176,97 @@ function buildForm() {
             "Sorry, this client does not support the selected process." +
             "</span>";
     }
+}
+
+function getInputs(){
+    
+    var inputElements = [];
+    var container = document.getElementById("input");
+    var inputs = process.dataInputs, supported = true,       
+        input;
+    for (var i=0,ii=inputs.length; i<ii; ++i) {
+        input = inputs[i];
+        if (input.complexData) {
+    		
+    		var templateProperties = getComplexInput(input);
+    		
+    		$.tmpl(TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP, templateProperties).appendTo(container);
+           
+        } else if (input.boundingBoxData) {
+            //addBoundingBoxInput(input);
+        } else if (input.literalData) {
+            //addLiteralInput(input);
+        } else {
+            supported = false;
+        }
+        if (input.minOccurs > 0) {
+            document.getElementById("input").appendChild(document.createTextNode("* "));
+        }
+    }
+    
+    return inputElements;	
+}
+
+// helper function for xml input
+function getComplexInput(input) {
+    
+    var complexInputElements = {};
+    
+    var name = input.identifier;        
+    
+    var fieldDiv = document.createElement("div"); 
+    
+    var field = document.createElement("textarea");
+    field.className = "wps-complex-input-textarea";
+    field.title = input["abstract"];
+    
+    var number = "";
+    
+    if(input.maxOccurs > 1){
+    	number = (input.occurrence || 1);
+    } 
+    
+    if(input.maxOccurs > 1){
+    	field.id = name + number + "-input-textarea";
+    }else {
+    	field.id = name + "-input-textarea";    
+    }
+    field.title = input["abstract"];
+    
+    fieldDiv.appendChild(field);
+    
+    var labelText = "";
+    
+    if(input.maxOccurs > 1){
+    	labelText = input.identifier + "(" + number + "/" + input.maxOccurs + ")";
+    }else{
+    	labelText = input.identifier;
+    }
+        
+    var formats = input.complexData.supported.formats;
+    var formatDropBox = createFormatDropBox(name + number + "formats", formats); 
+    
+    var formatDropBoxDiv = document.createElement("div"); 
+      
+    formatDropBoxDiv.appendChild(formatDropBox);
+      
+    var checkBoxDiv = document.createElement("div");   
+    
+    var checkBox = document.createElement("input");
+    checkBox.type = "checkbox";
+    checkBox.id = name + number + "-checkbox";
+    checkBox.value = "asReference";
+    
+    checkBoxDiv.appendChild(checkBox);
+    
+    checkBoxDiv.appendChild(document.createTextNode("asReference"));
+    
+    complexInputElements.identifier = labelText;
+    complexInputElements.inputField = fieldDiv.innerHTML;
+    complexInputElements.asReference = checkBoxDiv.innerHTML;
+    complexInputElements.formats = formatDropBoxDiv.innerHTML;
+    
+    return complexInputElements;    
 }
 
 function addInputs(){
