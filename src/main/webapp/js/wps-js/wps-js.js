@@ -538,7 +538,9 @@ function createComplexData(id, number){
         complexData = {
     		identifier : id,
 			reference : {
-    			mimeType: "image/tiff",
+    			mimeType: mimeType,
+    			encoding: encoding,
+    			schema: schema,
     			href: value,
     			method: "GET"
     		}
@@ -718,7 +720,7 @@ function execute() {
     var settings = {
 			url: wps,
 			method: "post",
-			domElement: $('#executeProcessVia'),//TODO
+			domElement: $('#executeProcess'),
 			data: new OpenLayers.Format.WPSExecute().write(finalProcess),
 			requestType: "Execute",
 	}
