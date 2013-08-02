@@ -264,45 +264,91 @@ function createFormatDropBox(id, formats){
 	return field;
 }
 
+function addInputCopyButton(){
+
+	var button = document.createElement("button");
+	
+	button.className = "add-input-copy";
+	
+	return button;
+}
+
+
 // helper function for xml input
-function addComplexInput(input) {
+function addComplexInput(input, previousSibling) {
     var container = document.getElementById("input");
     var name = input.identifier;
     var field = document.createElement("textarea");
     field.className = "wps-complex-input-textarea";
     field.title = input["abstract"];
-    field.id = name + "-input-textarea";
+    
+    if(input.maxOccurs > 1){
+    	field.id = name + (input.occurrence || 1) + "-input-textarea";
+    }else {
+    	field.id = name + "-input-textarea";    
+    }
+    field.title = input["abstract"];
     
     var label = document.createElement("label");
     label.className = "wps-input-item-label";
-    label.innerHTML = input.identifier;
-    
-    container.appendChild(label);
-    container.appendChild(field);   
+    if(input.maxOccurs > 1){
+    	label.innerHTML = input.identifier + "(" + (input.occurrence || 1) + "/" + input.maxOccurs + ")";
+    }else{
+    	label.innerHTML = input.identifier;
+    }
             
     var formats = input.complexData.supported.formats;
-        	
-    document.getElementById("input").appendChild(document.createElement("p"));
     		
-    var formatDropBox = createFormatDropBox(name + "formats", formats);
-    		
-    container.appendChild(formatDropBox);
+    var formatDropBox = createFormatDropBox(name + (input.occurrence || 1) + "formats", formats);    
+    
+    previousSibling && previousSibling.nextSibling ? addLabelFieldAndDropBoxBeforeSibling(container, field, label, formatDropBox, previousSibling):
+    addLabelFieldAndDropBox(container, field, label, formatDropBox);
+    
+    if(!previousSibling){
+    	//add this button just one time
+    	var button = addInputCopyButton();
+    	container.appendChild(button);
+    
+		button.onclick = function(){ 
+			createCopy(input, field, addComplexInput);
+		};
+	}
 }
 
 // helper function to dynamically create a bounding box input
-function addBoundingBoxInput(input) {
+function addBoundingBoxInput(input, previousSibling) {
     var container = document.getElementById("input");
     var name = input.identifier;
     var field = document.createElement("input");
     field.title = input["abstract"];
-    //field.value = "left,bottom,right,top (EPSG:4326)";
+    
+    if(input.maxOccurs > 1){
+    	field.id = name + (input.occurrence || 1);
+    }else {
+    	field.id = name;    
+    }
+    field.title = input["abstract"];
     
     var label = document.createElement("label");
     label.className = "wps-input-item-label";
-    label.innerHTML = input.identifier;
+    if(input.maxOccurs > 1){
+    	label.innerHTML = input.identifier + "(" + (input.occurrence || 1) + "/" + input.maxOccurs + ")";
+    }else{
+    	label.innerHTML = input.identifier;
+    }
     
-    container.appendChild(label);
-    container.appendChild(field);
+    previousSibling && previousSibling.nextSibling ? addLabelAndFieldBeforeSibling(container, field, label, previousSibling):
+    addLabelAndField(container, field, label);
+    
+    if(!previousSibling){
+    	//add this button just one time
+    	var button = addInputCopyButton();
+    	container.appendChild(button);
+    
+		button.onclick = function(){ 
+			createCopy(input, field, addBoundingBoxInput);
+		};
+	}
 }
 
 // helper function to create a literal input textfield or dropdown
@@ -330,6 +376,17 @@ function addLiteralInput(input, previousSibling) {
     
     previousSibling && previousSibling.nextSibling ? addLabelAndFieldBeforeSibling(container, field, label, previousSibling):
     addLabelAndField(container, field, label);
+    
+    if(!previousSibling){
+    	//add this button just one time
+    	var button = addInputCopyButton();
+    	container.appendChild(button);
+    
+		button.onclick = function(){ 
+			createCopy(input, field, addLiteralInput);
+		};
+	}
+    
     if (anyValue) {
         var dataType = input.literalData.dataType;
         //field.value = name + (dataType ? " (" + dataType + ")" : "");
@@ -339,7 +396,7 @@ function addLiteralInput(input, previousSibling) {
                     value: field.value
                 }
             } : undefined;
-            createCopy(input, field, addLiteralInput);
+            //createCopy(input, field, addLiteralInput);
         });
     } else {
         var option;
@@ -353,7 +410,7 @@ function addLiteralInput(input, previousSibling) {
             field.appendChild(option);
         }
         field.onchange = function() {
-            createCopy(input, field, addLiteralInput);
+            //createCopy(input, field, addLiteralInput);
             input.data = this.selectedIndex ? {
                 literalData: {
                     value: this.options[this.selectedIndex].value
@@ -370,14 +427,30 @@ function addLabelAndFieldBeforeSibling(container, field, label, previousSibling)
     container.insertBefore(field.nextSibling, document.createElement("p"));
 }
 
+function addLabelFieldAndDropBoxBeforeSibling(container, field, label, dropBox, previousSibling){	
+    container.insertBefore(dropBox, previousSibling.nextSibling.nextSibling);
+    var p = document.createElement("p");
+    container.insertBefore(p, dropBox);
+    container.insertBefore(field, p);
+    container.insertBefore(label, field);
+    container.insertBefore(field.nextSibling, document.createElement("p"));
+}
+
 function addLabelAndField(container, field, label){	
     container.appendChild(label);
     container.appendChild(field);
 }
 
+function addLabelFieldAndDropBox(container, field, label, dropBox){	
+    container.appendChild(label);
+    container.appendChild(field);
+    container.appendChild(document.createElement("p"));
+    container.appendChild(dropBox);
+}
+
 // if maxOccurs is > 1, this will add a copy of the field
 function createCopy(input, field, fn) {
-    if (input.maxOccurs && input.maxOccurs > 1 && !field.userSelected) {
+    if (input.maxOccurs && input.maxOccurs > 1) {
         // add another copy of the field - check maxOccurs
         if(input.occurrence && input.occurrence >= input.maxOccurs){
         	return;
@@ -385,10 +458,8 @@ function createCopy(input, field, fn) {
         field.userSelected = true;
         var newInput = OpenLayers.Util.extend({}, input);
         // we recognize copies by the occurrence property
-        //newInput.occurrence = (input.occurrence || 1) + 1;
         input.occurrence = (input.occurrence || 1) + 1;
         newInput.occurrence = input.occurrence;
-        //process.dataInputs.push(newInput);
         fn(newInput, field);
     }
 }
@@ -411,11 +482,94 @@ function addValueHandlers(field, onblur) {
 }
 
 function getComplexInputTextarea(id, number){
-  return document.getElementById(id + "-input-textarea" + number);
+  return document.getElementById(id + number + "-input-textarea");
 }
 
 function getLiteralInputField(id, number){
   return document.getElementById(id + number);
+}
+
+function createComplexData(id, number){
+
+	if(!number){
+		number = "";
+	}
+
+    var textarea = getComplexInputTextarea(id, number);
+    
+    var value = textarea.value;
+    
+    if(!value || (value == "")){
+    	return;
+    } 			
+    
+    //if complex data get the selected value (serialized format object)
+    //add schema, mimeType, encoding if existing
+    var select = document.getElementById(id + number + "formats");   
+    var selectedFormat = JSON.parse(select.options[select.selectedIndex].value);
+    var mimeType = selectedFormat.mimeType;	
+    var encoding = selectedFormat.encoding;	
+    var schema = selectedFormat.schema;
+    
+    //TODO check whether reference
+    var reference = true;
+    
+    var complexData;        			
+    
+    if(reference){
+    
+        complexData = {
+    		identifier : id,
+			reference : {
+    			mimeType: "image/tiff",
+    			href: value,
+    			method: "GET"
+    		}
+    	};   
+    	
+    }else{        			
+    	complexData = {
+    		identifier : id,
+    		data: {
+    			complexData: {
+    				value: value
+    			}
+    		}
+    	};        			
+    }
+    
+    return complexData;
+}
+
+function createLiteralData(id, number){
+
+	if(!number){
+		number = "";
+	}
+	
+    var inputField = getLiteralInputField(id, number);
+    var value;        			
+    if(inputField.options){
+    	//assume select
+    	value = inputField.options[inputField.selectedIndex].value;
+    }else{
+    	value = inputField.value;
+    }
+    
+    if(!value || (value == "")){
+    	return;
+    }
+
+	var literalData = {
+    	identifier : id,
+    	data: {
+    		literalData: {
+    			value: value
+    		}
+    	}
+    };
+    
+    return literalData;
 }
 
 // execute the process
@@ -436,42 +590,55 @@ function execute() {
         	//get multiple inputs
         	for(var j = 1; j <= input.occurrence; j++){
         		if(input.complexData){
-        			var textarea = getComplexInputTextarea(id, j);
-        			
-        			var value = textarea.value;
-        			
-        			//TODO check whether reference
-        		}else{
-        			var inputField = getLiteralInputField(id, j);
-        			var value;        			
-        			if(inputField.options){
-        				//assume select
-        				value = inputField.options[inputField.selectedIndex].value;
-        			}else{
-        				value = inputField.value;
+ 	
+ 					var complexData = createComplexData(id, j);
+ 					
+        			if(complexData){
+        				finalInputs.push(complexData);
         			}
-        			
-        			if(value && !(value == "")){
-        			
-        				var literalData = {
-        					identifier : id,
-        					data: {
-        						literalData: {
-                    				value: value
-                				}
-        					}
-        				};
-        			finalInputs.push(literalData);
-        			}
-        		}        		
+        		}else if(input.literalData){
+					
+					var literalData = createLiteralData(id, j);
+					
+					if(literalData){
+        				finalInputs.push(literalData);
+        			}					
+        		}//TODO: bbox data        		
         	}
+        }else{
+        	if(input.complexData){
+        		
+        		var complexData;
+        		
+        		if(input.maxOccurs > 1){
+        			//input has number 1 attached   			
+        			complexData = createComplexData(id, "1");
+ 				}else{
+ 					complexData = createComplexData(id);
+ 				}
+        		if(complexData){
+        			finalInputs.push(complexData);
+        		}
+        			
+        	}else if(input.literalData){
+        		
+        		var literalData;
+        		
+        		if(input.maxOccurs > 1){				
+					literalData = createLiteralData(id, "1");
+				}else{
+					literalData = createLiteralData(id);
+				}
+				if(literalData){
+        			finalInputs.push(literalData);
+        		}
+        	}//TODO bbox data
         }
-        
-        //if ((input.minOccurs === 0 || input.occurrence) && !input.data && !input.reference) {
-        //    OpenLayers.Util.removeItem(process.dataInputs, input);
-        //}
     }
     
+    //make real copy as inputs of process are overwritten but the 
+    //original inputs (i.e. all inputs) are needed for 
+    //consecutive execution
     var finalProcess = JSON.parse(JSON.stringify(process)) 
     
     finalProcess.dataInputs = finalInputs;
@@ -487,8 +654,7 @@ function execute() {
     	var identifier = output.identifier;
     	
     	//every output has a checkbox with id "output-id-checkbox"
-    	//we need to get this here and see if it is checked
-    	
+    	//we need to get this here and see if it is checked    	
     	var checkbox = document.getElementById(identifier + "-checkbox");
     	
     	if(checkbox.checked){
@@ -498,8 +664,8 @@ function execute() {
 					identifier:	identifier		
     			};
     		}else{    	
-    		//if complex output get the selected value (serialized format object)
-    		//add schema, mimeType, encoding if existing
+    			//if complex output get the selected value (serialized format object)
+    			//add schema, mimeType, encoding if existing
     			var select = document.getElementById(identifier + "formats");   
     			var selectedFormat = JSON.parse(select.options[select.selectedIndex].value);
     			var mimeType = selectedFormat.mimeType;	

@@ -82,7 +82,14 @@ span.wps-item-error-value {
 }
 
 textarea.wps-complex-input-textarea {
+	width: 377px;
 	height: 17px;
+}
+
+button.add-input-copy {
+	background-image:url('../images/Plus-16.png');
+	width: 20px;
+	height: 20px;
 }
 
 div.wps-execute-autoUpdate {
