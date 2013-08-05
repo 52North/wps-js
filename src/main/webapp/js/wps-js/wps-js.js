@@ -1,14 +1,49 @@
 var TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP = '\
 	<div class="wps-execute-complex-inputs"> \
 		<div class="wps-execute-response-process"> \
-			<ul class="wps-execute-response-list"> \
+			<ul class="wps-execute-response-list" id="complex-inputs"> \
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-item-label">${identifier}</label>${inputField}${asReference}</li> \
+					<label class="wps-input-item-label">${identifier}</label>{{html inputField}}{{html asReference}}</li> \
 				<li class="wps-execute-response-list-entry"> \
-					${formats}</li> \
+					{{html formats}}{{html copyButton}}</li> \
 			</ul> \
 		</div> \
 	</div>';
+
+var TEMPLATE_EXECUTE_COMPLEX_INPUTS_COPY_MARKUP = '\
+				<li class="wps-execute-response-list-entry"> \
+					<label class="wps-input-item-label">${identifier}</label>{{html inputField}}{{html asReference}}</li> \
+				<li class="wps-execute-response-list-entry"> \
+					{{html formats}}</li>';
+
+var TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP = '\
+	<div class="wps-execute-complex-inputs"> \
+		<div class="wps-execute-response-process"> \
+			<ul class="wps-execute-response-list" id="literal-inputs"> \
+				<li class="wps-execute-response-list-entry"> \
+					<label class="wps-input-item-label">${identifier}</label>{{html inputField}}{{html copyButton}}</li> \
+			</ul> \
+		</div> \
+	</div>';
+	
+var TEMPLATE_EXECUTE_LITERAL_INPUTS_COPY_MARKUP = '\
+				<li class="wps-execute-response-list-entry"> \
+					<label class="wps-input-item-label">${identifier}</label>{{html inputField}}</li>';
+
+
+var TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP = '\
+	<div class="wps-execute-complex-inputs"> \
+		<div class="wps-execute-response-process"> \
+			<ul class="wps-execute-response-list" id="bbox-inputs"> \
+				<li class="wps-execute-response-list-entry"> \
+					<label class="wps-input-item-label">${identifier}</label>{{html inputField}}{{html copyButton}}</li> \
+			</ul> \
+		</div> \
+	</div>';
+
+var TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP = '\
+				<li class="wps-execute-response-list-entry"> \
+					<label class="wps-input-item-label">${identifier}</label>{{html inputField}}</li>';
 
 function resolveRequest(type, method, settings) {
 	if (type == GET_CAPABILITIES_TYPE) {
@@ -187,15 +222,112 @@ function getInputs(){
     for (var i=0,ii=inputs.length; i<ii; ++i) {
         input = inputs[i];
         if (input.complexData) {
-    		
+    		    		
     		var templateProperties = getComplexInput(input);
+    			
+    		var name = input.identifier;
+           
+           	if((input.maxOccurs > 1)){
+    	
+    			var copyButtonDiv = document.createElement("div"); 
+    	
+    			var button = addInputCopyButton(name);    	
+    	
+				copyButtonDiv.appendChild(button);
+				templateProperties.copyButton = copyButtonDiv.innerHTML;
+    		}
     		
     		$.tmpl(TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP, templateProperties).appendTo(container);
+                      
+           if((input.maxOccurs > 1)){
            
+           		var button = document.getElementById(name + "-copy-button");
+           
+            	var complexInput = JSON.parse(JSON.stringify(input)) 
+           
+           		button.onclick = function(){ 
+					var templateProperties = createCopy(complexInput, getComplexInput);
+				
+					if(templateProperties){				
+						var complexInputsUl = document.getElementById("complex-inputs");
+			
+						$.tmpl(TEMPLATE_EXECUTE_COMPLEX_INPUTS_COPY_MARKUP, templateProperties).appendTo(complexInputsUl);
+					}
+				};
+			
+			}
+       	   
         } else if (input.boundingBoxData) {
-            //addBoundingBoxInput(input);
+            var templateProperties = getBoundingBoxInput(input);
+           
+           var button;
+           
+           	if((input.maxOccurs > 1)){
+    			
+    			var name = input.identifier;
+    	
+    			var copyButtonDiv = document.createElement("div"); 
+    	
+    			button = addInputCopyButton(name);    	
+    	
+				copyButtonDiv.appendChild(button);
+				templateProperties.copyButton = copyButtonDiv.innerHTML;
+    		}
+           
+           	$.tmpl(TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP, templateProperties).appendTo(container);
+                    
+            if((input.maxOccurs > 1)){        
+              
+            	var button = document.getElementById(input.identifier + "-copy-button");
+           
+            	var bboxInput = JSON.parse(JSON.stringify(input)) 
+           
+           		button.onclick = function(){ 
+					var templateProperties = createCopy(bboxInput, getBoundingBoxInput);
+				
+					if(templateProperties){				
+						var literalInputsUl = document.getElementById("bbox-inputs");
+			
+						$.tmpl(TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP, templateProperties).appendTo(bboxInputsUl);
+					}
+				};
+			}
+           
         } else if (input.literalData) {
-            //addLiteralInput(input);
+           var templateProperties = getLiteralInput(input, true);
+           
+            var button;
+           
+           	if((input.maxOccurs > 1)){
+    			
+    			var name = input.identifier;
+    	
+    			var copyButtonDiv = document.createElement("div"); 
+    	
+    			button = addInputCopyButton(name);    	
+    	
+				copyButtonDiv.appendChild(button);
+				templateProperties.copyButton = copyButtonDiv.innerHTML;
+    		}
+           
+           $.tmpl(TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP, templateProperties).appendTo(container);
+           
+           if((input.maxOccurs > 1)){
+            var button = document.getElementById(input.identifier + "-copy-button");
+           
+            var literalInput = JSON.parse(JSON.stringify(input)) 
+           
+           	button.onclick = function(){ 
+				var templateProperties = createCopy(literalInput, getLiteralInput);
+				
+				if(templateProperties){				
+					var literalInputsUl = document.getElementById("literal-inputs");
+			
+					$.tmpl(TEMPLATE_EXECUTE_LITERAL_INPUTS_COPY_MARKUP, templateProperties).appendTo(literalInputsUl);
+				}
+			};
+           }
+           
         } else {
             supported = false;
         }
@@ -269,31 +401,94 @@ function getComplexInput(input) {
     return complexInputElements;    
 }
 
-function addInputs(){
+// helper function to create a literal input textfield or dropdown
+function getLiteralInput(input) {
     
-    var container = document.getElementById("input");
-    var inputs = process.dataInputs, supported = true,       
-        input;
-    for (var i=0,ii=inputs.length; i<ii; ++i) {
-        input = inputs[i];
-        if (input.complexData) {
-    		
-    		addComplexInput(input);
-           
-        } else if (input.boundingBoxData) {
-            addBoundingBoxInput(input);
-        } else if (input.literalData) {
-            addLiteralInput(input);
-        } else {
-            supported = false;
-        }
-        if (input.minOccurs > 0) {
-            document.getElementById("input").appendChild(document.createTextNode("* "));
-        }
-        document.getElementById("input").appendChild(document.createElement("p"));
+    var literalInputElements = {};        
+    
+    var fieldDiv = document.createElement("div"); 
+    
+    var labelText = "";
+    
+    var number = "";
+    
+    if(input.maxOccurs > 1){
+    	number = (input.occurrence || 1);
+    } 
+    
+    var name = input.identifier;
+    var anyValue = input.literalData.anyValue;
+    // anyValue means textfield, otherwise we create a dropdown
+    var field = document.createElement(anyValue ? "input" : "select");    
+    
+    field.id = name + number;
+
+    field.title = input["abstract"];
+    
+    fieldDiv.appendChild(field);
+    
+    if(input.maxOccurs > 1){
+    	labelText = input.identifier + "(" + number + "/" + input.maxOccurs + ")";
+    }else{
+    	labelText = input.identifier;
     }
     
-    return supported;	
+    if (anyValue) {
+        var dataType = input.literalData.dataType;
+    } else {
+        var option;
+        option = document.createElement("option");
+        option.innerHTML = name;
+        field.appendChild(option);
+        for (var v in input.literalData.allowedValues) {
+            option = document.createElement("option");
+            option.value = v;
+            option.innerHTML = v;
+            field.appendChild(option);
+        }
+    }
+    
+    literalInputElements.identifier = labelText;
+    literalInputElements.inputField = fieldDiv.innerHTML;   
+    
+    return literalInputElements; 
+}
+
+// helper function to dynamically create a bounding box input
+function getBoundingBoxInput(input) {
+    
+    var bboxInputElements = {};        
+    
+    var fieldDiv = document.createElement("div"); 
+    
+    var labelText = "";
+    
+    var number = "";
+    
+    if(input.maxOccurs > 1){
+    	number = (input.occurrence || 1);
+    } 
+    
+    var name = input.identifier;
+    var field = document.createElement("input");
+    field.title = input["abstract"];
+
+    field.id = name + (input.occurrence || 1);
+
+    field.title = input["abstract"];
+    
+    fieldDiv.appendChild(field);
+    
+    if(input.maxOccurs > 1){
+    	labelText = input.identifier + "(" + number + "/" + input.maxOccurs + ")";
+    }else{
+    	labelText= input.identifier;
+    }
+    
+    bboxInputElements.identifier = labelText;
+    bboxInputElements.inputField = fieldDiv.innerHTML;   
+	
+	return bboxInputElements;
 }
 
 function addOutputs(){
@@ -368,218 +563,29 @@ function createFormatDropBox(id, formats){
 	return field;
 }
 
-function addInputCopyButton(){
+function addInputCopyButton(id){
 
 	var button = document.createElement("button");
 	
 	button.className = "add-input-copy";
 	
+	button.id = id + "-copy-button";
+	
 	return button;
 }
 
-
-// helper function for xml input
-function addComplexInput(input, previousSibling) {
-    var container = document.getElementById("input");
-    var name = input.identifier;
-    var field = document.createElement("textarea");
-    field.className = "wps-complex-input-textarea";
-    field.title = input["abstract"];
-    
-    var number = "";
-    
-    if(input.maxOccurs > 1){
-    	number = (input.occurrence || 1);
-    } 
-    
-    if(input.maxOccurs > 1){
-    	field.id = name + number + "-input-textarea";
-    }else {
-    	field.id = name + "-input-textarea";    
-    }
-    field.title = input["abstract"];
-    
-    var label = document.createElement("label");
-    label.className = "wps-input-item-label";
-    if(input.maxOccurs > 1){
-    	label.innerHTML = input.identifier + "(" + number + "/" + input.maxOccurs + ")";
-    }else{
-    	label.innerHTML = input.identifier;
-    }
-            
-    var formats = input.complexData.supported.formats;
-    		
-    var formatDropBox = createFormatDropBox(name + number + "formats", formats);    
-    
-    previousSibling && previousSibling.nextSibling ? addLabelFieldAndDropBoxBeforeSibling(container, field, label, formatDropBox, previousSibling):
-    addLabelFieldAndDropBox(container, field, label, formatDropBox);
-    	
-	var checkBox = document.createElement("input");
-    checkBox.type = "checkbox";
-    checkBox.id = name + number + "-checkbox";
-    checkBox.value = "asReference";
-    
-    container.appendChild(checkBox);
-    
-    container.appendChild(document.createTextNode("asReference"));
-    
-    if(!previousSibling){
-    	//add this button just one time
-    	var button = addInputCopyButton();
-    	container.appendChild(button);
-    
-		button.onclick = function(){ 
-			createCopy(input, field, addComplexInput);
-		};
-	}
-}
-
-// helper function to dynamically create a bounding box input
-function addBoundingBoxInput(input, previousSibling) {
-    var container = document.getElementById("input");
-    var name = input.identifier;
-    var field = document.createElement("input");
-    field.title = input["abstract"];
-    
-    if(input.maxOccurs > 1){
-    	field.id = name + (input.occurrence || 1);
-    }else {
-    	field.id = name;    
-    }
-    field.title = input["abstract"];
-    
-    var label = document.createElement("label");
-    label.className = "wps-input-item-label";
-    if(input.maxOccurs > 1){
-    	label.innerHTML = input.identifier + "(" + (input.occurrence || 1) + "/" + input.maxOccurs + ")";
-    }else{
-    	label.innerHTML = input.identifier;
-    }
-    
-    previousSibling && previousSibling.nextSibling ? addLabelAndFieldBeforeSibling(container, field, label, previousSibling):
-    addLabelAndField(container, field, label);
-    
-    if(!previousSibling){
-    	//add this button just one time
-    	var button = addInputCopyButton();
-    	container.appendChild(button);
-    
-		button.onclick = function(){ 
-			createCopy(input, field, addBoundingBoxInput);
-		};
-	}
-}
-
-// helper function to create a literal input textfield or dropdown
-function addLiteralInput(input, previousSibling) {
-    var name = input.identifier;
-    var container = document.getElementById("input");
-    var anyValue = input.literalData.anyValue;
-    // anyValue means textfield, otherwise we create a dropdown
-    var field = document.createElement(anyValue ? "input" : "select");
-    
-    if(input.maxOccurs > 1){
-    	field.id = name + (input.occurrence || 1);
-    }else {
-    	field.id = name;    
-    }
-    field.title = input["abstract"];
-    
-    var label = document.createElement("label");
-    label.className = "wps-input-item-label";
-    if(input.maxOccurs > 1){
-    	label.innerHTML = input.identifier + "(" + (input.occurrence || 1) + "/" + input.maxOccurs + ")";
-    }else{
-    	label.innerHTML = input.identifier;
-    }
-    
-    previousSibling && previousSibling.nextSibling ? addLabelAndFieldBeforeSibling(container, field, label, previousSibling):
-    addLabelAndField(container, field, label);
-    
-    if(!previousSibling){
-    	//add this button just one time
-    	var button = addInputCopyButton();
-    	container.appendChild(button);
-    
-		button.onclick = function(){ 
-			createCopy(input, field, addLiteralInput);
-		};
-	}
-    
-    if (anyValue) {
-        var dataType = input.literalData.dataType;
-        //field.value = name + (dataType ? " (" + dataType + ")" : "");
-        addValueHandlers(field, function() {
-            input.data = field.value ? {
-                literalData: {
-                    value: field.value
-                }
-            } : undefined;
-            //createCopy(input, field, addLiteralInput);
-        });
-    } else {
-        var option;
-        option = document.createElement("option");
-        option.innerHTML = name;
-        field.appendChild(option);
-        for (var v in input.literalData.allowedValues) {
-            option = document.createElement("option");
-            option.value = v;
-            option.innerHTML = v;
-            field.appendChild(option);
-        }
-        field.onchange = function() {
-            //createCopy(input, field, addLiteralInput);
-            input.data = this.selectedIndex ? {
-                literalData: {
-                    value: this.options[this.selectedIndex].value
-                }
-            } : undefined;
-        };
-    }
-    
-}
-
-function addLabelAndFieldBeforeSibling(container, field, label, previousSibling){	
-    container.insertBefore(field, previousSibling.nextSibling.nextSibling);
-    container.insertBefore(label, field);
-    container.insertBefore(field.nextSibling, document.createElement("p"));
-}
-
-function addLabelFieldAndDropBoxBeforeSibling(container, field, label, dropBox, previousSibling){	
-    container.insertBefore(dropBox, previousSibling.nextSibling.nextSibling);
-    var p = document.createElement("p");
-    container.insertBefore(p, dropBox);
-    container.insertBefore(field, p);
-    container.insertBefore(label, field);
-    container.insertBefore(field.nextSibling, document.createElement("p"));
-}
-
-function addLabelAndField(container, field, label){	
-    container.appendChild(label);
-    container.appendChild(field);
-}
-
-function addLabelFieldAndDropBox(container, field, label, dropBox){	
-    container.appendChild(label);
-    container.appendChild(field);
-    container.appendChild(document.createElement("p"));
-    container.appendChild(dropBox);
-}
-
 // if maxOccurs is > 1, this will add a copy of the field
-function createCopy(input, field, fn) {
+function createCopy(input, fn) {
     if (input.maxOccurs && input.maxOccurs > 1) {
         // add another copy of the field - check maxOccurs
         if(input.occurrence && input.occurrence >= input.maxOccurs){
         	return;
         }
-        field.userSelected = true;
         var newInput = OpenLayers.Util.extend({}, input);
         // we recognize copies by the occurrence property
         input.occurrence = (input.occurrence || 1) + 1;
         newInput.occurrence = input.occurrence;
-        fn(newInput, field);
+        return fn(newInput);
     }
 }
 
