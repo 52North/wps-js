@@ -45,6 +45,29 @@ var TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
 					<label class="wps-input-item-label">${identifier}</label>{{html inputField}}</li>';
 
+var TEMPLATE_EXECUTE_OUTPUTS_MARKUP = '\
+	<div class="wps-execute-complex-inputs"> \
+		<div class="wps-execute-response-process"> \
+			<ul class="wps-execute-response-list" id="outputs"> \
+			</ul> \
+		</div> \
+	</div>';
+
+var TEMPLATE_EXECUTE_COMPLEX_OUTPUTS_MARKUP = '\
+				<li class="wps-execute-response-list-entry"> \
+					<label class="wps-input-item-label">${identifier}</label>{{html shouldBeRequested}}</li> \
+				<li class="wps-execute-response-list-entry"> \
+					{{html formats}}</li>';
+
+
+var TEMPLATE_EXECUTE_LITERAL_OUTPUTS_MARKUP = '\
+				<li class="wps-execute-response-list-entry"> \
+					<label class="wps-input-item-label">${identifier}</label>{{html shouldBeRequested}}</li>';
+
+var TEMPLATE_EXECUTE_BBOX_OUTPUTS_MARKUP = '\
+				<li class="wps-execute-response-list-entry"> \
+					<label class="wps-input-item-label">${identifier}</label>{{html shouldBeRequested}}</li>';
+
 function resolveRequest(type, method, settings) {
 	if (type == GET_CAPABILITIES_TYPE) {
 		return new GetRequest(settings);
@@ -197,7 +220,7 @@ function buildForm() {
     document.getElementById("input").appendChild(outputH3);
     
     //TODO also check whether supported outputs?
-    addOutputs();
+    getOutputs();
         
     document.getElementById("input").appendChild(document.createElement("p"));
     
@@ -520,6 +543,63 @@ function addOutputs(){
     		container.appendChild(document.createElement("p"));
     		
     	}
+	}
+}
+
+function getOutputs(){
+    
+    var container = document.getElementById("input");
+    
+	$.tmpl(TEMPLATE_EXECUTE_OUTPUTS_MARKUP, "").appendTo(container);
+	
+	var outputsUl = document.getElementById("outputs");
+	
+	var outputs = process.processOutputs;
+	
+	for (var i = 0; i < outputs.length; i++) {
+		var output = outputs[i];
+		
+    	var id = output.identifier;
+    	
+    	var templateProperties = {};
+    	
+    	var template;
+    	
+    	var checkBoxDiv = document.createElement("div");
+    	
+    	var checkBox = document.createElement("input");
+    	checkBox.type = "checkbox";
+    	checkBox.id = id + "-checkbox";
+    	
+    	checkBoxDiv.appendChild(checkBox);
+    	
+    	templateProperties.identifier = id;
+    	templateProperties.shouldBeRequested = checkBoxDiv.innerHTML;
+    	
+    	if(output.complexOutput){
+    	
+    		var formats = output.complexOutput.supported.formats;
+    		
+    		var formatDropBox = createFormatDropBox(id + "formats", formats);
+    		
+    		var formatDropBoxDiv = document.createElement("div"); 
+    		
+    		formatDropBoxDiv.appendChild(formatDropBox);
+    		    		
+    		templateProperties.formats = formatDropBoxDiv.innerHTML;
+    		
+    		template = TEMPLATE_EXECUTE_COMPLEX_OUTPUTS_MARKUP;
+    		
+    	}else if(output.literalOutput){
+    		
+    		template = TEMPLATE_EXECUTE_LITERAL_OUTPUTS_MARKUP;
+    	
+    	}else if(output.boundingBoxOutput){
+    		
+    		template = TEMPLATE_EXECUTE_BBOX_OUTPUTS_MARKUP;    	
+    	}
+    	
+    	$.tmpl(template, templateProperties).appendTo(outputsUl);
 	}
 }
 
