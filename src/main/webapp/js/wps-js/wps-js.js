@@ -3,7 +3,7 @@ var TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP = '\
 		<div class="wps-execute-response-process"> \
 			<ul class="wps-execute-response-list" id="complex-inputs"> \
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}</label>{{html inputField}}{{html asReference}}</li> \
+					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}{{html asReference}}</li> \
 				<li class="wps-execute-response-list-entry"> \
 					{{html formats}}{{html copyButton}}</li> \
 			</ul> \
@@ -12,7 +12,7 @@ var TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP = '\
 
 var TEMPLATE_EXECUTE_COMPLEX_INPUTS_COPY_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}</label>{{html inputField}}{{html asReference}}</li> \
+					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}{{html asReference}}</li> \
 				<li class="wps-execute-response-list-entry"> \
 					{{html formats}}</li>';
 
@@ -21,14 +21,14 @@ var TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP = '\
 		<div class="wps-execute-response-process"> \
 			<ul class="wps-execute-response-list" id="literal-inputs"> \
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}</label>{{html inputField}}{{html copyButton}}</li> \
+					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}{{html copyButton}}</li> \
 			</ul> \
 		</div> \
 	</div>';
 	
 var TEMPLATE_EXECUTE_LITERAL_INPUTS_COPY_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}</label>{{html inputField}}</li>';
+					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}</li>';
 
 
 var TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP = '\
@@ -36,14 +36,14 @@ var TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP = '\
 		<div class="wps-execute-response-process"> \
 			<ul class="wps-execute-response-list" id="bbox-inputs"> \
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}</label>{{html inputField}}{{html copyButton}}</li> \
+					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}{{html copyButton}}</li> \
 			</ul> \
 		</div> \
 	</div>';
 
 var TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}</label>{{html inputField}}</li>';
+					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}</li>';
 
 var TEMPLATE_EXECUTE_OUTPUTS_MARKUP = '\
 	<div class="wps-execute-complex-inputs"> \
@@ -240,126 +240,61 @@ function getInputs(){
     
     var inputElements = [];
     var container = document.getElementById("input");
-    var inputs = process.dataInputs, supported = true,       
+    var inputs = process.dataInputs,       
         input;
     for (var i=0,ii=inputs.length; i<ii; ++i) {
-        input = inputs[i];
-        if (input.complexData) {
-    		    		
-    		var templateProperties = getComplexInput(input);
-    			
-    		var name = input.identifier;
-           
-           	if((input.maxOccurs > 1)){
-    	
-    			var copyButtonDiv = document.createElement("div"); 
-    	
-    			var button = addInputCopyButton(name);    	
-    	
-				copyButtonDiv.appendChild(button);
-				templateProperties.copyButton = copyButtonDiv.innerHTML;
-    		}
-    		
-    		$.tmpl(TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP, templateProperties).appendTo(container);
-                      
-           if((input.maxOccurs > 1)){
-           
-           		var button = document.getElementById(name + "-copy-button");
-           
-            	var complexInput = JSON.parse(JSON.stringify(input)) 
-           
-           		button.onclick = function(){ 
-					var templateProperties = createCopy(complexInput, getComplexInput);
-				
-					if(templateProperties){				
-						var complexInputsUl = document.getElementById("complex-inputs");
-			
-						$.tmpl(TEMPLATE_EXECUTE_COMPLEX_INPUTS_COPY_MARKUP, templateProperties).appendTo(complexInputsUl);
-					}
-				};
-			
-			}
-       	   
-        } else if (input.boundingBoxData) {
-            var templateProperties = getBoundingBoxInput(input);
-           
-           var button;
-           
-           	if((input.maxOccurs > 1)){
-    			
-    			var name = input.identifier;
-    	
-    			var copyButtonDiv = document.createElement("div"); 
-    	
-    			button = addInputCopyButton(name);    	
-    	
-				copyButtonDiv.appendChild(button);
-				templateProperties.copyButton = copyButtonDiv.innerHTML;
-    		}
-           
-           	$.tmpl(TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP, templateProperties).appendTo(container);
-                    
-            if((input.maxOccurs > 1)){        
-              
-            	var button = document.getElementById(input.identifier + "-copy-button");
-           
-            	var bboxInput = JSON.parse(JSON.stringify(input)) 
-           
-           		button.onclick = function(){ 
-					var templateProperties = createCopy(bboxInput, getBoundingBoxInput);
-				
-					if(templateProperties){				
-						var literalInputsUl = document.getElementById("bbox-inputs");
-			
-						$.tmpl(TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP, templateProperties).appendTo(bboxInputsUl);
-					}
-				};
-			}
-           
+        input = inputs[i];    
+                
+        if (input.complexData) {    		    		
+			getInput(input, container, TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP, TEMPLATE_EXECUTE_COMPLEX_INPUTS_COPY_MARKUP, "complex-inputs", getComplexInput);       	   
+        } else if (input.boundingBoxData) {            
+            getInput(input, container, TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP, TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP, "bbox-inputs", getBoundingBoxInput);               
         } else if (input.literalData) {
-           var templateProperties = getLiteralInput(input, true);
-           
-            var button;
-           
-           	if((input.maxOccurs > 1)){
-    			
-    			var name = input.identifier;
-    	
-    			var copyButtonDiv = document.createElement("div"); 
-    	
-    			button = addInputCopyButton(name);    	
-    	
-				copyButtonDiv.appendChild(button);
-				templateProperties.copyButton = copyButtonDiv.innerHTML;
-    		}
-           
-           $.tmpl(TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP, templateProperties).appendTo(container);
-           
-           if((input.maxOccurs > 1)){
-            var button = document.getElementById(input.identifier + "-copy-button");
-           
-            var literalInput = JSON.parse(JSON.stringify(input)) 
-           
-           	button.onclick = function(){ 
-				var templateProperties = createCopy(literalInput, getLiteralInput);
-				
-				if(templateProperties){				
-					var literalInputsUl = document.getElementById("literal-inputs");
-			
-					$.tmpl(TEMPLATE_EXECUTE_LITERAL_INPUTS_COPY_MARKUP, templateProperties).appendTo(literalInputsUl);
-				}
-			};
-           }
-           
-        } else {
-            supported = false;
-        }
-        if (input.minOccurs > 0) {
-            document.getElementById("input").appendChild(document.createTextNode("* "));
+            getInput(input, container, TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP, TEMPLATE_EXECUTE_LITERAL_INPUTS_COPY_MARKUP, "literal-inputs", getLiteralInput);
         }
     }
     
     return inputElements;	
+}
+
+function getInput(input, container, template, copyTemplate, inputParentId, fn){
+
+    var templateProperties = fn(input);
+    
+    if (input.minOccurs > 0) {
+        templateProperties.required = "*";
+    }
+    	
+    var name = input.identifier;
+    
+    if(input.maxOccurs > 1){
+    
+    	var copyButtonDiv = document.createElement("div"); 
+    
+    	var button = addInputCopyButton(name);    	
+    
+		copyButtonDiv.appendChild(button);
+		templateProperties.copyButton = copyButtonDiv.innerHTML;
+    }
+    
+    $.tmpl(template, templateProperties).appendTo(container);
+              
+    if(input.maxOccurs > 1){
+    
+    	var button = document.getElementById(name + "-copy-button");
+    
+    	button.onclick = function(){ 
+			var templateProperties = createCopy(input, fn);
+		
+			if(templateProperties){				
+				var inputsUl = document.getElementById(inputParentId);
+	
+				$.tmpl(copyTemplate, templateProperties).appendTo(inputsUl);
+			}
+		};
+	
+	}
+
 }
 
 // helper function for xml input
