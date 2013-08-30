@@ -431,7 +431,7 @@ function getBoundingBoxInput(input) {
     var field = document.createElement("input");
     field.title = input["abstract"];
 
-    field.id = name + (input.occurrence || 1);
+    field.id = name + number;
 
     field.title = input["abstract"];
     
@@ -676,6 +676,9 @@ function createComplexData(id, number){
     		identifier : id,
     		data: {
     			complexData: {
+    				mimeType: mimeType,
+    				encoding: encoding,
+    				schema: schema,
     				value: value
     			}
     		}
@@ -716,6 +719,38 @@ function createLiteralData(id, number){
     return literalData;
 }
 
+function createBBoxData(id, number){
+
+	if(!number){
+		number = "";
+	}
+	
+    var inputField = getLiteralInputField(id, number);
+    var value;        			
+    if(inputField.options){
+    	//assume select
+    	value = inputField.options[inputField.selectedIndex].value;
+    }else{
+    	value = inputField.value;
+    }
+    
+    if(!value || (value == "")){
+    	return;
+    }
+
+	var boundingBoxData = {
+    	identifier : id,
+    	data: {
+    		boundingBoxData: {
+    				projection : "EPSG:4326",//TODO get from processdescription, if available
+       				bounds: OpenLayers.Bounds.fromString(value)
+    		}
+    	}
+    };
+    
+    return boundingBoxData;
+}
+
 // execute the process
 // use OpenLayers functionality to build the execute request
 // send it off and handle the response with our own functionality 
@@ -747,7 +782,14 @@ function execute() {
 					if(literalData){
         				finalInputs.push(literalData);
         			}					
-        		}//TODO: bbox data        		
+        		}else if(input.boundingBoxData){
+					
+					var boundingBoxData = createBBoxData(id, j);
+					
+					if(boundingBoxData){
+        				finalInputs.push(boundingBoxData);
+        			}					
+        		}           		
         	}
         }else{
         	if(input.complexData){
@@ -776,7 +818,19 @@ function execute() {
 				if(literalData){
         			finalInputs.push(literalData);
         		}
-        	}//TODO bbox data
+        	}else if(input.boundingBoxData){
+        		
+        		var boundingBoxData;
+        		
+        		if(input.maxOccurs > 1){				
+					boundingBoxData = createBBoxData(id, "1");
+				}else{
+					boundingBoxData = createBBoxData(id);
+				}
+				if(boundingBoxData){
+        			finalInputs.push(boundingBoxData);
+        		}
+        	}
         }
     }
     
