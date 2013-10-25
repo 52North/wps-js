@@ -36,14 +36,14 @@ var TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP = '\
 		<div class="wps-execute-response-process"> \
 			<ul class="wps-execute-response-list" id="bbox-inputs"> \
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}{{html copyButton}}</li> \
+					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}<label>${description}</label>{{html copyButton}}</li> \
 			</ul> \
 		</div> \
 	</div>';
 
 var TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}</li>';
+					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}<label>${description}</label></li>';
 
 var TEMPLATE_EXECUTE_OUTPUTS_MARKUP = '\
 	<div class="wps-execute-complex-inputs"> \
@@ -396,7 +396,7 @@ function getLiteralInput(input) {
     } else {
         var option;
         option = document.createElement("option");
-        option.innerHTML = name;
+        //option.innerHTML = name;
         field.appendChild(option);
         for (var v in input.literalData.allowedValues) {
             option = document.createElement("option");
@@ -404,6 +404,10 @@ function getLiteralInput(input) {
             option.innerHTML = v;
             field.appendChild(option);
         }
+    
+   		if(input.literalData.defaultValue){
+   			field.value = input.literalData.defaultValue; 
+   		}
     }
     
     literalInputElements.identifier = labelText;
@@ -433,7 +437,7 @@ function getBoundingBoxInput(input) {
 
     field.id = name + number;
 
-    field.title = input["abstract"];
+    field.title = input["abstract"];    
     
     fieldDiv.appendChild(field);
     
@@ -444,7 +448,8 @@ function getBoundingBoxInput(input) {
     }
     
     bboxInputElements.identifier = labelText;
-    bboxInputElements.inputField = fieldDiv.innerHTML;   
+    bboxInputElements.inputField = fieldDiv.innerHTML;
+    bboxInputElements.description = "left, bottom, right, top";
 	
 	return bboxInputElements;
 }
