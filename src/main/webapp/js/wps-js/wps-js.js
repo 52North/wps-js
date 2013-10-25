@@ -396,7 +396,7 @@ function getLiteralInput(input) {
     } else {
         var option;
         option = document.createElement("option");
-        option.innerHTML = name;
+        //option.innerHTML = name;
         field.appendChild(option);
         for (var v in input.literalData.allowedValues) {
             option = document.createElement("option");
