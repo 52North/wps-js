@@ -743,10 +743,13 @@ function createBBoxData(id, number){
     	return;
     }
 
+	var dimensions = value.split(",").length / 2;
+
 	var boundingBoxData = {
     	identifier : id,
     	data: {
     		boundingBoxData: {
+    				dimensions : dimensions,
     				projection : "EPSG:4326",//TODO get from processdescription, if available
        				bounds: OpenLayers.Bounds.fromString(value)
     		}
