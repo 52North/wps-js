@@ -110,6 +110,7 @@
 							<includes>
 								<include>html/**</include>
 								<include>jstestdriver/**</include>
+								<include>WEB-INF/**</include>
 							</includes>
 							<filtering>true</filtering>
 						</resource>

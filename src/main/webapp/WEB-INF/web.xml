@@ -1,5 +1,6 @@
 <web-app version="3.0">
-	<display-name>Archetype Created Web Application</display-name>
+	<display-name>Javascript WPS Client | #${build-commit-abbrev} as of ${build-tstamp}, build at ${buildTimestamp}</display-name>
+	
 	<welcome-file-list>
 		<welcome-file>/html/index.html</welcome-file>
 	</welcome-file-list>
