@@ -845,7 +845,7 @@ function execute() {
     //make real copy as inputs of process are overwritten but the 
     //original inputs (i.e. all inputs) are needed for 
     //consecutive execution
-    var finalProcess = JSON.parse(JSON.stringify(process)) 
+    var finalProcess = JSON.parse(JSON.stringify(process));
     
     finalProcess.dataInputs = finalInputs;
     
@@ -910,7 +910,7 @@ function execute() {
 			domElement: $('#executeProcess'),
 			data: new OpenLayers.Format.WPSExecute().write(finalProcess),
 			requestType: "Execute",
-	}
+	};
 
 	var originalRequest = new PostRequest(settings);
 
@@ -985,7 +985,15 @@ function execute() {
 	    	if (setup.proxy) {
 	    		USE_PROXY = true;
 	    		PROXY_URL = setup.proxy.url;
+	    		/*
+	    		 * setup OpenLayers to use the proxy as well
+	    		 */
+	    		OpenLayers.ProxyHost = setup.proxy.url;
 	    		PROXY_TYPE = setup.proxy.type;
+	    	}
+	    	
+	    	if (setup.configuration) {
+	    		
 	    	}
 	    }
 	});

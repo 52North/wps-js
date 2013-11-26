@@ -1,0 +1,30 @@
+{
+   "inputs":{
+      "myComplexInput1":{
+         "value":"input-value",
+         "asReference":false,
+         "schema":"text/xml; http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"
+      },
+      "myLiteralInput2":{
+         "urlGetParameter":"myInput2Value"
+      },
+      "myLiteralInput3":{
+         "hide":true
+      },
+      "myLiteralInput4":{
+         "hide":true,
+         "value":"whatever"
+      }
+   },
+   "outputs":{
+      "myLiteralOutput1":{
+         "autoSelect":true,
+         "hide":true
+      },
+      "myComplexOutput2":{
+         "autoSelect":false,
+         "schema":"text/xml; http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"
+      }
+   },
+   "selectedProcess":"org.n52.wps.server.WhateverYouWannaDo"
+}
