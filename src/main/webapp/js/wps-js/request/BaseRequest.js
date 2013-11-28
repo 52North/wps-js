@@ -36,7 +36,9 @@ var BaseRequest = Class.extend({
 	},
 
 	changeElementContent : function(htmlContent) {
-		this.settings.domElement.html(htmlContent);
+		if (this.settings.domElement) {
+			this.settings.domElement.html(htmlContent);
+		}
 	},
 	
 	prepareHTTPRequest : function() {
