@@ -2,9 +2,14 @@
 var PostRequest = BaseRequest.extend({
 
 	prepareHTTPRequest : function() {
+		var payload = this.settings.data;
+		if (!payload) {
+			payload = this.createPostPayload();
+		}
+		
 		return {
 			type : "POST",
-			data : this.createPostPayload(),
+			data : payload,
 			contentType : "text/xml"
 		};
 	},
