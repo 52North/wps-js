@@ -1,30 +1,39 @@
 {
-   "inputs":{
-      "myComplexInput1":{
-         "value":"input-value",
-         "asReference":false,
-         "schema":"text/xml; http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"
-      },
-      "myLiteralInput2":{
-         "urlGetParameter":"myInput2Value"
-      },
-      "myLiteralInput3":{
-         "hide":true
-      },
-      "myLiteralInput4":{
-         "hide":true,
-         "value":"whatever"
-      }
-   },
-   "outputs":{
-      "myLiteralOutput1":{
-         "autoSelect":true,
-         "hide":true
-      },
-      "myComplexOutput2":{
-         "autoSelect":false,
-         "schema":"text/xml; http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"
-      }
-   },
-   "selectedProcess":"org.n52.wps.server.WhateverYouWannaDo"
+   "inputs": [
+	      {
+	    	  "identifier": "myComplexInput1",
+	    	  "type": "complex",
+	    	  "value":"input-value",
+	    	  "asReference":false,
+	    	  "schema":"text/xml; http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"
+	      },
+	      {
+	    	  "identifier": "myLiteralInput1",
+	    	  "type": "literal",
+	    	  "value":"myInput1Value",
+	    	  "dataType": "xs:string"
+	      },
+	      {
+	    	  "identifier": "myLiteralInput2Hidden",
+	    	  "type": "literal",
+	    	  "value":"myInput2Value",
+	    	  "dataType": "xs:string",
+	    	  "hidden": true
+	      }
+	   ],
+	"outputs":[
+		  {
+			  "identifier": "myComplexOutput1",
+			  "type": "complex",
+			  "asReference":false,
+			  "schema":"text/xml; http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"
+		  },
+		  {
+			  "identifier": "myLiteralOutput1",
+			  "type": "literal"
+			  "selected":true
+		  }
+	   ],
+   "processIdentifier":"org.n52.wps.server.WhateverYouWannaDo",
+   "url": "http://my-wps-instance:8080/beAwareOfCORS/wps"
 }
