@@ -995,8 +995,9 @@ function execute() {
 	    	if (setup.configuration) {
 	    		
 	    	}
-	    }
+
+		}
 	});
     
-
 }(jQuery));
+

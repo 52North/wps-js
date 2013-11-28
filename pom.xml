@@ -89,6 +89,7 @@
 								<jsSourceFile>request/BaseRequest.js</jsSourceFile>
 								<jsSourceFile>request/GetRequest.js</jsSourceFile>
 								<jsSourceFile>request/PostRequest.js</jsSourceFile>
+								<jsSourceFile>request/ExecuteRequest.js</jsSourceFile>
 
 								<!-- Entry point -->
 								<jsSourceFile>wps-js.js</jsSourceFile>
@@ -293,7 +294,7 @@
 						<configuration>
 							<verbose>true</verbose>
 							<!-- You might need to adjust this depending on your OS, comma-separated -->
-							<browser>firefox, chromium-browser</browser>
+							<browser>firefox</browser>
 							<config>${project.build.directory}/${project.artifactId}-${project.version}/jstestdriver/jsTestDriver.conf</config>
 							<port>${jstestdriverPort}</port>
 						</configuration>
