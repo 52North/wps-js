@@ -12,12 +12,34 @@ var EXECUTE_REQUEST_XML_START = '<wps:Execute service="WPS" version="1.0.0" \
 	  ${responseForm}\
 	</wps:Execute>';
 
-var EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT = '<wps:Input>\
+var EXECUTE_REQUEST_XML_COMPLEX_DATA_INPUT = '<wps:Input>\
 	      <ows:Identifier>${identifier}</ows:Identifier>\
 	      <wps:Data>\
-	        <wps:LiteralData dataType="${dataType}">${value}</wps:LiteralData>\
+			<wps:ComplexData schema="${schema}">\
+			${complexPayload}\
+			</wps:ComplexData>\
 	      </wps:Data>\
-	    </wps:Input>';
+	</wps:Input>';
+
+var EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_INPUT = '<wps:Input>\
+    <ows:Identifier>${identifier}</ows:Identifier>\
+    <wps:Reference schema="${schema}" \
+	xlink:href="${href}" method="${method}"/>\
+  </wps:Input>';
+
+var EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT = '<wps:Input>\
+    <ows:Identifier>${identifier}</ows:Identifier>\
+    <wps:Data>\
+      <wps:LiteralData dataType="${dataType}">${value}</wps:LiteralData>\
+    </wps:Data>\
+  </wps:Input>';
+
+var EXECUTE_REQUEST_XML_LITERAL_DATA_NO_TYPE_INPUT = '<wps:Input>\
+    <ows:Identifier>${identifier}</ows:Identifier>\
+    <wps:Data>\
+      <wps:LiteralData dataType="${dataType}">${value}</wps:LiteralData>\
+    </wps:Data>\
+  </wps:Input>';
 
 var EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW = '<wps:ResponseForm>\
 	    <wps:RawDataOutput mimeType="${mimeType}">\
@@ -54,7 +76,7 @@ var ExecuteRequest = PostRequest.extend({
 		
 		var responseFormMarkup = "";
 		if (outputs) {
-			responseFormMarkup = this.createResponseFormMarkup(outputs);
+			responseFormMarkup = this.createResponseFormMarkup(outputs, this.settings.outputStyle);
 		}
 		
 		var templateProperties = {
@@ -70,39 +92,124 @@ var ExecuteRequest = PostRequest.extend({
 	
 	createDataInputsMarkup : function(inputs) {
 		var result = "";
-		var markup;
+		var markup = "";
 		for (var i = 0; i < inputs.length; i++) {
-			if ("literal".localeCompare(inputs[i].type) == 0) {
-				markup = this.fillTemplate(EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT, inputs[i]);
-				result += markup;
+			if (equalsString("literal", inputs[i].type)) {
+				markup = this.createLiteralDataInput(inputs[i]);
 			}
 			else {
-				
+				markup = this.createComplexDataInput(inputs[i]);
 			}
+			result += markup;
 		}
 		
 		return result;
 	},
 	
-	createResponseFormMarkup : function(outputs) {
+	/*
+	 * example 'input' objects:
+	 * 
+	 * {
+	 * identifier: "theInputId",
+	 * value: "10.0",
+	 * dataType: "xs:double"
+	 * }
+	 * 
+	 * {
+	 * identifier: "theInputId",
+	 * value: "myStringValue"
+	 * }
+	 * 
+	 */
+	createLiteralDataInput : function(input) {
+		if (input.dataType) {
+			markup = this.fillTemplate(EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT, input);
+		}
+		else {
+			markup = this.fillTemplate(EXECUTE_REQUEST_XML_LITERAL_DATA_NO_TYPE_INPUT, input);
+		}
+		
+		return markup;
+	},
+	
+	/*
+	 * example 'input' objects:
+	 * 
+	 * {
+	 * identifier: "theProcessId",
+	 * schema: "http://schema.xsd.url",
+	 * complexPayload: "<heavy><xml><markup/></xml></heavy>"
+	 * }
+	 * 
+	 * {
+	 * identifier: "theProcessId",
+	 * schema: "http://schema.xsd.url",
+	 * href: "http://the.online.resource",
+	 * method: "GET"
+	 * }
+	 * 
+	 */
+	createComplexDataInput : function(input) {
+		if (input.href) {
+			markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_INPUT, input);
+		}
+		else {
+			markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_INPUT, input);
+		}
+		
+		return markup;
+	},
+	
+	/*
+	 * example 'outputStyle' objects:
+	 * 
+	 * {
+	 *     storeExecuteResponse: true,
+	 *     lineage: false,
+	 *     status: true
+	 * }
+	 * 
+	 * example 'outputs' objects:
+	 * 
+	 * [
+	 * 	  {
+	 * 		  identifier: "myComplexOutput1",
+	 * 		  type: "complex",
+	 * 		  asReference:false,
+	 * 		  mimeType: "text/xml",
+	 * 		  schema:"http://schemas.opengis.net/gml/3.1.1/base/gml.xsd",
+	 *        encoding: "UTF-8"
+	 * 	  },
+	 * 	  {
+	 * 		  identifier: "myLiteralOutput1",
+	 * 		  type: "literal"
+	 * 		  selected:true
+	 * 	  }
+	 * ]
+	 * 
+	 */
+	createResponseFormMarkup : function(outputs, outputStyle) {
 		var outputString = "";
 		for (var i = 0; i < outputs.length; i++) {
-			if ("literal".localeCompare(outputs[i].type) == 0) {
+			if (equalsString("literal", outputs[i].type)) {
 				outputString += this.fillTemplate(EXECUTE_REQUEST_XML_LITERAL_OUTPUT, outputs[i]);
 			}
 			else {
+				if (!outputs[i].encoding) {
+					outputs[i].encoding = "UTF-8";
+				}
 				
+				if (!outputs[i].mimeType) {
+					outputs[i].mimeType = "text/xml";
+				}
+				
+				outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_OUTPUT, outputs[i]);
 			}
 		}
 		
-		var templateProperties = {
-				outputs: outputString,
-				storeExecuteResponse: false,
-				lineage: false,
-				status: false
-		};
+		outputStyle.outputs = outputString;
 		
-		var result = this.fillTemplate(EXECUTE_REQUEST_XML_RESPONSE_FORM_DOCUMENT, templateProperties);
+		var result = this.fillTemplate(EXECUTE_REQUEST_XML_RESPONSE_FORM_DOCUMENT, outputStyle);
 		
 		return result;
 	}

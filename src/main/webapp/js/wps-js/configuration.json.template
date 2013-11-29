@@ -34,6 +34,11 @@
 			  "selected":true
 		  }
 	   ],
+   "outputStyle": {
+       "storeExecuteResponse": true,
+       "lineage": true,
+       "status": true
+   },
    "processIdentifier":"org.n52.wps.server.WhateverYouWannaDo",
    "url": "http://my-wps-instance:8080/beAwareOfCORS/wps"
 }
