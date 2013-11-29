@@ -90,6 +90,10 @@
 								<jsSourceFile>request/GetRequest.js</jsSourceFile>
 								<jsSourceFile>request/PostRequest.js</jsSourceFile>
 								<jsSourceFile>request/ExecuteRequest.js</jsSourceFile>
+								<jsSourceFile>request/DescribeProcessGetRequest.js</jsSourceFile>
+								<jsSourceFile>request/GetCapabilitiesGetRequest.js</jsSourceFile>
+								<jsSourceFile>request/DescribeProcessPostRequest.js</jsSourceFile>
+								<jsSourceFile>request/GetCapabilitiesPostRequest.js</jsSourceFile>
 
 								<!-- Entry point -->
 								<jsSourceFile>wps-js.js</jsSourceFile>

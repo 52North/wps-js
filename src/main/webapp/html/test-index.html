@@ -42,7 +42,7 @@
 							  type: "literal"
 						  }
 					   ],
-					processIdentifier: "org.envirocar.wps.HarvestAllTracksProcess",
+					processIdentifier: "org.n52.wps.server.algorithm.test.MultiReferenceInputAlgorithm",
 					url: "http://localhost:8080/52n-wps-webapp-3.2.0/WebProcessingService"
 					};
 		return result;
@@ -50,6 +50,11 @@
 		$('#wpscaller').click(function() {
 			var req = new ExecuteRequest(createSettings());
 			req.execute();
+			
+			new DescribeProcessGetRequest(createSettings()).execute();
+			new GetCapabilitiesGetRequest(createSettings()).execute();
+			new DescribeProcessPostRequest(createSettings()).execute();
+			new GetCapabilitiesPostRequest(createSettings()).execute();
 			
 			$('#capabilitiesByClick').wpsCall({
 				url: "http://localhost/wps-js/target/wps-js-1.0.0-SNAPSHOT/xml/ExecuteResponse_accepted.xml",
