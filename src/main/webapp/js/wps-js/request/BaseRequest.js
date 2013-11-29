@@ -46,9 +46,13 @@ var BaseRequest = Class.extend({
 	},
 
 	executeHTTPRequest : function(requestSettings) {
+		/*
+		 * we need 'self' as 'this' is different in the
+		 * anonymous callbacks
+		 */
 		var self = this;
 		
-		var combinedRequestSettings = $.extend({
+		var combinedRequestSettings = jQuery.extend({
 			success : function(data) {
 				if (self.callback) {
 					self.callback(data, self.settings.domElement, self, self.updateSwitch);
@@ -76,6 +80,6 @@ var BaseRequest = Class.extend({
 		} else {
 			targetUrl = this.settings.url;
 		}
-		$.ajax(targetUrl, combinedRequestSettings);
+		jQuery.ajax(targetUrl, combinedRequestSettings);
 	}
 });

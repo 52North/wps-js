@@ -83,7 +83,7 @@ function resolveRequest(type, method, settings) {
 }
 
 function resolveGetParameters() {
-	var params = $.url();
+	var params = jQuery.url();
 	var url = params.param(PARAM_WPS_REQUEST_URL);
 	var requestType = params.param(PARAM_WPS_REQUEST_TYPE);
 	
@@ -97,7 +97,7 @@ function resolveGetParameters() {
 function assertValidState(settings) {
 	var dataValid = true;
 	if (settings.method == METHOD_POST) {
-		dataValid = $.isXMLDoc(settings.data);
+		dataValid = jQuery.isXMLDoc(settings.data);
 	}
 	return settings.url && settings.requestType && settings.method && dataValid;
 }
@@ -118,7 +118,7 @@ function callbackOnResponseParsed(responseData, domElement, originalRequest) {
 			originalRequest.updateSwitch.element = "wps-execute-autoUpdate";
 		}
 		
-		$('#'+originalRequest.updateSwitch.element).click(function() {
+		jQuery('#'+originalRequest.updateSwitch.element).click(function() {
 			
 			var updateSwitch = originalRequest.updateSwitch;
 			
@@ -132,7 +132,7 @@ function callbackOnResponseParsed(responseData, domElement, originalRequest) {
 			originalRequest = new GetRequest(getSettings);
 			originalRequest.execute(updateSwitch.callback, updateSwitch);
 		});
-		$('#'+originalRequest.updateSwitch.element).css( 'cursor', 'pointer' );
+		jQuery('#'+originalRequest.updateSwitch.element).css( 'cursor', 'pointer' );
 	}
 }
 
@@ -277,7 +277,7 @@ function getInput(input, container, template, copyTemplate, inputParentId, fn){
 		templateProperties.copyButton = copyButtonDiv.innerHTML;
     }
     
-    $.tmpl(template, templateProperties).appendTo(container);
+    jQuery.tmpl(template, templateProperties).appendTo(container);
               
     if(input.maxOccurs > 1){
     
@@ -289,7 +289,7 @@ function getInput(input, container, template, copyTemplate, inputParentId, fn){
 			if(templateProperties){				
 				var inputsUl = document.getElementById(inputParentId);
 	
-				$.tmpl(copyTemplate, templateProperties).appendTo(inputsUl);
+				jQuery.tmpl(copyTemplate, templateProperties).appendTo(inputsUl);
 			}
 		};
 	
@@ -490,7 +490,7 @@ function getOutputs(){
     
     var container = document.getElementById("input");
     
-	$.tmpl(TEMPLATE_EXECUTE_OUTPUTS_MARKUP, "").appendTo(container);
+	jQuery.tmpl(TEMPLATE_EXECUTE_OUTPUTS_MARKUP, "").appendTo(container);
 	
 	var outputsUl = document.getElementById("outputs");
 	
@@ -539,7 +539,7 @@ function getOutputs(){
     		template = TEMPLATE_EXECUTE_BBOX_OUTPUTS_MARKUP;    	
     	}
     	
-    	$.tmpl(template, templateProperties).appendTo(outputsUl);
+    	jQuery.tmpl(template, templateProperties).appendTo(outputsUl);
 	}
 }
 
@@ -907,7 +907,7 @@ function execute() {
     var settings = {
 			url: wps,
 			method: "post",
-			domElement: $('#executeProcess'),
+			domElement: jQuery('#executeProcess'),
 			data: new OpenLayers.Format.WPSExecute().write(finalProcess),
 			requestType: "Execute",
 	};
@@ -920,30 +920,30 @@ function execute() {
 /*
  * jQuery plugin definitions
  */
-(function($) {
+(function(jQuery) {
 
-	$.fn.extend({
+	jQuery.fn.extend({
 		wpsCall : function( options ) {
 	    	var settings;
 	    	if (options && options.viaUrl) {
 	    		/*
 	    		 * Call via GET parameters
 	    		 */
-	    		settings = $.extend(resolveGetParameters(), {method: METHOD_GET});
+	    		settings = jQuery.extend(resolveGetParameters(), {method: METHOD_GET});
 	    	}
 	    	else {
 	            /*
 	             * Custom User Call
 	             */
-	            settings = $.extend({
+	            settings = jQuery.extend({
 	                method: METHOD_GET
 	            }, options);
 	    	}
 	    	
 	    	if (assertValidState(settings)) {
 	    		return this.each( function() {
-	            	var requestSettings = $.extend({
-	                    domElement: $(this)
+	            	var requestSettings = jQuery.extend({
+	                    domElement: jQuery(this)
 	                }, settings);
 	            	
 	            	var request = resolveRequest(requestSettings.requestType, requestSettings.method,
@@ -956,7 +956,7 @@ function execute() {
 	    }
 	});
 	
-	$.extend({
+	jQuery.extend({
 		wpsSetup : function(setup) {
 			if (setup.reset) {
 				wpsResetSetup();
@@ -988,7 +988,9 @@ function execute() {
 	    		/*
 	    		 * setup OpenLayers to use the proxy as well
 	    		 */
-	    		OpenLayers.ProxyHost = setup.proxy.url;
+	    		if (OpenLayers) {
+	    			OpenLayers.ProxyHost = setup.proxy.url;
+	    		}
 	    		PROXY_TYPE = setup.proxy.type;
 	    	}
 	    	

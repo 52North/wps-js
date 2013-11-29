@@ -14,6 +14,9 @@ var PostRequest = BaseRequest.extend({
 		};
 	},
 	
+	/*
+	 * overwrite this method to create specific payload
+	 */
 	createPostPayload : function() {
 		return null;
 	},
