@@ -70,7 +70,7 @@ var TEMPLATE_EXECUTE_BBOX_OUTPUTS_MARKUP = '\
 
 function resolveRequest(type, method, settings) {
 	if (type == GET_CAPABILITIES_TYPE) {
-		return new GetRequest(settings);
+		return new GetCapabilitiesGetRequest(settings);
 	}
 	else if (type == DESCRIBE_PROCESS_TYPE) {
 		return new GetRequest(settings);
@@ -158,48 +158,84 @@ function getCapabilities() {
     
     removePocessesFromSelectFast();
     
-    OpenLayers.Request.GET({
-        url: wps,
-        params: {
-            "SERVICE": "WPS",
-            "REQUEST": "GetCapabilities"
-        },
-        success: function(response){
-            capabilities = new OpenLayers.Format.WPSCapabilities().read(
-                response.responseText
-            );
-            var dropdown = document.getElementById("processes");
-            var offerings = capabilities.processOfferings, option;
-            // populate the dropdown
-            for (var p in offerings) {
-                option = document.createElement("option");
-                option.innerHTML = offerings[p].identifier;
-                option.value = p;
-                dropdown.appendChild(option);				
-            }
+    var getCap = new GetCapabilitiesGetRequest({
+    	url : wps
+    });
+    
+    getCap.execute(function(response, targetDomElement, originalRequest, updateSwitch) {
+    	//TODO read response with GetCapabilitiesResponse.js
+        capabilities = new OpenLayers.Format.WPSCapabilities().read(
+                response);
+        var dropdown = document.getElementById("processes");
+        var offerings = capabilities.processOfferings, option;
+        // populate the dropdown
+        for (var p in offerings) {
+            option = document.createElement("option");
+            option.innerHTML = offerings[p].identifier;
+            option.value = p;
+            dropdown.appendChild(option);				
         }
     });
+    
+//    OpenLayers.Request.GET({
+//        url: wps,
+//        params: {
+//            "SERVICE": "WPS",
+//            "REQUEST": "GetCapabilities"
+//        },
+//        success: function(response){
+//            capabilities = new OpenLayers.Format.WPSCapabilities().read(
+//                response.responseText
+//            );
+//            var dropdown = document.getElementById("processes");
+//            var offerings = capabilities.processOfferings, option;
+//            // populate the dropdown
+//            for (var p in offerings) {
+//                option = document.createElement("option");
+//                option.innerHTML = offerings[p].identifier;
+//                option.value = p;
+//                dropdown.appendChild(option);				
+//            }
+//        }
+//    });
 }
 
 // using OpenLayers.Format.WPSDescribeProcess to get information about a
 // process
 function describeProcess() {
     var selection = this.options[this.selectedIndex].value;
-    OpenLayers.Request.GET({
-        url: wps,
-        params: {
-            "SERVICE": "WPS",
-            "REQUEST": "DescribeProcess",
-            "VERSION": capabilities.version,
-            "IDENTIFIER": selection
-        },
-        success: function(response) {
-            process = new OpenLayers.Format.WPSDescribeProcess().read(
-                response.responseText
-            ).processDescriptions[selection];
-            buildForm();
-        }
+    
+    var describeProcess = new DescribeProcessGetRequest({
+    	url : wps,
+    	processIdentifier: selection
     });
+    
+    describeProcess.execute(function(response, targetDomElement, originalRequest, updateSwitch) {
+    	//TODO read response with DescribeProcessResponse.js
+            var parsed = new OpenLayers.Format.WPSDescribeProcess().read(
+                response
+            );
+            
+            process = parsed.processDescriptions[selection];
+            
+            buildForm();
+        });
+    
+//    OpenLayers.Request.GET({
+//        url: wps,
+//        params: {
+//            "SERVICE": "WPS",
+//            "REQUEST": "DescribeProcess",
+//            "VERSION": capabilities.version,
+//            "IDENTIFIER": selection
+//        },
+//        success: function(response) {
+//            process = new OpenLayers.Format.WPSDescribeProcess().read(
+//                response.responseText
+//            ).processDescriptions[selection];
+//            buildForm();
+//        }
+//    });
 }
 
 // dynamically create a form from the process description
@@ -283,15 +319,17 @@ function getInput(input, container, template, copyTemplate, inputParentId, fn){
     
     	var button = document.getElementById(name + "-copy-button");
     
-    	button.onclick = function(){ 
-			var templateProperties = createCopy(input, fn);
-		
-			if(templateProperties){				
-				var inputsUl = document.getElementById(inputParentId);
-	
-				jQuery.tmpl(copyTemplate, templateProperties).appendTo(inputsUl);
-			}
-		};
+    	if (button) {
+    		button.onclick = function(){ 
+    			var templateProperties = createCopy(input, fn);
+    		
+    			if(templateProperties){				
+    				var inputsUl = document.getElementById(inputParentId);
+    	
+    				jQuery.tmpl(copyTemplate, templateProperties).appendTo(inputsUl);
+    			}
+    		};	
+    	}
 	
 	}
 
