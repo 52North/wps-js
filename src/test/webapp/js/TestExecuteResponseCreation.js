@@ -35,15 +35,17 @@ AsyncTestCase('TestExecuteResponseCreation', {
 				assertEquals("GECA-Intercomparison", jQuery(updateDiv[1])
 						.children("span.wps-item-value").html());
 
-				assertEquals("Status", jQuery(updateDiv[2]).children(
-						"label.wps-item-label").html());
+				assertEquals("Created on ", jQuery(updateDiv[2]).children(
+					"label.wps-item-label").html());
 				assertTrue(jQuery(updateDiv[2]).children("span.wps-item-value")
-						.html().indexOf("Process started") !== -1);
-
-				assertEquals("Created on ", jQuery(updateDiv[3]).children(
+						.html().indexOf("2013") !== -1);
+				
+				assertEquals("Status", jQuery(updateDiv[3]).children(
 						"label.wps-item-label").html());
 				assertTrue(jQuery(updateDiv[3]).children("span.wps-item-value")
-						.html().indexOf("2013") !== -1);
+						.html().indexOf("Process started") !== -1);
+
+
 			});
 
 			window.setTimeout(validation, 2000);

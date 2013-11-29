@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-<script src="js/jquery/jquery.1.8.3.min.js"></script>
-<script src="js/jquery/jquery-ui.1.8.3.min.js"></script>
-<script src="js/wps-js/wps-js.${project.version}.js"></script>
+<script src="../js/jquery/jquery.1.8.3.min.js"></script>
+<script src="../js/jquery/jquery-ui.1.8.3.min.js"></script>
+<script src="../js/wps-js/wps-js.${project.version}.js"></script>
 <!--script src="http://openlayers.org/api/OpenLayers.js"></script-->
-<script src="js/openlayers/OpenLayers-closure.js"></script>
+<script src="../js/openlayers/OpenLayers-closure.js"></script>
 <!--script src="js/openlayers/OpenLayers.js"></script-->
 <link type="text/css" rel="stylesheet" href="css/wps-js.css">
 <title>WPS Client Test</title>
@@ -71,8 +71,9 @@
 		// add behavior to html elements
 		document.getElementById("processes").onchange = describeProcess;
 		document.getElementById("wps").onchange = getCapabilities;
+		
 
-		OpenLayers.ProxyHost = "../wps_proxy/wps_proxy?url=";
+		
 	</script>
 
 	<div>
