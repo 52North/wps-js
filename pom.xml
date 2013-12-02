@@ -114,6 +114,7 @@
 							<directory>src/main/webapp</directory>
 							<includes>
 								<include>html/**</include>
+								<include>index.html</include>
 								<include>jstestdriver/**</include>
 							</includes>
 							<filtering>true</filtering>
