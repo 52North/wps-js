@@ -24,8 +24,8 @@ var CapabilitiesResponse = BaseResponse.extend({
 	createMarkup : function() {
 		var provName = this.xmlResponse.getElementsByTagNameNS(OWS_11_NAMESPACE, "ProviderName");
 		var abstrakt = this.xmlResponse.getElementsByTagNameNS(OWS_11_NAMESPACE, "Abstract");
-		var content = "<div>Abstract: "+$(abstrakt).text()+"</div><br>";
-		content = content + "<div>Provider name: "+$(provName).text()+"</div><br>";
+		var content = "<div>Abstract: "+jQuery(abstrakt).text()+"</div><br>";
+		content = content + "<div>Provider name: "+jQuery(provName).text()+"</div><br>";
 		//repeat the above to display additional information
 		return content;
 	}

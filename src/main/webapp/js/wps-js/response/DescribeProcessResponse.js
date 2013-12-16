@@ -25,7 +25,7 @@ var DescribeProcessResponse = BaseResponse.extend({
 
 	createMarkup : function() {
 		var provName = xml.getElementsByTagNameNS(OWS_11_NAMESPACE, "ProviderName");
-		var content = "<div>"+$(provName).text()+"</div>";
+		var content = "<div>"+jQuery(provName).text()+"</div>";
 		return this._super(content);
 	}
 

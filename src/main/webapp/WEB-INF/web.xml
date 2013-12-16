@@ -2,6 +2,6 @@
 	<display-name>Javascript WPS Client | #${build-commit-abbrev} as of ${build-tstamp}, build at ${buildTimestamp}</display-name>
 	
 	<welcome-file-list>
-		<welcome-file>/html/index.html</welcome-file>
+		<welcome-file>/index.html</welcome-file>
 	</welcome-file-list>
 </web-app>
