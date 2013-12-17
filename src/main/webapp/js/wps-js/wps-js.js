@@ -247,7 +247,7 @@ function buildForm() {
 
  	var supported = true;
  	
- 	getInputs();
+ 	createFormInputs(process.dataInputs);
     
     var outputH3 = document.createElement("h3");
     
@@ -272,28 +272,27 @@ function buildForm() {
     }
 }
 
-function getInputs(){
+function createFormInputs(inputs){
     
     var inputElements = [];
     var container = document.getElementById("input");
-    var inputs = process.dataInputs,       
-        input;
+    var input;
     for (var i=0,ii=inputs.length; i<ii; ++i) {
         input = inputs[i];    
                 
         if (input.complexData) {    		    		
-			getInput(input, container, TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP, TEMPLATE_EXECUTE_COMPLEX_INPUTS_COPY_MARKUP, "complex-inputs", getComplexInput);       	   
+			createInput(input, container, TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP, TEMPLATE_EXECUTE_COMPLEX_INPUTS_COPY_MARKUP, "complex-inputs", getComplexInput);       	   
         } else if (input.boundingBoxData) {            
-            getInput(input, container, TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP, TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP, "bbox-inputs", getBoundingBoxInput);               
+            createInput(input, container, TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP, TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP, "bbox-inputs", getBoundingBoxInput);               
         } else if (input.literalData) {
-            getInput(input, container, TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP, TEMPLATE_EXECUTE_LITERAL_INPUTS_COPY_MARKUP, "literal-inputs", getLiteralInput);
+            createInput(input, container, TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP, TEMPLATE_EXECUTE_LITERAL_INPUTS_COPY_MARKUP, "literal-inputs", getLiteralInput);
         }
     }
     
     return inputElements;	
 }
 
-function getInput(input, container, template, copyTemplate, inputParentId, fn){
+function createInput(input, container, template, copyTemplate, inputParentId, fn){
 
     var templateProperties = fn(input);
     
@@ -348,6 +347,8 @@ function getComplexInput(input) {
     field.className = "wps-complex-input-textarea";
     field.title = input["abstract"];
     
+    var inputType = createInputTypeElement("complex", name+"");
+    
     var number = "";
     
     if(input.maxOccurs > 1){
@@ -356,12 +357,15 @@ function getComplexInput(input) {
     
     if(input.maxOccurs > 1){
     	field.id = name + number + "-input-textarea";
+    	inputType.id = name + number + "-input-type";
     }else {
-    	field.id = name + "-input-textarea";    
+    	field.id = name + "-input-textarea";
+    	inputType.id = name + "-input-type";
     }
     field.title = input["abstract"];
     
     fieldDiv.appendChild(field);
+    fieldDiv.appendChild(inputType);
     
     var labelText = "";
     
@@ -490,6 +494,15 @@ function getBoundingBoxInput(input) {
     bboxInputElements.description = "left, bottom, right, top";
 	
 	return bboxInputElements;
+}
+
+function createInputTypeElement(theType, theId) {
+	var typeInput = document.createElement("input");
+	
+	typeInput.setAttribute("type", "hidden");
+	typeInput.setAttribute("value", theType);
+	
+	return typeInput;
 }
 
 function addOutputs(){
