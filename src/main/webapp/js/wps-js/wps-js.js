@@ -70,7 +70,7 @@ var TEMPLATE_EXECUTE_BBOX_OUTPUTS_MARKUP = '\
 
 function resolveRequest(type, method, settings) {
 	if (type == GET_CAPABILITIES_TYPE) {
-		return new GetRequest(settings);
+		return new GetCapabilitiesGetRequest(settings);
 	}
 	else if (type == DESCRIBE_PROCESS_TYPE) {
 		return new GetRequest(settings);
@@ -83,7 +83,7 @@ function resolveRequest(type, method, settings) {
 }
 
 function resolveGetParameters() {
-	var params = $.url();
+	var params = jQuery.url();
 	var url = params.param(PARAM_WPS_REQUEST_URL);
 	var requestType = params.param(PARAM_WPS_REQUEST_TYPE);
 	
@@ -97,7 +97,7 @@ function resolveGetParameters() {
 function assertValidState(settings) {
 	var dataValid = true;
 	if (settings.method == METHOD_POST) {
-		dataValid = $.isXMLDoc(settings.data);
+		dataValid = jQuery.isXMLDoc(settings.data);
 	}
 	return settings.url && settings.requestType && settings.method && dataValid;
 }
@@ -118,7 +118,7 @@ function callbackOnResponseParsed(responseData, domElement, originalRequest) {
 			originalRequest.updateSwitch.element = "wps-execute-autoUpdate";
 		}
 		
-		$('#'+originalRequest.updateSwitch.element).click(function() {
+		jQuery('#'+originalRequest.updateSwitch.element).click(function() {
 			
 			var updateSwitch = originalRequest.updateSwitch;
 			
@@ -132,7 +132,7 @@ function callbackOnResponseParsed(responseData, domElement, originalRequest) {
 			originalRequest = new GetRequest(getSettings);
 			originalRequest.execute(updateSwitch.callback, updateSwitch);
 		});
-		$('#'+originalRequest.updateSwitch.element).css( 'cursor', 'pointer' );
+		jQuery('#'+originalRequest.updateSwitch.element).css( 'cursor', 'pointer' );
 	}
 }
 
@@ -158,48 +158,84 @@ function getCapabilities() {
     
     removePocessesFromSelectFast();
     
-    OpenLayers.Request.GET({
-        url: wps,
-        params: {
-            "SERVICE": "WPS",
-            "REQUEST": "GetCapabilities"
-        },
-        success: function(response){
-            capabilities = new OpenLayers.Format.WPSCapabilities().read(
-                response.responseText
-            );
-            var dropdown = document.getElementById("processes");
-            var offerings = capabilities.processOfferings, option;
-            // populate the dropdown
-            for (var p in offerings) {
-                option = document.createElement("option");
-                option.innerHTML = offerings[p].identifier;
-                option.value = p;
-                dropdown.appendChild(option);				
-            }
+    var getCap = new GetCapabilitiesGetRequest({
+    	url : wps
+    });
+    
+    getCap.execute(function(response, targetDomElement, originalRequest, updateSwitch) {
+    	//TODO read response with GetCapabilitiesResponse.js
+        capabilities = new OpenLayers.Format.WPSCapabilities().read(
+                response);
+        var dropdown = document.getElementById("processes");
+        var offerings = capabilities.processOfferings, option;
+        // populate the dropdown
+        for (var p in offerings) {
+            option = document.createElement("option");
+            option.innerHTML = offerings[p].identifier;
+            option.value = p;
+            dropdown.appendChild(option);				
         }
     });
+    
+//    OpenLayers.Request.GET({
+//        url: wps,
+//        params: {
+//            "SERVICE": "WPS",
+//            "REQUEST": "GetCapabilities"
+//        },
+//        success: function(response){
+//            capabilities = new OpenLayers.Format.WPSCapabilities().read(
+//                response.responseText
+//            );
+//            var dropdown = document.getElementById("processes");
+//            var offerings = capabilities.processOfferings, option;
+//            // populate the dropdown
+//            for (var p in offerings) {
+//                option = document.createElement("option");
+//                option.innerHTML = offerings[p].identifier;
+//                option.value = p;
+//                dropdown.appendChild(option);				
+//            }
+//        }
+//    });
 }
 
 // using OpenLayers.Format.WPSDescribeProcess to get information about a
 // process
 function describeProcess() {
     var selection = this.options[this.selectedIndex].value;
-    OpenLayers.Request.GET({
-        url: wps,
-        params: {
-            "SERVICE": "WPS",
-            "REQUEST": "DescribeProcess",
-            "VERSION": capabilities.version,
-            "IDENTIFIER": selection
-        },
-        success: function(response) {
-            process = new OpenLayers.Format.WPSDescribeProcess().read(
-                response.responseText
-            ).processDescriptions[selection];
-            buildForm();
-        }
+    
+    var describeProcess = new DescribeProcessGetRequest({
+    	url : wps,
+    	processIdentifier: selection
     });
+    
+    describeProcess.execute(function(response, targetDomElement, originalRequest, updateSwitch) {
+    	//TODO read response with DescribeProcessResponse.js
+            var parsed = new OpenLayers.Format.WPSDescribeProcess().read(
+                response
+            );
+            
+            process = parsed.processDescriptions[selection];
+            
+            buildForm();
+        });
+    
+//    OpenLayers.Request.GET({
+//        url: wps,
+//        params: {
+//            "SERVICE": "WPS",
+//            "REQUEST": "DescribeProcess",
+//            "VERSION": capabilities.version,
+//            "IDENTIFIER": selection
+//        },
+//        success: function(response) {
+//            process = new OpenLayers.Format.WPSDescribeProcess().read(
+//                response.responseText
+//            ).processDescriptions[selection];
+//            buildForm();
+//        }
+//    });
 }
 
 // dynamically create a form from the process description
@@ -277,21 +313,23 @@ function getInput(input, container, template, copyTemplate, inputParentId, fn){
 		templateProperties.copyButton = copyButtonDiv.innerHTML;
     }
     
-    $.tmpl(template, templateProperties).appendTo(container);
+    jQuery.tmpl(template, templateProperties).appendTo(container);
               
     if(input.maxOccurs > 1){
     
     	var button = document.getElementById(name + "-copy-button");
     
-    	button.onclick = function(){ 
-			var templateProperties = createCopy(input, fn);
-		
-			if(templateProperties){				
-				var inputsUl = document.getElementById(inputParentId);
-	
-				$.tmpl(copyTemplate, templateProperties).appendTo(inputsUl);
-			}
-		};
+    	if (button) {
+    		button.onclick = function(){ 
+    			var templateProperties = createCopy(input, fn);
+    		
+    			if(templateProperties){				
+    				var inputsUl = document.getElementById(inputParentId);
+    	
+    				jQuery.tmpl(copyTemplate, templateProperties).appendTo(inputsUl);
+    			}
+    		};	
+    	}
 	
 	}
 
@@ -490,7 +528,7 @@ function getOutputs(){
     
     var container = document.getElementById("input");
     
-	$.tmpl(TEMPLATE_EXECUTE_OUTPUTS_MARKUP, "").appendTo(container);
+	jQuery.tmpl(TEMPLATE_EXECUTE_OUTPUTS_MARKUP, "").appendTo(container);
 	
 	var outputsUl = document.getElementById("outputs");
 	
@@ -539,7 +577,7 @@ function getOutputs(){
     		template = TEMPLATE_EXECUTE_BBOX_OUTPUTS_MARKUP;    	
     	}
     	
-    	$.tmpl(template, templateProperties).appendTo(outputsUl);
+    	jQuery.tmpl(template, templateProperties).appendTo(outputsUl);
 	}
 }
 
@@ -845,7 +883,7 @@ function execute() {
     //make real copy as inputs of process are overwritten but the 
     //original inputs (i.e. all inputs) are needed for 
     //consecutive execution
-    var finalProcess = JSON.parse(JSON.stringify(process)) 
+    var finalProcess = JSON.parse(JSON.stringify(process));
     
     finalProcess.dataInputs = finalInputs;
     
@@ -907,10 +945,10 @@ function execute() {
     var settings = {
 			url: wps,
 			method: "post",
-			domElement: $('#executeProcess'),
+			domElement: jQuery('#executeProcess'),
 			data: new OpenLayers.Format.WPSExecute().write(finalProcess),
 			requestType: "Execute",
-	}
+	};
 
 	var originalRequest = new PostRequest(settings);
 
@@ -920,30 +958,30 @@ function execute() {
 /*
  * jQuery plugin definitions
  */
-(function($) {
+(function(jQuery) {
 
-	$.fn.extend({
+	jQuery.fn.extend({
 		wpsCall : function( options ) {
 	    	var settings;
 	    	if (options && options.viaUrl) {
 	    		/*
 	    		 * Call via GET parameters
 	    		 */
-	    		settings = $.extend(resolveGetParameters(), {method: METHOD_GET});
+	    		settings = jQuery.extend(resolveGetParameters(), {method: METHOD_GET});
 	    	}
 	    	else {
 	            /*
 	             * Custom User Call
 	             */
-	            settings = $.extend({
+	            settings = jQuery.extend({
 	                method: METHOD_GET
 	            }, options);
 	    	}
 	    	
 	    	if (assertValidState(settings)) {
 	    		return this.each( function() {
-	            	var requestSettings = $.extend({
-	                    domElement: $(this)
+	            	var requestSettings = jQuery.extend({
+	                    domElement: jQuery(this)
 	                }, settings);
 	            	
 	            	var request = resolveRequest(requestSettings.requestType, requestSettings.method,
@@ -956,7 +994,7 @@ function execute() {
 	    }
 	});
 	
-	$.extend({
+	jQuery.extend({
 		wpsSetup : function(setup) {
 			if (setup.reset) {
 				wpsResetSetup();
@@ -985,10 +1023,21 @@ function execute() {
 	    	if (setup.proxy) {
 	    		USE_PROXY = true;
 	    		PROXY_URL = setup.proxy.url;
+	    		/*
+	    		 * setup OpenLayers to use the proxy as well
+	    		 */
+	    		if (OpenLayers) {
+	    			OpenLayers.ProxyHost = setup.proxy.url;
+	    		}
 	    		PROXY_TYPE = setup.proxy.type;
 	    	}
-	    }
+	    	
+	    	if (setup.configuration) {
+	    		
+	    	}
+
+		}
 	});
     
-
 }(jQuery));
+

@@ -52,7 +52,7 @@ var ExecuteResponse = BaseResponse.extend({
 				value = "n/a";
 			}
 			array[i] = {
-					key : $(identifier).text(),
+					key : jQuery(identifier).text(),
 					value : value
 			};
 		}
@@ -66,20 +66,18 @@ var ExecuteResponse = BaseResponse.extend({
 		var process = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "Process");
 		var status = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "Status");
 		
-		var properties;
+		var properties = null;
 		var extensions = {};
-		
+		var statusText = null;		
 		var processFailed = false;
 		
 		if (process && process[0] && status && status[0]) {
-			var identifier = $(process[0].getElementsByTagNameNS(OWS_11_NAMESPACE, "Identifier")).text();
-			var title = $(process[0].getElementsByTagNameNS(OWS_11_NAMESPACE, "Title")).text();	
-			
-			var statusText;
+			var identifier = jQuery(process[0].getElementsByTagNameNS(OWS_11_NAMESPACE, "Identifier")).text();
+			var title = jQuery(process[0].getElementsByTagNameNS(OWS_11_NAMESPACE, "Title")).text();	
 			
 			var accepted = status[0].getElementsByTagNameNS(WPS_100_NAMESPACE, "ProcessAccepted");
 			if (accepted && accepted.length > 0) {
-				statusText = $(accepted).text();
+				statusText = jQuery(accepted).text();
 			}
 			if (!statusText) {
 				var started = status[0].getElementsByTagNameNS(WPS_100_NAMESPACE, "ProcessStarted");
@@ -101,7 +99,7 @@ var ExecuteResponse = BaseResponse.extend({
 					statusText = "Process succeeded";
 					var processOutputs = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "ProcessOutputs");
 					if (processOutputs && processOutputs.length > 0) {
-						extensions = $.extend(this.resolveProcessOutputs(processOutputs[0]), extensions);	
+						extensions = jQuery.extend(this.resolveProcessOutputs(processOutputs[0]), extensions);	
 					}
 				}
 			}
@@ -162,7 +160,7 @@ var ExecuteResponse = BaseResponse.extend({
 			template = TEMPLATE_EXECUTE_RESPONSE_MARKUP;
 		}
 		
-		var result = $.tmpl(template, properties);
+		var result = jQuery.tmpl(template, properties);
 		
 		//insert status entry depending on normal status (started, accepted, paused, succeeded) or failed status
 		var statusDiv = result.children('#wps-execute-response-status');
@@ -173,15 +171,15 @@ var ExecuteResponse = BaseResponse.extend({
 		};
 		
 		if(!processFailed){
-			$.tmpl(TEMPLATE_EXECUTE_RESPONSE_STATUS_NORMAL_MARKUP, statusProperties).appendTo(statusList);			
+			jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_STATUS_NORMAL_MARKUP, statusProperties).appendTo(statusList);			
 		}else{
-			$.tmpl(TEMPLATE_EXECUTE_RESPONSE_STATUS_FAILED_MARKUP, statusProperties).appendTo(statusList);
+			jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_STATUS_FAILED_MARKUP, statusProperties).appendTo(statusList);
 		}
 		
-		if (extensions && !$.isEmptyObject(extensions)) {
+		if (extensions && !jQuery.isEmptyObject(extensions)) {
 			var extensionDiv = result.children('#wps-execute-response-extension');
 			if (extensions.outputs) {
-				$.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP, extensions.outputs).appendTo(extensionDiv);
+				jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP, extensions.outputs).appendTo(extensionDiv);
 			}
 		}
 		
