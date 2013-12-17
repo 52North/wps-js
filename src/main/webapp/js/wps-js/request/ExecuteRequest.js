@@ -41,6 +41,16 @@ var EXECUTE_REQUEST_XML_LITERAL_DATA_NO_TYPE_INPUT = '<wps:Input>\
     </wps:Data>\
   </wps:Input>';
 
+var EXECUTE_REQUEST_XML_BOUNDING_BOX_INPUT = '<wps:Input>\
+    <ows:Identifier>${identifier}</ows:Identifier>\
+    <wps:Data>\
+       <wps:BoundingBoxData ows:crs="${crs}" ows:dimensions="${dimension}">\
+          <ows:LowerCorner>${lowerCorner}</ows:LowerCorner>\
+          <ows:UpperCorner>${upperCorner}</ows:UpperCorner>\
+       </wps:BoundingBoxData>\
+    </wps:Data>\
+ </wps:Input>';
+
 var EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW = '<wps:ResponseForm>\
 	    <wps:RawDataOutput mimeType="${mimeType}">\
 	      <ows:Identifier>${identifier}</ows:Identifier>\
@@ -92,13 +102,16 @@ var ExecuteRequest = PostRequest.extend({
 	
 	createDataInputsMarkup : function(inputs) {
 		var result = "";
-		var markup = "";
 		for (var i = 0; i < inputs.length; i++) {
+			var markup = "";
 			if (equalsString("literal", inputs[i].type)) {
 				markup = this.createLiteralDataInput(inputs[i]);
 			}
-			else {
+			else if (equalsString("complex", inputs[i].type)) {
 				markup = this.createComplexDataInput(inputs[i]);
+			}
+			else if (equalsString("bbox", inputs[i].type)) {
+				markup = this.createBoundingBoxDataInput(inputs[i]);
 			}
 			result += markup;
 		}
@@ -122,6 +135,7 @@ var ExecuteRequest = PostRequest.extend({
 	 * 
 	 */
 	createLiteralDataInput : function(input) {
+		var markup;
 		if (input.dataType) {
 			markup = this.fillTemplate(EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT, input);
 		}
@@ -150,12 +164,47 @@ var ExecuteRequest = PostRequest.extend({
 	 * 
 	 */
 	createComplexDataInput : function(input) {
+		var markup;
 		if (input.href) {
 			markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_INPUT, input);
 		}
 		else {
 			markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_INPUT, input);
 		}
+		
+		return markup;
+	},
+	
+	/*
+	 * example 'input' objects:
+	 * 
+	 * {
+	 * identifier: "theInputId",
+	 * crs: "EPSG:4236",
+	 * dimension: 2,
+	 * lowerCorner: "-10.0 40.5",
+	 * upperCorner: "20.4 65.3",
+	 * }
+	 * 
+	 * {
+	 * identifier: "theInputId",
+	 * value: "myStringValue"
+	 * }
+	 * 
+	 */
+	createBoundingBoxDataInput : function(input) {
+		/*
+		 * set some default values
+		 */
+		if (!input.crs) {
+			input.crs = "EPSG:4326";
+		}
+		
+		if (!input.dimension) {
+			input.dimension = 2;
+		}
+		
+		var markup = this.fillTemplate(EXECUTE_REQUEST_XML_BOUNDING_BOX_INPUT, input);
 		
 		return markup;
 	},
