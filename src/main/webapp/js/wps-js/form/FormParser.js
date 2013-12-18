@@ -25,7 +25,7 @@ var FormParser = Class.extend({
 		 */
 		for (var i = 0; i < formValues.length; i++) {
 			var prop = formValues[i];
-			if (stringStartsWith(prop.name, "type_")) {
+			if (stringStartsWith(prop.name, "type_input")) {
 				var originalInputName = prop.name.substring(5, prop.name.length);
 				inputs[inputNameToPosition[originalInputName]].type = prop.value;
 				if (stringStartsWith(prop.value, "complex")) {
@@ -39,7 +39,7 @@ var FormParser = Class.extend({
 		 */
 		for (var i = 0; i < formValues.length; i++) {
 			var prop = formValues[i];
-			if (stringStartsWith(prop.name, "checkbox_")) {
+			if (stringStartsWith(prop.name, "checkbox_input")) {
 				var originalInputName = prop.name.substring(9, prop.name.length);
 				/*
 				 * its only present in the array if checked
@@ -53,13 +53,73 @@ var FormParser = Class.extend({
 		 */
 		for (var i = 0; i < formValues.length; i++) {
 			var prop = formValues[i];
-			if (stringStartsWith(prop.name, "format_")) {
+			if (stringStartsWith(prop.name, "format_input")) {
 				var originalInputName = prop.name.substring(7, prop.name.length);
 				inputs[inputNameToPosition[originalInputName]].schema = prop.value;
 			}
 		}
 		
 		return inputs;
+	},
+	
+	parseOutputs : function(formValues) {
+		var outputs = [];
+		var outputNameToPosition = [];
+		
+		for (var i = 0; i < formValues.length; i++) {
+			var prop = formValues[i];
+			if (stringStartsWith(prop.name, "output_")) {
+				var j = outputs.length;
+				outputs[j] = {};
+				outputs[j].identifier = prop.name.substring(7, prop.name.length);
+
+				//TODO: currently not supported in the form
+				outputs[j].asReference = false;
+				outputNameToPosition[prop.name] = j;
+			}
+		}
+		
+		/*
+		 * look for each input's type
+		 */
+		for (var i = 0; i < formValues.length; i++) {
+			var prop = formValues[i];
+			if (stringStartsWith(prop.name, "type_output")) {
+				var originalName = prop.name.substring(5, prop.name.length);
+				outputs[outputNameToPosition[originalName]].type = prop.value;
+			}
+		}
+		
+		/*
+		 * look for each input's format
+		 */
+		for (var i = 0; i < formValues.length; i++) {
+			var prop = formValues[i];
+			if (stringStartsWith(prop.name, "format_output")) {
+				var originalName = prop.name.substring(7, prop.name.length);
+				outputs[outputNameToPosition[originalName]].schema = prop.value;
+			}
+		}
+		
+		return outputs;
+	},
+	
+	parseProcessIdentifier : function(formValues) {
+		for (var i = 0; i < formValues.length; i++) {
+			var prop = formValues[i];
+			if (equalsString(prop.name, "processIdentifier")) {
+				return prop.value;
+			}
+		}
+		return "";
+	},
+	
+	parseOutputStyle : function(formValues) {
+		return {
+			   storeExecuteResponse: true,
+			   lineage: false,
+			   status: true
+		   };
 	}
 
 });
