@@ -10,3 +10,7 @@ function equalsString(a, b) {
 	
 	return jQuery.trim(a).localeCompare(jQuery.trim(b)) == 0;
 }
+
+function stringStartsWith(target, sub) {
+	return target.indexOf(sub) == 0;
+}

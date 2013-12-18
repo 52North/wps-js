@@ -37,7 +37,7 @@ var EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT = '<wps:Input>\
 var EXECUTE_REQUEST_XML_LITERAL_DATA_NO_TYPE_INPUT = '<wps:Input>\
     <ows:Identifier>${identifier}</ows:Identifier>\
     <wps:Data>\
-      <wps:LiteralData dataType="${dataType}">${value}</wps:LiteralData>\
+      <wps:LiteralData>${value}</wps:LiteralData>\
     </wps:Data>\
   </wps:Input>';
 
@@ -232,7 +232,6 @@ var ExecuteRequest = PostRequest.extend({
 	 * 	  {
 	 * 		  identifier: "myLiteralOutput1",
 	 * 		  type: "literal"
-	 * 		  selected:true
 	 * 	  }
 	 * ]
 	 * 

@@ -255,7 +255,7 @@ function buildForm(targetDiv, processDescription) {
         	return false;
         });
  	formElement.append(createFormInputs(processDescription.dataInputs));
-//	formElement.append(createFormOutputs(processDescription));
+	formElement.append(createFormOutputs(processDescription));
  	formElement.append(jQuery('<input type="hidden" name="processIdentifier" value="'+processDescription.identifier+'" />'));
 	targetDiv.append(formElement);
         
@@ -506,93 +506,66 @@ function createInputTypeElement(theType, theId) {
 	return typeInput;
 }
 
-function addOutputs(){
-    var container = document.getElementById("input");
-	var outputs = process.processOutputs;
-	
-	for (var i = 0; i < outputs.length; i++) {		
-    	var output = outputs[i];
-    	var id = output.identifier;
-    	var label = document.createElement("label");
-    	label.className = "wps-input-item-label";
-    	label.innerHTML = id;
-    	
-    	var checkBox = document.createElement("input");
-    	checkBox.type = "checkbox";
-    	checkBox.id = id + "-checkbox";
-    
-    	container.appendChild(label);
-    	container.appendChild(checkBox);
-    	container.appendChild(document.createElement("p"));
-    	
-    	if(output.complexOutput){
-    	
-    		var formats = output.complexOutput.supported.formats;
-    		
-    		var formatDropBox = createFormatDropdown(id + "formats", formats);
-    		
-    		container.appendChild(formatDropBox);
-    		container.appendChild(document.createElement("p"));
-    		
-    	}
-	}
-}
 
 function createFormOutputs(processDescription){
-    
-    var container = document.getElementById("input");
+	var container = jQuery('<div id="output"></div>');
     
 	jQuery.tmpl(TEMPLATE_EXECUTE_OUTPUTS_MARKUP, "").appendTo(container);
 	
-	var outputsUl = document.getElementById("outputs");
+	var outputsUl = jQuery('<ul id="outputs" class="wps-execute-response-list"/>');
+	container.append(outputsUl);
 	
 	var outputs = processDescription.processOutputs;
 	
 	for (var i = 0; i < outputs.length; i++) {
 		var output = outputs[i];
 		
-    	var id = output.identifier;
+    	var id = "output_"+output.identifier;
     	
     	var templateProperties = {};
     	
-    	var template;
+    	var template = null;
     	
-    	var checkBoxDiv = document.createElement("div");
+    	var checkBoxDiv = jQuery("<div />");
     	
-    	var checkBox = document.createElement("input");
-    	checkBox.type = "checkbox";
-    	checkBox.id = id + "-checkbox";
+    	var checkBox = jQuery('<input type="checkbox"/>');
+    	checkBox.attr("name", id);
+    	var typeField = createInputTypeElement(output.complexOutput ? "complex" : "literal", id);
     	
-    	checkBoxDiv.appendChild(checkBox);
+    	checkBoxDiv.append(checkBox);
+    	checkBoxDiv.append(typeField);
     	
     	templateProperties.identifier = id;
-    	templateProperties.shouldBeRequested = checkBoxDiv.innerHTML;
+    	templateProperties.shouldBeRequested = checkBoxDiv.html();
     	
-    	if(output.complexOutput){
-    	
+    	if (output.complexOutput) {
     		var formats = output.complexOutput.supported.formats;
     		
-    		var formatDropBox = createFormatDropdown(id + "formats", formats);
+    		var formatDropBox = createFormatDropdown("format_"+id, formats, output);
     		
-    		var formatDropBoxDiv = document.createElement("div"); 
+    		var formatDropBoxDiv = jQuery("<div />");
     		
-    		formatDropBoxDiv.appendChild(formatDropBox);
+    		formatDropBoxDiv.append(formatDropBox);
     		    		
-    		templateProperties.formats = formatDropBoxDiv.innerHTML;
+    		templateProperties.formats = formatDropBoxDiv.html();
     		
     		template = TEMPLATE_EXECUTE_COMPLEX_OUTPUTS_MARKUP;
     		
-    	}else if(output.literalOutput){
+    	} else if (output.literalOutput) {
     		
     		template = TEMPLATE_EXECUTE_LITERAL_OUTPUTS_MARKUP;
     	
-    	}else if(output.boundingBoxOutput){
+    	} else if (output.boundingBoxOutput) {
     		
     		template = TEMPLATE_EXECUTE_BBOX_OUTPUTS_MARKUP;    	
     	}
     	
-    	jQuery.tmpl(template, templateProperties).appendTo(outputsUl);
+    	if (template) {
+    		jQuery.tmpl(template, templateProperties).appendTo(outputsUl);
+    	}
 	}
+	
+	return container;
 }
 
 function createFormatDropdown(id, formats, input){
@@ -650,318 +623,27 @@ function createCopy(input, propertyCreationFunction) {
     }
 }
 
-// helper function for adding events to form fields
-function addValueHandlers(field, onblur) {
-    field.onclick = function() {
-        if (!this.initialValue) {
-            this.initialValue = this.value;
-            this.value = "";
-        }
-    };
-    field.onblur = function() {
-        if (!this.value) {
-            this.value = this.initialValue;
-            delete this.initialValue;
-        }
-        onblur.apply(this, arguments);
-    };
-}
-
-function getComplexInputTextarea(id, number){
-  return document.getElementById(id + number + "-input-textarea");
-}
-
-function getLiteralInputField(id, number){
-  return document.getElementById(id + number);
-}
-
-function createComplexData(id, number){
-
-	if(!number){
-		number = "";
-	}
-
-    var textarea = getComplexInputTextarea(id, number);
-    
-    var value = textarea.value;
-    
-    if(!value || (value == "")){
-    	return;
-    } 			
-    
-    //if complex data get the selected value (serialized format object)
-    //add schema, mimeType, encoding if existing
-    var select = document.getElementById(id + number + "formats");   
-    var selectedFormat = JSON.parse(select.options[select.selectedIndex].value);
-    var mimeType = selectedFormat.mimeType;	
-    var encoding = selectedFormat.encoding;	
-    var schema = selectedFormat.schema;
-    
-    var checkBox = document.getElementById(id + number + "-checkbox");
-    
-    //check whether reference
-    var reference = checkBox.checked;
-    
-    var complexData;        			
-    
-    if(reference){
-    
-        complexData = {
-    		identifier : id,
-			reference : {
-    			mimeType: mimeType,
-    			encoding: encoding,
-    			schema: schema,
-    			href: value,
-    			method: "GET"
-    		}
-    	};   
-    	
-    }else{        			
-    	complexData = {
-    		identifier : id,
-    		data: {
-    			complexData: {
-    				mimeType: mimeType,
-    				encoding: encoding,
-    				schema: schema,
-    				value: value
-    			}
-    		}
-    	};        			
-    }
-    
-    return complexData;
-}
-
-function createLiteralData(id, number){
-
-	if(!number){
-		number = "";
-	}
-	
-    var inputField = getLiteralInputField(id, number);
-    var value;        			
-    if(inputField.options){
-    	//assume select
-    	value = inputField.options[inputField.selectedIndex].value;
-    }else{
-    	value = inputField.value;
-    }
-    
-    if(!value || (value == "")){
-    	return;
-    }
-
-	var literalData = {
-    	identifier : id,
-    	data: {
-    		literalData: {
-    			value: value
-    		}
-    	}
-    };
-    
-    return literalData;
-}
-
-function createBBoxData(id, number){
-
-	if(!number){
-		number = "";
-	}
-	
-    var inputField = getLiteralInputField(id, number);
-    var value;        			
-    if(inputField.options){
-    	//assume select
-    	value = inputField.options[inputField.selectedIndex].value;
-    }else{
-    	value = inputField.value;
-    }
-    
-    if(!value || (value == "")){
-    	return;
-    }
-
-	var dimensions = value.split(",").length / 2;
-
-	var boundingBoxData = {
-    	identifier : id,
-    	data: {
-    		boundingBoxData: {
-    				dimensions : dimensions,
-    				projection : "EPSG:4326",//TODO get from processdescription, if available
-       				bounds: OpenLayers.Bounds.fromString(value)
-    		}
-    	}
-    };
-    
-    return boundingBoxData;
-}
-
-
-function stringStartsWith(target, sub) {
-	return target.indexOf(sub) == 0;
-}
 
 // execute the process
-// use OpenLayers functionality to build the execute request
-// send it off and handle the response with our own functionality 
 function execute(formId) {
     var formValues = jQuery('#'+formId).serializeArray();
     
-    var inputs = new FormParser().parseInputs(formValues);
-    
-    var finalInputs = [];
-    
-    var input;
-    // remove occurrences that the user has not filled out
-    for (var i=process.dataInputs.length-1; i>=0; --i) {
-        input = process.dataInputs[i];
-        
-        var id = input.identifier;
-        
-        if(input.occurrence > 1){
-        	//get multiple inputs
-        	for(var j = 1; j <= input.occurrence; j++){
-        		if(input.complexData){
- 	
- 					var complexData = createComplexData(id, j);
- 					
-        			if(complexData){
-        				finalInputs.push(complexData);
-        			}
-        		}else if(input.literalData){
-					
-					var literalData = createLiteralData(id, j);
-					
-					if(literalData){
-        				finalInputs.push(literalData);
-        			}					
-        		}else if(input.boundingBoxData){
-					
-					var boundingBoxData = createBBoxData(id, j);
-					
-					if(boundingBoxData){
-        				finalInputs.push(boundingBoxData);
-        			}					
-        		}           		
-        	}
-        }else{
-        	if(input.complexData){
-        		
-        		var complexData;
-        		
-        		if(input.maxOccurs > 1){
-        			//input has number 1 attached   			
-        			complexData = createComplexData(id, "1");
- 				}else{
- 					complexData = createComplexData(id);
- 				}
-        		if(complexData){
-        			finalInputs.push(complexData);
-        		}
-        			
-        	}else if(input.literalData){
-        		
-        		var literalData;
-        		
-        		if(input.maxOccurs > 1){				
-					literalData = createLiteralData(id, "1");
-				}else{
-					literalData = createLiteralData(id);
-				}
-				if(literalData){
-        			finalInputs.push(literalData);
-        		}
-        	}else if(input.boundingBoxData){
-        		
-        		var boundingBoxData;
-        		
-        		if(input.maxOccurs > 1){				
-					boundingBoxData = createBBoxData(id, "1");
-				}else{
-					boundingBoxData = createBBoxData(id);
-				}
-				if(boundingBoxData){
-        			finalInputs.push(boundingBoxData);
-        		}
-        	}
-        }
-    }
-    
-    //make real copy as inputs of process are overwritten but the 
-    //original inputs (i.e. all inputs) are needed for 
-    //consecutive execution
-    var finalProcess = JSON.parse(JSON.stringify(process));
-    
-    finalProcess.dataInputs = finalInputs;
-    
-    var outputs = process.processOutputs;
-    
-    var checkedOutputs = [];
-    
-    for(var i = 0; i < outputs.length; i++){
-    	
-    	var output = outputs[i];
-    	
-    	var identifier = output.identifier;
-    	
-    	//every output has a checkbox with id "output-id-checkbox"
-    	//we need to get this here and see if it is checked    	
-    	var checkbox = document.getElementById(identifier + "-checkbox");
-    	
-    	if(checkbox.checked){
-    		var outputDef = {};
-    		if(output.literalOutput){
-    			 outputDef = {
-					identifier:	identifier		
-    			};
-    		}else{    	
-    			//if complex output get the selected value (serialized format object)
-    			//add schema, mimeType, encoding if existing
-    			var select = document.getElementById(identifier + "formats");   
-    			var selectedFormat = JSON.parse(select.options[select.selectedIndex].value);
-    			var mimeType = selectedFormat.mimeType;	
-    			var encoding = selectedFormat.encoding;	
-    			var schema = selectedFormat.schema;
-    			
-    			//TODO make this optional, i.e. make it possible to receive raw data?
-    			outputDef.asReference = true;
-    			outputDef.identifier = identifier;
-    			outputDef.mimeType = mimeType;
-    			if(encoding){
-    				outputDef.encoding = encoding;    				
-    			}
-    			if(schema){
-    				outputDef.schema = schema;    				
-    			}
-    			
-    			
-    		}
-    		checkedOutputs.push(outputDef);
-    		
-    	}
-    	
-    }
-    
-    finalProcess.responseForm = {
-        responseDocument: {
-        	storeExecuteResponse: true,
-        	outputs: checkedOutputs
-        }
-    };
+    var parser = new FormParser();
+    var inputs = parser.parseInputs(formValues);
+    var outputs = parser.parseOutputs(formValues);
+    var processIdentifier = parser.parseProcessIdentifier(formValues);
+    var outputStyle = parser.parseOutputStyle(formValues);
     
     var settings = {
 			url: wps,
-			method: "post",
-			domElement: jQuery('#executeProcess'),
-			data: new OpenLayers.Format.WPSExecute().write(finalProcess),
-			requestType: "Execute",
+			inputs: inputs,
+			outputs: outputs,
+			outputStyle: outputStyle,
+			processIdentifier: processIdentifier,
+			domElement: jQuery('#executeProcess')
 	};
 
-	var originalRequest = new PostRequest(settings);
+	var originalRequest = new ExecuteRequest(settings);
 
 	originalRequest.execute(callbackOnResponseParsed, {});
 }
