@@ -216,9 +216,10 @@ function describeProcess() {
                 response
             );
             
-            process = parsed.processDescriptions[selection];
+            var process = parsed.processDescriptions[selection];
             
-            buildForm();
+            clearForm(jQuery('#wps-execute-container'));
+            buildForm(jQuery('#wps-execute-container'), process);
         });
     
 //    OpenLayers.Request.GET({
@@ -238,33 +239,28 @@ function describeProcess() {
 //    });
 }
 
+function clearForm(targetDiv) {
+	targetDiv.html('');
+}
+
 // dynamically create a form from the process description
-function buildForm() {
-    document.getElementById("abstract").innerHTML = process["abstract"];
-    document.getElementById("input").innerHTML = "<h3>Inputs:</h3>";
-    
-    document.getElementById("output").innerHTML = "";
+function buildForm(targetDiv, processDescription) {
+    jQuery("#abstract").html(processDescription["abstract"]);
 
  	var supported = true;
  	
- 	createFormInputs(process.dataInputs);
-    
-    var outputH3 = document.createElement("h3");
-    
-    outputH3.innerHTML = "Outputs:"; 
-    
-    document.getElementById("input").appendChild(outputH3);
-    
-    //TODO also check whether supported outputs?
-    getOutputs();
+ 	var formElement = jQuery('<form id="wps-execute-form"></form>');
+ 	formElement.append(createFormInputs(processDescription.dataInputs));
+//	formElement.append(createFormOutputs(processDescription));
+	
+	targetDiv.append(formElement);
         
-    document.getElementById("input").appendChild(document.createElement("p"));
-    
     if (supported) {
-        var executeButton = document.createElement("button");
-        executeButton.innerHTML = "Execute";
-        document.getElementById("input").appendChild(executeButton);
-        executeButton.onclick = execute;
+        var executeButton = jQuery("<button>ExeCUTE</button>");
+        formElement.append(executeButton);
+        executeButton.click(function() {
+        	execute("wps-execute-form");
+        });
     } else {
         document.getElementById("input").innerHTML = '<span class="notsupported">' +
             "Sorry, this client does not support the selected process." +
@@ -274,27 +270,33 @@ function buildForm() {
 
 function createFormInputs(inputs){
     
-    var inputElements = [];
-    var container = document.getElementById("input");
+    var container = jQuery('<div id="input"></div>');
+    var complexContainer = jQuery('<div id="complex-inputs"/>');
+    var literalContainer = jQuery('<div id="literal-inputs"/>');
+    var bboxContainer = jQuery('<div id="bbox-inputs"/>');
+    container.append(complexContainer);
+    container.append(literalContainer);
+    container.append(bboxContainer);
+    
     var input;
-    for (var i=0,ii=inputs.length; i<ii; ++i) {
+    for (var i=0; i < inputs.length; i++) {
         input = inputs[i];    
                 
         if (input.complexData) {    		    		
-			createInput(input, container, TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP, TEMPLATE_EXECUTE_COMPLEX_INPUTS_COPY_MARKUP, "complex-inputs", getComplexInput);       	   
+			createInput(input, container, TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP, TEMPLATE_EXECUTE_COMPLEX_INPUTS_COPY_MARKUP, "complex-inputs", createComplexInput);       	   
         } else if (input.boundingBoxData) {            
-            createInput(input, container, TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP, TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP, "bbox-inputs", getBoundingBoxInput);               
+            createInput(input, container, TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP, TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP, "bbox-inputs", createBoundingBoxInput);               
         } else if (input.literalData) {
-            createInput(input, container, TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP, TEMPLATE_EXECUTE_LITERAL_INPUTS_COPY_MARKUP, "literal-inputs", getLiteralInput);
+            createInput(input, container, TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP, TEMPLATE_EXECUTE_LITERAL_INPUTS_COPY_MARKUP, "literal-inputs", createLiteralInput);
         }
     }
     
-    return inputElements;	
+    return container;	
 }
 
-function createInput(input, container, template, copyTemplate, inputParentId, fn){
+function createInput(input, container, template, copyTemplate, inputParentId, propertyCreationFunction){
 
-    var templateProperties = fn(input);
+    var templateProperties = propertyCreationFunction(input);
     
     if (input.minOccurs > 0) {
         templateProperties.required = "*";
@@ -302,29 +304,27 @@ function createInput(input, container, template, copyTemplate, inputParentId, fn
     	
     var name = input.identifier;
     
-    if(input.maxOccurs > 1){
+    var button = null;
+    if (input.maxOccurs > 1) {
     
-    	var copyButtonDiv = document.createElement("div"); 
+    	var copyButtonDiv = jQuery("<div></div>"); 
     
-    	var button = addInputCopyButton(name);    	
+    	button = addInputCopyButton(name);    	
     
-		copyButtonDiv.appendChild(button);
-		templateProperties.copyButton = copyButtonDiv.innerHTML;
+		copyButtonDiv.append(button);
+		templateProperties.copyButton = copyButtonDiv.html();
     }
     
     jQuery.tmpl(template, templateProperties).appendTo(container);
               
-    if(input.maxOccurs > 1){
-    
-    	var button = document.getElementById(name + "-copy-button");
+    if (input.maxOccurs > 1) {
     
     	if (button) {
-    		button.onclick = function(){ 
-    			var templateProperties = createCopy(input, fn);
+    		button.onclick = function() { 
+    			var templateProperties = createCopy(input, propertyCreationFunction);
     		
-    			if(templateProperties){				
-    				var inputsUl = document.getElementById(inputParentId);
-    	
+    			if (templateProperties) {				
+    				var inputsUl = jQuery('#'+inputParentId);
     				jQuery.tmpl(copyTemplate, templateProperties).appendTo(inputsUl);
     			}
     		};	
@@ -335,37 +335,34 @@ function createInput(input, container, template, copyTemplate, inputParentId, fn
 }
 
 // helper function for xml input
-function getComplexInput(input) {
+function createComplexInput(input) {
     
     var complexInputElements = {};
     
     var name = input.identifier;        
     
-    var fieldDiv = document.createElement("div"); 
+    var fieldDiv = jQuery("<div/>"); 
     
-    var field = document.createElement("textarea");
-    field.className = "wps-complex-input-textarea";
-    field.title = input["abstract"];
-    
-    var inputType = createInputTypeElement("complex", name+"");
+    var field = jQuery('<textarea class="wps-complex-input-textarea" title="'+ input["abstract"] +'"/>');
     
     var number = "";
     
     if(input.maxOccurs > 1){
     	number = (input.occurrence || 1);
     } 
-    
+
+    var inputType;
     if(input.maxOccurs > 1){
-    	field.id = name + number + "-input-textarea";
-    	inputType.id = name + number + "-input-type";
+    	field.attr("name", name + number);
+    	inputType = createInputTypeElement("complex", name + number + "-input-type");
     }else {
-    	field.id = name + "-input-textarea";
-    	inputType.id = name + "-input-type";
+    	field.attr("name", name);
+    	inputType = createInputTypeElement("complex", name + "-input-type");
     }
-    field.title = input["abstract"];
+    field.attr("title", input["abstract"]);
     
-    fieldDiv.appendChild(field);
-    fieldDiv.appendChild(inputType);
+    fieldDiv.append(field);
+    fieldDiv.append(inputType);
     
     var labelText = "";
     
@@ -376,37 +373,33 @@ function getComplexInput(input) {
     }
         
     var formats = input.complexData.supported.formats;
-    var formatDropBox = createFormatDropBox(name + number + "formats", formats); 
+    var formatDropBox = createFormatDropdown(name + number + "formats", formats, input); 
     
-    var formatDropBoxDiv = document.createElement("div"); 
+    var formatDropBoxDiv = jQuery("<div />"); 
       
-    formatDropBoxDiv.appendChild(formatDropBox);
+    formatDropBoxDiv.append(formatDropBox);
       
-    var checkBoxDiv = document.createElement("div");   
+    var checkBoxDiv = jQuery('<div />'); 
     
-    var checkBox = document.createElement("input");
-    checkBox.type = "checkbox";
-    checkBox.id = name + number + "-checkbox";
-    checkBox.value = "asReference";
+    var checkBox = jQuery('<input type="checkbox" name="'+name + number + "-checkbox"+'" value="asReference"/>');
     
-    checkBoxDiv.appendChild(checkBox);
-    
-    checkBoxDiv.appendChild(document.createTextNode("asReference"));
+    checkBoxDiv.append(checkBox);
+    checkBoxDiv.append("asReference");
     
     complexInputElements.identifier = labelText;
-    complexInputElements.inputField = fieldDiv.innerHTML;
-    complexInputElements.asReference = checkBoxDiv.innerHTML;
-    complexInputElements.formats = formatDropBoxDiv.innerHTML;
+    complexInputElements.inputField = fieldDiv.html();
+    complexInputElements.asReference = checkBoxDiv.html();
+    complexInputElements.formats = formatDropBoxDiv.html();
     
     return complexInputElements;    
 }
 
 // helper function to create a literal input textfield or dropdown
-function getLiteralInput(input) {
+function createLiteralInput(input) {
     
     var literalInputElements = {};        
     
-    var fieldDiv = document.createElement("div"); 
+    var fieldDiv = jQuery("<div />"); 
     
     var labelText = "";
     
@@ -419,13 +412,15 @@ function getLiteralInput(input) {
     var name = input.identifier;
     var anyValue = input.literalData.anyValue;
     // anyValue means textfield, otherwise we create a dropdown
-    var field = document.createElement(anyValue ? "input" : "select");    
+    var field = anyValue ? jQuery("<input />") : jQuery("<select />");    
     
-    field.id = name + number;
+    field.attr("name", name + number);
+    var inputType = createInputTypeElement("literal", name + number + "-input-type");
 
-    field.title = input["abstract"];
+    field.attr("title", input["abstract"]);
     
-    fieldDiv.appendChild(field);
+    fieldDiv.append(field);
+    fieldDiv.append(inputType);
     
     if(input.maxOccurs > 1){
     	labelText = input.identifier + "(" + number + "/" + input.maxOccurs + ")";
@@ -436,34 +431,33 @@ function getLiteralInput(input) {
     if (anyValue) {
         var dataType = input.literalData.dataType;
     } else {
-        var option;
-        option = document.createElement("option");
+        var option = jQuery("<option />");
         //option.innerHTML = name;
-        field.appendChild(option);
+        field.append(option);
         for (var v in input.literalData.allowedValues) {
-            option = document.createElement("option");
-            option.value = v;
-            option.innerHTML = v;
-            field.appendChild(option);
+            option = jQuery("<option />");
+            option.attr("value", v);
+            option.html(v);
+            field.append(option);
         }
     
    		if(input.literalData.defaultValue){
-   			field.value = input.literalData.defaultValue; 
+   			field.attr("value", input.literalData.defaultValue); 
    		}
     }
     
     literalInputElements.identifier = labelText;
-    literalInputElements.inputField = fieldDiv.innerHTML;   
+    literalInputElements.inputField = fieldDiv.html();
     
     return literalInputElements; 
 }
 
 // helper function to dynamically create a bounding box input
-function getBoundingBoxInput(input) {
+function createBoundingBoxInput(input) {
     
     var bboxInputElements = {};        
     
-    var fieldDiv = document.createElement("div"); 
+    var fieldDiv = jQuery("<div />"); 
     
     var labelText = "";
     
@@ -474,14 +468,16 @@ function getBoundingBoxInput(input) {
     } 
     
     var name = input.identifier;
-    var field = document.createElement("input");
-    field.title = input["abstract"];
+    var field = jQuery("<input />");
+    field.attr("title", input["abstract"]);
 
-    field.id = name + number;
+    field.attr("name", name + number);
+    var inputType = createInputTypeElement("bbox", name + number + "-input-type");
 
-    field.title = input["abstract"];    
+    field.attr("title", input["abstract"]);    
     
-    fieldDiv.appendChild(field);
+    fieldDiv.append(field);
+    fieldDiv.append(inputType);
     
     if(input.maxOccurs > 1){
     	labelText = input.identifier + "(" + number + "/" + input.maxOccurs + ")";
@@ -490,17 +486,14 @@ function getBoundingBoxInput(input) {
     }
     
     bboxInputElements.identifier = labelText;
-    bboxInputElements.inputField = fieldDiv.innerHTML;
+    bboxInputElements.inputField = fieldDiv.html();
     bboxInputElements.description = "left, bottom, right, top";
 	
 	return bboxInputElements;
 }
 
 function createInputTypeElement(theType, theId) {
-	var typeInput = document.createElement("input");
-	
-	typeInput.setAttribute("type", "hidden");
-	typeInput.setAttribute("value", theType);
+	var typeInput = jQuery('<input type="hidden" value="'+theType+'" name="'+theId+'" />');
 	
 	return typeInput;
 }
@@ -528,7 +521,7 @@ function addOutputs(){
     	
     		var formats = output.complexOutput.supported.formats;
     		
-    		var formatDropBox = createFormatDropBox(id + "formats", formats);
+    		var formatDropBox = createFormatDropdown(id + "formats", formats);
     		
     		container.appendChild(formatDropBox);
     		container.appendChild(document.createElement("p"));
@@ -537,7 +530,7 @@ function addOutputs(){
 	}
 }
 
-function getOutputs(){
+function createFormOutputs(processDescription){
     
     var container = document.getElementById("input");
     
@@ -545,7 +538,7 @@ function getOutputs(){
 	
 	var outputsUl = document.getElementById("outputs");
 	
-	var outputs = process.processOutputs;
+	var outputs = processDescription.processOutputs;
 	
 	for (var i = 0; i < outputs.length; i++) {
 		var output = outputs[i];
@@ -571,7 +564,7 @@ function getOutputs(){
     	
     		var formats = output.complexOutput.supported.formats;
     		
-    		var formatDropBox = createFormatDropBox(id + "formats", formats);
+    		var formatDropBox = createFormatDropdown(id + "formats", formats);
     		
     		var formatDropBoxDiv = document.createElement("div"); 
     		
@@ -594,13 +587,10 @@ function getOutputs(){
 	}
 }
 
-function createFormatDropBox(id, formats){
+function createFormatDropdown(id, formats, input){
 
-    var container = document.getElementById("input");
     // anyValue means textfield, otherwise we create a dropdown
-    var field = document.createElement("select");
-    field.id = id;
-    field.title = input["abstract"];
+    var field = jQuery('<select name="'+id+'" title="'+input["abstract"]+'"/>');
     
     var option;
     for (var i = 0; i < formats.length; i++) {
@@ -626,37 +616,29 @@ function createFormatDropBox(id, formats){
     	}
     	
     	//var formatString = format.mimeType + schema + encoding;
-        option = document.createElement("option");
-        option.value = JSON.stringify(format);
-        option.innerHTML = formatString;
-        field.appendChild(option);
+        option = jQuery('<option value="'+JSON.stringify(format)+'">'+formatString+'</option>');
+        field.append(option);
     }
 	return field;
 }
 
 function addInputCopyButton(id){
-
-	var button = document.createElement("button");
-	
-	button.className = "add-input-copy";
-	
-	button.id = id + "-copy-button";
-	
+	var button = jQuery('<button class="add-input-copy" id="'+id+'-copy-button" />');
 	return button;
 }
 
 // if maxOccurs is > 1, this will add a copy of the field
-function createCopy(input, fn) {
+function createCopy(input, propertyCreationFunction) {
     if (input.maxOccurs && input.maxOccurs > 1) {
         // add another copy of the field - check maxOccurs
         if(input.occurrence && input.occurrence >= input.maxOccurs){
         	return;
         }
-        var newInput = OpenLayers.Util.extend({}, input);
+        var newInput = jQuery.extend({}, input);
         // we recognize copies by the occurrence property
         input.occurrence = (input.occurrence || 1) + 1;
         newInput.occurrence = input.occurrence;
-        return fn(newInput);
+        return propertyCreationFunction(newInput);
     }
 }
 
@@ -813,8 +795,8 @@ function createBBoxData(id, number){
 // execute the process
 // use OpenLayers functionality to build the execute request
 // send it off and handle the response with our own functionality 
-function execute() {
-    
+function execute(formId) {
+    var formValues = jQuery('#'+formId).serializeArray();
     var finalInputs = [];
     
     var input;
