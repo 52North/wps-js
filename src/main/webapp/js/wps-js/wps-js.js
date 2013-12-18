@@ -250,17 +250,18 @@ function buildForm(targetDiv, processDescription) {
  	var supported = true;
  	
  	var formElement = jQuery('<form id="wps-execute-form"></form>');
+ 	formElement.submit(function() {
+        	execute("wps-execute-form");
+        	return false;
+        });
  	formElement.append(createFormInputs(processDescription.dataInputs));
 //	formElement.append(createFormOutputs(processDescription));
-	
+ 	formElement.append(jQuery('<input type="hidden" name="processIdentifier" value="'+processDescription.identifier+'" />'));
 	targetDiv.append(formElement);
         
     if (supported) {
         var executeButton = jQuery("<button>ExeCUTE</button>");
         formElement.append(executeButton);
-        executeButton.click(function() {
-        	execute("wps-execute-form");
-        });
     } else {
         document.getElementById("input").innerHTML = '<span class="notsupported">' +
             "Sorry, this client does not support the selected process." +
@@ -352,13 +353,16 @@ function createComplexInput(input) {
     } 
 
     var inputType;
+    var fieldName;
     if(input.maxOccurs > 1){
-    	field.attr("name", name + number);
-    	inputType = createInputTypeElement("complex", name + number + "-input-type");
+    	fieldName = "input_"+ name + number;
     }else {
-    	field.attr("name", name);
-    	inputType = createInputTypeElement("complex", name + "-input-type");
+    	fieldName = "input_"+ name;
     }
+    
+    field.attr("name", fieldName);
+	inputType = createInputTypeElement("complex", fieldName);
+    
     field.attr("title", input["abstract"]);
     
     fieldDiv.append(field);
@@ -373,7 +377,7 @@ function createComplexInput(input) {
     }
         
     var formats = input.complexData.supported.formats;
-    var formatDropBox = createFormatDropdown(name + number + "formats", formats, input); 
+    var formatDropBox = createFormatDropdown("format_"+fieldName, formats, input); 
     
     var formatDropBoxDiv = jQuery("<div />"); 
       
@@ -381,7 +385,7 @@ function createComplexInput(input) {
       
     var checkBoxDiv = jQuery('<div />'); 
     
-    var checkBox = jQuery('<input type="checkbox" name="'+name + number + "-checkbox"+'" value="asReference"/>');
+    var checkBox = jQuery('<input type="checkbox" name="checkbox_'+fieldName + '" value="asReference"/>');
     
     checkBoxDiv.append(checkBox);
     checkBoxDiv.append("asReference");
@@ -410,12 +414,14 @@ function createLiteralInput(input) {
     } 
     
     var name = input.identifier;
+    
+    var fieldName = "input_"+ name + number;
     var anyValue = input.literalData.anyValue;
     // anyValue means textfield, otherwise we create a dropdown
     var field = anyValue ? jQuery("<input />") : jQuery("<select />");    
     
-    field.attr("name", name + number);
-    var inputType = createInputTypeElement("literal", name + number + "-input-type");
+    field.attr("name", fieldName);
+    var inputType = createInputTypeElement("literal", fieldName);
 
     field.attr("title", input["abstract"]);
     
@@ -468,11 +474,13 @@ function createBoundingBoxInput(input) {
     } 
     
     var name = input.identifier;
+    
+    var fieldName = "input_"+ name + number;
     var field = jQuery("<input />");
     field.attr("title", input["abstract"]);
 
-    field.attr("name", name + number);
-    var inputType = createInputTypeElement("bbox", name + number + "-input-type");
+    field.attr("name", fieldName);
+    var inputType = createInputTypeElement("bbox", fieldName);
 
     field.attr("title", input["abstract"]);    
     
@@ -493,7 +501,7 @@ function createBoundingBoxInput(input) {
 }
 
 function createInputTypeElement(theType, theId) {
-	var typeInput = jQuery('<input type="hidden" value="'+theType+'" name="'+theId+'" />');
+	var typeInput = jQuery('<input type="hidden" value="'+theType+'" name="type_'+theId+ '" />');
 	
 	return typeInput;
 }
@@ -792,11 +800,76 @@ function createBBoxData(id, number){
     return boundingBoxData;
 }
 
+function parseInputs(formValues) {
+	var inputs = [];
+	var inputNameToPosition = [];
+	
+	for (var i = 0; i < formValues.length; i++) {
+		var prop = formValues[i];
+		if (stringStartsWith(prop.name, "input_")) {
+			var j = inputs.length;
+			inputs[j] = {};
+			inputs[j].identifier = prop.name.substring(6, prop.name.length);
+			inputs[j].value = prop.value;
+			inputNameToPosition[prop.name] = j;
+		}
+	}
+	
+	/*
+	 * look for each input's type
+	 */
+	for (var i = 0; i < formValues.length; i++) {
+		var prop = formValues[i];
+		if (stringStartsWith(prop.name, "type_")) {
+			var originalInputName = prop.name.substring(5, prop.name.length);
+			inputs[inputNameToPosition[originalInputName]].type = prop.value;
+			if (stringStartsWith(prop.value, "complex")) {
+				inputs[inputNameToPosition[originalInputName]].complexPayload = inputs[inputNameToPosition[originalInputName]].value;
+			}
+		}
+	}
+	
+	/*
+	 * check asReference flag
+	 */
+	for (var i = 0; i < formValues.length; i++) {
+		var prop = formValues[i];
+		if (stringStartsWith(prop.name, "checkbox_")) {
+			var originalInputName = prop.name.substring(9, prop.name.length);
+			/*
+			 * its only present in the array if checked
+			 */
+			inputs[inputNameToPosition[originalInputName]].aReference = true;
+		}
+	}
+	
+	/*
+	 * look for each input's format
+	 */
+	for (var i = 0; i < formValues.length; i++) {
+		var prop = formValues[i];
+		if (stringStartsWith(prop.name, "format_")) {
+			var originalInputName = prop.name.substring(7, prop.name.length);
+			inputs[inputNameToPosition[originalInputName]].schema = prop.value;
+		}
+	}
+	
+	return inputs;
+}
+
+function stringStartsWith(target, sub) {
+	return target.indexOf(sub) == 0;
+}
+
 // execute the process
 // use OpenLayers functionality to build the execute request
 // send it off and handle the response with our own functionality 
 function execute(formId) {
     var formValues = jQuery('#'+formId).serializeArray();
+    
+    var inputs = parseInputs(formValues);
+    
+    
     var finalInputs = [];
     
     var input;
