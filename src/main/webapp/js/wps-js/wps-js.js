@@ -130,7 +130,7 @@ function describeProcess() {
             
             var formBuilder = new FormBuilder();
             formBuilder.clearForm(jQuery('#wps-execute-container'));
-            formBuilder.buildExecuteForm(jQuery('#wps-execute-container'), process);
+            formBuilder.buildExecuteForm(jQuery('#wps-execute-container'), process, execute);
         });
     
 }

@@ -79,14 +79,14 @@ var FormBuilder = Class.extend({
 		targetDiv.html('');
 	},
 	
-	buildExecuteForm : function(targetDiv, processDescription) {
+	buildExecuteForm : function(targetDiv, processDescription, executeCallback) {
 		jQuery("#abstract").html(processDescription["abstract"]);
 
 	 	var supported = true;
 	 	
 	 	var formElement = jQuery('<form id="wps-execute-form"></form>');
 	 	formElement.submit(function() {
-	        	execute("wps-execute-form");
+	 			executeCallback("wps-execute-form");
 	        	return false;
 	        });
 	 	formElement.append(this.createFormInputs(processDescription.dataInputs));
