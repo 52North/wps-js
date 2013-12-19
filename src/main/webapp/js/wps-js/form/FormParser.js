@@ -110,6 +110,11 @@ var FormParser = Class.extend({
 			if (stringStartsWith(prop.name, "type_output")) {
 				var originalName = prop.name.substring(5, prop.name.length);
 				outputs[outputNameToPosition[originalName]].type = prop.value;
+				
+				//TODO: set via form
+				if (stringStartsWith(prop.value, "complex")) {
+					outputs[outputNameToPosition[originalName]].asReference = true;
+				}
 			}
 		}
 		
