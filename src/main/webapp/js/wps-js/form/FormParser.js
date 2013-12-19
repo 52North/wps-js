@@ -28,8 +28,13 @@ var FormParser = Class.extend({
 			if (stringStartsWith(prop.name, "type_input")) {
 				var originalInputName = prop.name.substring(5, prop.name.length);
 				inputs[inputNameToPosition[originalInputName]].type = prop.value;
+				
 				if (stringStartsWith(prop.value, "complex")) {
 					inputs[inputNameToPosition[originalInputName]].complexPayload = inputs[inputNameToPosition[originalInputName]].value;
+				}
+				
+				else if (stringStartsWith(prop.value, "bbox")) {
+					this.parseBboxValue(inputs[inputNameToPosition[originalInputName]].value, inputs[inputNameToPosition[originalInputName]]);
 				}
 			}
 		}
@@ -55,11 +60,29 @@ var FormParser = Class.extend({
 			var prop = formValues[i];
 			if (stringStartsWith(prop.name, "format_input")) {
 				var originalInputName = prop.name.substring(7, prop.name.length);
-				inputs[inputNameToPosition[originalInputName]].schema = prop.value;
+				var formatObject = JSON.parse(prop.value);
+				this.parseFormatObject(formatObject, inputs[inputNameToPosition[originalInputName]]);
 			}
 		}
 		
 		return inputs;
+	},
+	
+	parseBboxValue : function(bboxString, targetObject) {
+		var array = bboxString.split(",");
+
+		if (array.length < 4) {
+			for (var i = array.length; i < 4; i++) {
+				/*
+				 * bad input, fill it with zero
+				 * TODO: do validation in prior
+				 */
+				array[i] = "0.0";
+			}
+		}
+		
+		targetObject.lowerCorner = jQuery.trim(array[0]) + " " + jQuery.trim(array[1]);
+		targetObject.upperCorner = jQuery.trim(array[2]) + " " + jQuery.trim(array[3]);
 	},
 	
 	parseOutputs : function(formValues) {
@@ -80,7 +103,7 @@ var FormParser = Class.extend({
 		}
 		
 		/*
-		 * look for each input's type
+		 * look for each outputs type
 		 */
 		for (var i = 0; i < formValues.length; i++) {
 			var prop = formValues[i];
@@ -91,17 +114,32 @@ var FormParser = Class.extend({
 		}
 		
 		/*
-		 * look for each input's format
+		 * look for each outputs format
 		 */
 		for (var i = 0; i < formValues.length; i++) {
 			var prop = formValues[i];
 			if (stringStartsWith(prop.name, "format_output")) {
 				var originalName = prop.name.substring(7, prop.name.length);
-				outputs[outputNameToPosition[originalName]].schema = prop.value;
+				var formatObject = JSON.parse(prop.value);
+				this.parseFormatObject(formatObject, outputs[outputNameToPosition[originalName]]);
 			}
 		}
 		
 		return outputs;
+	},
+	
+	parseFormatObject : function(formatObject, targetObject) {
+		if (formatObject.mimeType) {
+			targetObject.mimeType = formatObject.mimeType;
+		}
+		
+		if (formatObject.schema) {
+			targetObject.schema = formatObject.schema;
+		}
+		
+		if (formatObject.encoding) {
+			targetObject.encoding = formatObject.encoding;
+		}
 	},
 	
 	parseProcessIdentifier : function(formValues) {

@@ -12,14 +12,41 @@ var EXECUTE_REQUEST_XML_START = '<wps:Execute service="WPS" version="1.0.0" \
 	  ${responseForm}\
 	</wps:Execute>';
 
-var EXECUTE_REQUEST_XML_COMPLEX_DATA_INPUT = '<wps:Input>\
+var EXECUTE_REQUEST_XML_COMPLEX_DATA_ALL_INPUT = '<wps:Input>\
 	      <ows:Identifier>${identifier}</ows:Identifier>\
 	      <wps:Data>\
-			<wps:ComplexData schema="${schema}">\
+			<wps:ComplexData schema="${schema}" mimeType="${mimeType}" encoding="${encoding}">\
 			${complexPayload}\
 			</wps:ComplexData>\
 	      </wps:Data>\
 	</wps:Input>';
+
+var EXECUTE_REQUEST_XML_COMPLEX_DATA_MIME_TYPE_INPUT = '<wps:Input>\
+    <ows:Identifier>${identifier}</ows:Identifier>\
+    <wps:Data>\
+		<wps:ComplexData mimeType="${mimeType}">\
+		${complexPayload}\
+		</wps:ComplexData>\
+    </wps:Data>\
+</wps:Input>';
+
+var EXECUTE_REQUEST_XML_COMPLEX_DATA_SCHEMA_INPUT = '<wps:Input>\
+    <ows:Identifier>${identifier}</ows:Identifier>\
+    <wps:Data>\
+		<wps:ComplexData schema="${schema}" mimeType="${mimeType}">\
+		${complexPayload}\
+		</wps:ComplexData>\
+    </wps:Data>\
+</wps:Input>';
+
+var EXECUTE_REQUEST_XML_COMPLEX_DATA_ENCODING_INPUT = '<wps:Input>\
+    <ows:Identifier>${identifier}</ows:Identifier>\
+    <wps:Data>\
+		<wps:ComplexData mimeType="${mimeType}" encoding="${encoding}">\
+		${complexPayload}\
+		</wps:ComplexData>\
+    </wps:Data>\
+</wps:Input>';
 
 var EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_INPUT = '<wps:Input>\
     <ows:Identifier>${identifier}</ows:Identifier>\
@@ -64,8 +91,23 @@ var EXECUTE_REQUEST_XML_RESPONSE_FORM_DOCUMENT = '<wps:ResponseForm>\
     </wps:ResponseDocument>\
   </wps:ResponseForm>';
 
-var EXECUTE_REQUEST_XML_COMPLEX_OUTPUT = '<wps:Output \
+var EXECUTE_REQUEST_XML_COMPLEX_ALL_OUTPUT = '<wps:Output \
 	asReference="${asReference}" schema="${schema}" mimeType="${mimeType}" encoding="${encoding}">\
+        <ows:Identifier>${identifier}</ows:Identifier>\
+      </wps:Output>';
+
+var EXECUTE_REQUEST_XML_COMPLEX_MIME_TYPE_OUTPUT = '<wps:Output \
+	asReference="${asReference}" mimeType="${mimeType}">\
+        <ows:Identifier>${identifier}</ows:Identifier>\
+      </wps:Output>';
+
+var EXECUTE_REQUEST_XML_COMPLEX_SCHEMA_OUTPUT = '<wps:Output \
+	asReference="${asReference}" schema="${schema}" mimeType="${mimeType}">\
+        <ows:Identifier>${identifier}</ows:Identifier>\
+      </wps:Output>';
+
+var EXECUTE_REQUEST_XML_COMPLEX_ENCODING_OUTPUT = '<wps:Output \
+	asReference="${asReference}" mimeType="${mimeType}" encoding="${encoding}">\
         <ows:Identifier>${identifier}</ows:Identifier>\
       </wps:Output>';
 	
@@ -169,7 +211,21 @@ var ExecuteRequest = PostRequest.extend({
 			markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_INPUT, input);
 		}
 		else {
-			markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_INPUT, input);
+			if (input.schema && input.encoding) {
+				markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_ALL_INPUT, input);
+			}
+			
+			else if (input.schema && !input.encoding) {
+				markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_SCHEMA_INPUT, input);
+			}
+			
+			else if (!input.schema && input.encoding) {
+				markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_ENCODING_INPUT, input);
+			}
+			
+			else {
+				markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_MIME_TYPE_INPUT, input);
+			}
 		}
 		
 		return markup;
@@ -243,15 +299,21 @@ var ExecuteRequest = PostRequest.extend({
 				outputString += this.fillTemplate(EXECUTE_REQUEST_XML_LITERAL_OUTPUT, outputs[i]);
 			}
 			else {
-				if (!outputs[i].encoding) {
-					outputs[i].encoding = "UTF-8";
+				if (outputs[i].encoding && outputs[i].schema) {
+					outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_ALL_OUTPUT, outputs[i]);
 				}
 				
-				if (!outputs[i].mimeType) {
-					outputs[i].mimeType = "text/xml";
+				else if (outputs[i].encoding && !outputs[i].schema) {
+					outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_ENCODING_OUTPUT, outputs[i]);
 				}
 				
-				outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_OUTPUT, outputs[i]);
+				else if (!outputs[i].encoding && outputs[i].schema) {
+					outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_SCHEMA_OUTPUT, outputs[i]);
+				}
+				
+				else {
+					outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_MIME_TYPE_OUTPUT, outputs[i]);
+				}
 			}
 		}
 		

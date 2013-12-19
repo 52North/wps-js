@@ -431,7 +431,8 @@ var FormBuilder = Class.extend({
 	    	}
 	    	
 	    	//var formatString = format.mimeType + schema + encoding;
-	        option = jQuery('<option value="'+JSON.stringify(format)+'">'+formatString+'</option>');
+	        option = jQuery('<option>'+formatString+'</option>');
+	        option.val(JSON.stringify(format));
 	        field.append(option);
 	    }
 		return field;
