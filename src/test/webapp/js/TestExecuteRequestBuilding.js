@@ -39,7 +39,7 @@ var EXPECTED_RESULT_COMPLEX = '<wps:Execute service="WPS" version="1.0.0" \
 	<heavy><xml><markup/></xml></heavy>\
 	</wps:ComplexData>\
       </wps:Data>\
-   </wps:Input>\
+</wps:Input>\
 	</wps:DataInputs>\
 	<wps:ResponseForm>\
    <wps:ResponseDocument storeExecuteResponse="true" lineage="true" status="true">\
@@ -210,8 +210,8 @@ function createSettingsBBOX() {
 }
 
 function compareXmlDeep(xmlA, xmlB) {
-	var xmlA = new Document();
-	var xmlB = new Document();
+//	var xmlA = new Document();
+//	var xmlB = new Document();
 	
 	if (xmlA.nodeType != xmlB.nodeType) {
 		jstestdriver.console.log("nodeType: "+ xmlA.nodeType +" != "+ xmlB.nodeType);
