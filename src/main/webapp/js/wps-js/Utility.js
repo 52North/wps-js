@@ -14,3 +14,15 @@ function equalsString(a, b) {
 function stringStartsWith(target, sub) {
 	return target.indexOf(sub) == 0;
 }
+
+function fillXMLTemplate(template, properties) {
+	var result = template;
+	
+	for (var key in properties) {
+		if (properties.hasOwnProperty(key)) {
+			result = result.replace("${"+key+"}", properties[key]);	
+		}
+	}
+	
+	return result;
+}

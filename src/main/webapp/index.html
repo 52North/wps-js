@@ -62,8 +62,16 @@
 		});
 
 		// add behavior to html elements
-		document.getElementById("processes").onchange = describeProcess;
-		document.getElementById("wps").onchange = getCapabilities;
+		document.getElementById("processes").onchange = function() {
+			var sel = document.getElementById("processes");
+			
+			describeProcess(sel.options[sel.selectedIndex].text);
+		};
+		document.getElementById("wps").onchange = function() {
+			var sel = document.getElementById("wps");
+			
+			getCapabilities(sel.options[sel.selectedIndex].text);
+		};
 		
 	</script>
 
