@@ -78,15 +78,15 @@ function removePocessesFromSelectFast(){
     option.innerHTML = "Select a process";
     option.value = "Select a process";
     newSelectObj.appendChild(option);	
-    newSelectObj.onchange = describeProcess;
+    newSelectObj.onchange = selectObj.onchange;
 	return newSelectObj;
 }
 
 // using OpenLayers.Format.WPSCapabilities to read the capabilities
 // and fill available process list
-function getCapabilities() {
+function getCapabilities(wpsUrl) {
     
-	jQuery.wpsSetup({configuration : {url : this.options[this.selectedIndex].value}});
+	jQuery.wpsSetup({configuration : {url : wpsUrl}});
 //    wps = this.options[this.selectedIndex].value;
     
     removePocessesFromSelectFast();
@@ -120,7 +120,7 @@ function describeProcess(processIdentifier, wpsUrl, targetContainer) {
 	}
 	
 	if (!wpsUrl) {
-		wpsUrl = wps;
+		wpsUrl = wps.getServiceUrl();
 	}
 	
 	if (!targetContainer) {
