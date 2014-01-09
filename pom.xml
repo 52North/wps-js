@@ -95,6 +95,10 @@
 								<jsSourceFile>request/DescribeProcessPostRequest.js</jsSourceFile>
 								<jsSourceFile>request/GetCapabilitiesPostRequest.js</jsSourceFile>
 
+								<!-- Form classes -->
+								<jsSourceFile>form/FormBuilder.js</jsSourceFile>
+								<jsSourceFile>form/FormParser.js</jsSourceFile>
+								
 								<!-- Entry point -->
 								<jsSourceFile>wps-js.js</jsSourceFile>
 							</jsSourceFiles>
