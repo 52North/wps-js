@@ -1,3 +1,4 @@
+var wps;
 
 function resolveRequest(type, method, settings) {
 	if (type == GET_CAPABILITIES_TYPE) {
@@ -85,12 +86,13 @@ function removePocessesFromSelectFast(){
 // and fill available process list
 function getCapabilities() {
     
-    wps = this.options[this.selectedIndex].value;
+	jQuery.wpsSetup({configuration : {url : this.options[this.selectedIndex].value}});
+//    wps = this.options[this.selectedIndex].value;
     
     removePocessesFromSelectFast();
     
     var getCap = new GetCapabilitiesGetRequest({
-    	url : wps
+    	url : wps.getServiceUrl()
     });
     
     getCap.execute(function(response, targetDomElement, originalRequest, updateSwitch) {
@@ -112,12 +114,22 @@ function getCapabilities() {
 
 // using OpenLayers.Format.WPSDescribeProcess to get information about a
 // process
-function describeProcess() {
-    var selection = this.options[this.selectedIndex].value;
+function describeProcess(processIdentifier, wpsUrl, targetContainer) {
+	if (!processIdentifier) {
+		processIdentifier = this.options[this.selectedIndex].value;		
+	}
+	
+	if (!wpsUrl) {
+		wpsUrl = wps;
+	}
+	
+	if (!targetContainer) {
+		targetContainer = "wps-execute-container";
+	}
     
     var describeProcess = new DescribeProcessGetRequest({
-    	url : wps,
-    	processIdentifier: selection
+    	url : wpsUrl,
+    	processIdentifier: processIdentifier
     });
     
     describeProcess.execute(function(response, targetDomElement, originalRequest, updateSwitch) {
@@ -126,17 +138,17 @@ function describeProcess() {
                 response
             );
             
-            var process = parsed.processDescriptions[selection];
+            var process = parsed.processDescriptions[processIdentifier];
             
             var formBuilder = new FormBuilder();
-            formBuilder.clearForm(jQuery('#wps-execute-container'));
-            formBuilder.buildExecuteForm(jQuery('#wps-execute-container'), process, execute);
+            formBuilder.clearForm(jQuery('#'+targetContainer));
+            formBuilder.buildExecuteForm(jQuery('#'+targetContainer), process, execute);
         });
     
 }
 
 // execute the process
-function execute(formId) {
+function execute(formId, wpsUrl) {
     var formValues = jQuery('#'+formId).serializeArray();
     
     var parser = new FormParser();
@@ -145,8 +157,12 @@ function execute(formId) {
     var processIdentifier = parser.parseProcessIdentifier(formValues);
     var outputStyle = parser.parseOutputStyle(formValues);
     
+    if (!wpsUrl) {
+    	wpsUrl = wps.getServiceUrl();
+    }
+    
     var settings = {
-			url: wps,
+			url: wpsUrl,
 			inputs: inputs,
 			outputs: outputs,
 			outputStyle: outputStyle,
@@ -237,7 +253,7 @@ function execute(formId) {
 	    	}
 	    	
 	    	if (setup.configuration) {
-	    		
+	    		wps = new WPSConfiguration(setup.configuration);
 	    	}
 
 		}

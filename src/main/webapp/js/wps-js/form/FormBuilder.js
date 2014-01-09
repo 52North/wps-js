@@ -80,6 +80,7 @@ var FormBuilder = Class.extend({
 	},
 	
 	buildExecuteForm : function(targetDiv, processDescription, executeCallback) {
+		var procObj = JSON.stringify(processDescription);
 		jQuery("#abstract").html(processDescription["abstract"]);
 
 	 	var supported = true;
@@ -200,6 +201,10 @@ var FormBuilder = Class.extend({
 	    
 	    field.attr("title", input["abstract"]);
 	    
+	    if (input.predefinedValue) {
+	    	field.html(input.predefinedValue);
+	    }
+	    
 	    fieldDiv.append(field);
 	    fieldDiv.append(inputType);
 	    
@@ -279,12 +284,23 @@ var FormBuilder = Class.extend({
 	            option = jQuery("<option />");
 	            option.attr("value", v);
 	            option.html(v);
+	            
+	            if (input.predefinedValue && equalsString(input.predefinedValue, v)) {
+	            	option.attr("selected", true);
+	            }
+	            
 	            field.append(option);
 	        }
 	    
 	   		if(input.literalData.defaultValue){
 	   			field.attr("value", input.literalData.defaultValue); 
 	   		}
+	    }
+	    
+	    if (input.predefinedValue) {
+	    	if (anyValue) {
+	    		field.attr("value", input.predefinedValue);
+	    	}
 	    }
 	    
 	    literalInputElements.identifier = labelText;
@@ -317,7 +333,11 @@ var FormBuilder = Class.extend({
 	    field.attr("name", fieldName);
 	    var inputType = self.createInputTypeElement("bbox", fieldName);
 
-	    field.attr("title", input["abstract"]);    
+	    field.attr("title", input["abstract"]);
+	    
+	    if (input.predefinedValue) {
+	    	field.attr("value", input.predefinedValue);
+	    }
 	    
 	    fieldDiv.append(field);
 	    fieldDiv.append(inputType);
@@ -365,6 +385,10 @@ var FormBuilder = Class.extend({
 	    	var checkBox = jQuery('<input type="checkbox"/>');
 	    	checkBox.attr("name", id);
 	    	var typeField = this.createInputTypeElement(output.complexOutput ? "complex" : "literal", id);
+	    	
+	    	if (output.selected) {
+	    		checkBox.attr("checked", "checked");
+	    	}
 	    	
 	    	checkBoxDiv.append(checkBox);
 	    	checkBoxDiv.append(typeField);
