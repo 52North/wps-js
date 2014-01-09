@@ -88,6 +88,10 @@
 			alert("Dataset '"+id+"' is not supported.");
 		}
 		
+		function invalidDatasets() {
+			alert("The provided datasets are not available or insufficient.");
+		}
+		
 		//var wps = "http://localhost:8080/wps/WebProcessingService",
 		//var wps = "http://geoviqua.dev.52north.org/wps/WebProcessingService",
 		var wps, capabilities, // the capabilities, read by Format.WPSCapabilities::read
@@ -115,7 +119,13 @@
 			var onlineResourceMapping = prepareOnlineResourceMappings();
 			
 			var finalMappings = {};
+			
 			//check if the datasets are supported
+			
+			if (!ids || ids.length < 2) {
+				invalidDatasets();
+				return;
+			}
 			for (var i = 0; i < ids.length; i++) {
 				var elem = ids[i];
 				if (!identifierToDatasetMap[elem]) {
