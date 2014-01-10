@@ -97,15 +97,18 @@ div.wps-container {
 						<li><a
 							href="http://scgeoviqua.sapienzaconsulting.com/web/guest/geo_home">Demo
 								Geoportal</a></li>
-						<li><a href="'">GECA</a></li>
+						<!-- 						<li><a href="'">GECA</a></li> -->
 					</ul>
 				</div>
 			</div>
 		</div>
 
-		<div class="container" style="padding-top: 100px;">
+		<div class="container"
+			style="padding-top: 100px; padding-bottom: 42px;">
 			<div id="notification"></div>
-			<div id="welcome"></div>
+			<div id="welcome">
+				<p class="source">Welcome!</p>
+			</div>
 			<div id="documentation">
 				<p>GECA is a toolkit for ingesting, processing and
 					inter-comparing satellite data against correlative data, which can
@@ -115,7 +118,8 @@ div.wps-container {
 					their Geoportal identifiers. Internally, these identifiers can be
 					resolved to the actual access points for the datasets and
 					reasonable values to perform a dataset comparison of two types: <em>intercomparison</em>
-					or <em>colocation</em>.
+					or <em>colocation</em>. You can use the raw process <a
+						href="../../">here</a>.
 				</p>
 				<p>
 					Besides the comparison type, you can select the output: a <em>PDF</em>
@@ -125,10 +129,13 @@ div.wps-container {
 				</p>
 			</div>
 
+			<h3 id="clientHeadline" style="display: none;">Dataset
+				comparison</h3>
 			<div id="wrapper">
 				<div class="wps-container">
 					<div class="wps-execute-container" id="wps-form"></div>
 				</div>
+				<p>&nbsp;</p>
 				<div class="wps-container">
 					<div id="executeProcess"></div>
 				</div>
@@ -143,7 +150,7 @@ div.wps-container {
 						<dd>
 							<a href="http://www.52north.org/">http://www.52north.org</a>
 						</dd>
-						<dt>GitHub Project</dt>
+						<dt>WPS Javascript client GitHub Project</dt>
 						<dd>
 							<a href="https://github.com/52North/wps-js/">https://github.com/52North/wps-js</a>
 							<a href="https://github.com/52North/wps-js/"
@@ -163,8 +170,8 @@ div.wps-container {
 					</dl>
 				</div>
 				<p class="text-center" style="margin-top: 10px;">Copyright ©
-					2013 52°North Initiative for Geospatial Open Source Software GmbH.
-					All Rights Reserved. | ${project.build.finalName}
+					2013 52&deg;North Initiative for Geospatial Open Source Software
+					GmbH. All Rights Reserved. | ${project.build.finalName}
 					#${build-commit-abbrev}</p>
 			</div>
 		</div>
@@ -236,12 +243,19 @@ div.wps-container {
 			return result;
 		}
 
+		function showAlertBox(text) {
+			jQuery("#notification").html(
+					'<div class="alert alert-danger">' + text + '<div>');
+		}
+
 		function datasetNotSupported(id) {
-			alert("Dataset '" + id + "' is not supported.");
+			showAlertBox('Dataset "'
+					+ id
+					+ '" is not supported. <a href="javascript:history.go(-1)">[Go Back]</a>');
 		}
 
 		function invalidDatasets() {
-			alert("The provided datasets are not available or insufficient.");
+			showAlertBox('The provided datasets are not available or insufficient. <a href="javascript:history.go(-1)">[Go Back]</a>');
 		}
 
 		//var wps = "http://localhost:8080/wps/WebProcessingService",
@@ -287,13 +301,14 @@ div.wps-container {
 									return;
 								}
 							}
+
+							// ids are provided and supported:
 							var params = prepareExecuteParameters(createPredefinedValues(
 									identifierToDatasetMap,
 									onlineResourceMapping));
 
 							var source = getUrlVar("source");
 							setupWelcome(source, ids, identifierToDatasetMap);
-
 							setupWPSForm(params);
 						});
 
@@ -386,6 +401,7 @@ div.wps-container {
 								})
 					})
 			jQuery("#welcome").html(welcomeText);
+			jQuery("#clientHeadline").css("display", "block");
 
 			jQuery("#btn_execute").html("Start Process");
 		}
