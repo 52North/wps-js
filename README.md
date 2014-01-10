@@ -14,6 +14,8 @@ A simple configuration of a Tomcat servlet container to develop wps-js is to poi
 />
 ```
 
+You can then update the deployed copy by running ``mvn package -DskiptTests=true``.
+
 ### Proxy
 
 wps-js needs a proxy server to connect to WPS server instances. A simple one is jproxy, see https://github.com/matthesrieke/jprox. wps-js will by default look for a proxy at ``/wps_proxy/wps_proxy?``.
@@ -23,6 +25,7 @@ wps-js needs a proxy server to connect to WPS server instances. A simple one is 
 Make sure you use the following parameters in jprox's ``web.xml`` and deploy it as ``wps_proxy.war`` to make it work with the default wps-js configuration.
 
 ```
+[...]
 <param-name>parameterKey</param-name>
 <param-value>url</param-value>
 [...]

@@ -1,8 +1,8 @@
 
 var TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP = '\
-	<div class="wps-execute-complex-inputs"> \
+	<div class="wps-execute-complex-inputs" id="input_${identifier}"> \
 		<div class="wps-execute-response-process"> \
-			<ul class="wps-execute-response-list" id="complex-inputs"> \
+			<ul class="wps-execute-response-list"> \
 				<li class="wps-execute-response-list-entry"> \
 					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}{{html asReference}}</li> \
 				<li class="wps-execute-response-list-entry"> \
@@ -18,9 +18,9 @@ var TEMPLATE_EXECUTE_COMPLEX_INPUTS_COPY_MARKUP = '\
 					{{html formats}}</li>';
 
 var TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP = '\
-	<div class="wps-execute-complex-inputs"> \
+	<div class="wps-execute-literal-inputs" id="input_${identifier}"> \
 		<div class="wps-execute-response-process"> \
-			<ul class="wps-execute-response-list" id="literal-inputs"> \
+			<ul class="wps-execute-response-list"> \
 				<li class="wps-execute-response-list-entry"> \
 					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}{{html copyButton}}</li> \
 			</ul> \
@@ -33,9 +33,9 @@ var TEMPLATE_EXECUTE_LITERAL_INPUTS_COPY_MARKUP = '\
 
 
 var TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP = '\
-	<div class="wps-execute-complex-inputs"> \
+	<div class="wps-execute-bbox-inputs" id="input_${identifier}"> \
 		<div class="wps-execute-response-process"> \
-			<ul class="wps-execute-response-list" id="bbox-inputs"> \
+			<ul class="wps-execute-response-list"> \
 				<li class="wps-execute-response-list-entry"> \
 					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}<label>${description}</label>{{html copyButton}}</li> \
 			</ul> \
@@ -80,11 +80,8 @@ var FormBuilder = Class.extend({
 	},
 	
 	buildExecuteForm : function(targetDiv, processDescription, executeCallback) {
-		var procObj = JSON.stringify(processDescription);
 		jQuery("#abstract").html(processDescription["abstract"]);
 
-	 	var supported = true;
-	 	
 	 	var formElement = jQuery('<form id="wps-execute-form"></form>');
 	 	formElement.submit(function() {
 	 			executeCallback("wps-execute-form");
@@ -95,14 +92,8 @@ var FormBuilder = Class.extend({
 	 	formElement.append(jQuery('<input type="hidden" name="processIdentifier" value="'+processDescription.identifier+'" />'));
 		targetDiv.append(formElement);
 	        
-	    if (supported) {
-	        var executeButton = jQuery("<button>ExeCUTE</button>");
-	        formElement.append(executeButton);
-	    } else {
-	        document.getElementById("input").innerHTML = '<span class="notsupported">' +
-	            "Sorry, this client does not support the selected process." +
-	            "</span>";
-	    }
+        var executeButton = jQuery("<button id=\"btn_execute\">Execute</button>");
+        formElement.append(executeButton);
 	},
 	
 	createFormInputs : function(inputs){
@@ -152,7 +143,8 @@ var FormBuilder = Class.extend({
 			templateProperties.copyButton = copyButtonDiv.html();
 	    }
 	    
-	    jQuery.tmpl(template, templateProperties).appendTo(container);
+	    var result = jQuery.tmpl(template, templateProperties);
+	    result.appendTo(container);
 	              
 	    if (input.maxOccurs > 1) {
 	    
@@ -168,6 +160,10 @@ var FormBuilder = Class.extend({
 	    	}
 		
 		}
+	    
+	    if (input.hidden) {
+	    	result.css("display", "none");
+	    }
 
 	},
 
