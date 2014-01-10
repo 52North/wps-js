@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+	<meta charset="UTF-8">
 	<script src="../js/jquery/jquery.1.8.3.min.js"></script>
 	<script src="../js/jquery/jquery-ui.1.8.3.min.js"></script>
 	<script src="../js/wps-js/wps-js.${project.version}.js"></script>
@@ -74,5 +75,9 @@
 			});
 		});
 	</script>
+	
+	<div>
+		<p>${project.build.finalName} #${build-commit-abbrev} as of ${build-tstamp}, build at ${buildTimestamp}</p>
+	</div>
 </body>
 </html>
