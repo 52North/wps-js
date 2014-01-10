@@ -77,6 +77,9 @@
 
 								<!-- Utility -->
 								<jsSourceFile>Utility.js</jsSourceFile>
+								
+								<!-- Model  -->
+								<jsSourceFile>model/WPSConfiguration.js</jsSourceFile>
 
 								<!-- Response class -->
 								<jsSourceFiles>response/BaseResponse.js</jsSourceFiles>
@@ -95,6 +98,10 @@
 								<jsSourceFile>request/DescribeProcessPostRequest.js</jsSourceFile>
 								<jsSourceFile>request/GetCapabilitiesPostRequest.js</jsSourceFile>
 
+								<!-- Form classes -->
+								<jsSourceFile>form/FormBuilder.js</jsSourceFile>
+								<jsSourceFile>form/FormParser.js</jsSourceFile>
+								
 								<!-- Entry point -->
 								<jsSourceFile>wps-js.js</jsSourceFile>
 							</jsSourceFiles>
@@ -114,6 +121,7 @@
 							<directory>src/main/webapp</directory>
 							<includes>
 								<include>html/**</include>
+								<include>demo/**</include>
 								<include>index.html</include>
 								<include>jstestdriver/**</include>
 								<include>WEB-INF/**</include>

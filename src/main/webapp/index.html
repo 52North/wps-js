@@ -33,8 +33,7 @@
 			<div class="wps-container">
 				<select id="processes"><option>Select a process</option></select>
 				<p id="abstract"></p>
-				<div id="input"></div>
-				<div id="output"></div>
+				<div class="wps-execute-container" id="wps-execute-container"></div>
 			</div>
 			<p></p>
 			<div class="wps-container">
@@ -64,8 +63,16 @@
 		});
 
 		// add behavior to html elements
-		document.getElementById("processes").onchange = describeProcess;
-		document.getElementById("wps").onchange = getCapabilities;
+		document.getElementById("processes").onchange = function() {
+			var sel = document.getElementById("processes");
+			
+			describeProcess(sel.options[sel.selectedIndex].text);
+		};
+		document.getElementById("wps").onchange = function() {
+			var sel = document.getElementById("wps");
+			
+			getCapabilities(sel.options[sel.selectedIndex].text);
+		};
 		
 	</script>
 
