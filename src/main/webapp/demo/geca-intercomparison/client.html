@@ -88,8 +88,9 @@ div.wps-container {
 						<span class="icon-bar"></span> <span class="icon-bar"></span> <span
 							class="icon-bar"></span>
 					</button>
-					<a class="navbar-brand" href="#">GeoViQua Dataset
-						Intercomparison Demo</a>
+					<a class="navbar-brand"
+						href="http://localhost:8080/wps-js/demo/geca-intercomparison/client.html">GeoViQua
+						Dataset Intercomparison Demo</a>
 				</div>
 				<div class="navbar-collapse collapse">
 					<ul class="nav navbar-nav">
@@ -118,8 +119,8 @@ div.wps-container {
 					their Geoportal identifiers. Internally, these identifiers can be
 					resolved to the actual access points for the datasets and
 					reasonable values to perform a dataset comparison of two types: <em>intercomparison</em>
-					or <em>colocation</em>. You can use the raw process <a
-						href="../../">here</a>.
+					or <em>colocation</em>.<span id="fullForm"></span> A working
+					example can be found <a href="..." id="link_example">here</a>.
 				</p>
 				<p>
 					Besides the comparison type, you can select the output: a <em>PDF</em>
@@ -188,10 +189,20 @@ div.wps-container {
 		var WELCOME_TEMPLATE = '<p><span class="source">Hello ${gecademoSource} user!</span></p><p><span class="ids">You want to compare the datasets ${gecademoDataset1} and ${gecademoDataset2}.</span></p>';
 		var WELCOME_DATASET_BACKLINK_TEMPLATE = '<a href="http://scgeoviqua.sapienzaconsulting.com/web/guest/geo_resources_details?p_p_id=vrdPortlet_WAR_geoportal&p_p_lifecycle=0&p_p_state=normal&p_p_mode=view&p_p_col_id=column-2&p_p_col_pos=1&p_p_col_count=2&_vrdPortlet_WAR_geoportal_uuid=${gecademoDatasetLink}&sourceType=USGSGN">${gecademoDatasetName}</a>';
 
-		function prepareDatasetMappings() {
+		var FULL_FORM_TEMPLATE = ' You can use the raw process and see all preset values <a href="${gecademoFullFormLink}" id="link_fullForm" title="Show form with all inputs">here</a>.';
+
+		function supportedDatasets() {
 			var result = {};
-			result["067a17f9-8d37-4d15-b405-25e701dd03b0"] = "SCI_OL__2P";
-			result["31172be3-01ae-4d4d-b500-8e734a1d5432"] = "ERS_GOM_LVL21";
+			result[0] = "067a17f9-8d37-4d15-b405-25e701dd03b0";
+			result[1] = "31172be3-01ae-4d4d-b500-8e734a1d5432";
+			return result;
+		}
+
+		function prepareDatasetMappings() {
+			var ids = supportedDatasets();
+			var result = {};
+			result[ids[0]] = "SCI_OL__2P";
+			result[ids[1]] = "ERS_GOM_LVL21";
 			return result;
 		}
 
@@ -282,14 +293,23 @@ div.wps-container {
 								}
 							});
 
+							var finalMappings = {};
+
+							// add a link to a working example
+							var fullLink = window.location.href
+									.substring(0, window.location.href
+											.indexOf("client.html") + 11)
+									+ "?source=Testlink&_pdPortlet_WAR_geoportal_uuid="
+									+ supportedDatasets()[0]
+									+ "&_pdPortlet_WAR_geoportal_uuid="
+									+ supportedDatasets()[1];
+							jQuery("#link_example").attr("href", fullLink);
+
 							var ids = getUrlVar("_pdPortlet_WAR_geoportal_uuid");
 							var identifierToDatasetMap = prepareDatasetMappings();
 							var onlineResourceMapping = prepareOnlineResourceMappings();
 
-							var finalMappings = {};
-
 							//check if the datasets are supported
-
 							if (!ids || ids.length < 2) {
 								invalidDatasets();
 								return;
@@ -304,11 +324,21 @@ div.wps-container {
 
 							var hideValue = getUrlVar("hide");
 							var hidePrefilledFormElements = !(hideValue == "false");
-							
+
+							var fullFormLink = fillXMLTemplate(
+									FULL_FORM_TEMPLATE,
+									{
+										gecademoFullFormLink : window.location.href
+												+ "&hide=false"
+									});
+							jQuery("#fullForm").html(fullFormLink);
+
 							// ids are provided and supported:
-							var params = prepareExecuteParameters(createPredefinedValues(
-									identifierToDatasetMap,
-									onlineResourceMapping), hidePrefilledFormElements);
+							var params = prepareExecuteParameters(
+									createPredefinedValues(
+											identifierToDatasetMap,
+											onlineResourceMapping),
+									hidePrefilledFormElements);
 
 							var source = getUrlVar("source");
 							setupWelcome(source, ids, identifierToDatasetMap);
