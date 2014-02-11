@@ -2,6 +2,10 @@
 
 Standalone JavaScript WPS client.
 
+## Documentation
+
+Project and user documentation can be found in the 52°North wiki: https://wiki.52north.org/bin/view/Geoprocessing/Wps-js
+
 ## Development
 
 ### Tomcat configuration
