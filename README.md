@@ -6,7 +6,8 @@ Standalone JavaScript WPS client.
 
 ### Tomcat configuration
 
-A simple configuration of a Tomcat servlet container to develop wps-js is to point the context of the webapp to the Maven target directory.
+#### Catalina context
+A simple configuration of a Tomcat servlet container to develop wps-js is to point the context of the webapp to the Maven target directory. Put the following lines into a file ``<Tomcat dir>\conf\Catalina\localhost\wps-js.xml`` and restart the servlet container:
 
 ```
 <Context 
@@ -15,6 +16,10 @@ A simple configuration of a Tomcat servlet container to develop wps-js is to poi
 ```
 
 You can then update the deployed copy by running ``mvn package -DskiptTests=true``.
+
+#### Eclipse WTP
+
+Alternatively configuration with the web tools plug-in in Eclipse: Open your server configuration, then the tab "Modules" and add the path ``<your path>/wps-js/target/wps-js-1.0.0-SNAPSHOT`` as the document base and any path, for example ``/wps-js``.
 
 ### Proxy
 
@@ -34,6 +39,8 @@ Make sure you use the following parameters in jprox's ``web.xml`` and deploy it 
 	<url-pattern>/</url-pattern>
 [...]
 ```
+
+Alternatively, you can also import jproxy as a project in Eclipse and configure it as a web module for your testing server in the WTP plug-in.
 
 ## License
 
