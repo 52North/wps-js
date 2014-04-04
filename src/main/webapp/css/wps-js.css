@@ -81,6 +81,14 @@ span.wps-item-error-value {
 	color: red;
 }
 
+span.wps-item-error-message-value {
+	color: red;
+	display: block;
+    unicode-bidi: embed;
+    font-family: monospace;
+    white-space: pre;
+}
+
 textarea.wps-complex-input-textarea {
 	width: 377px;
 	height: 17px;

@@ -28,10 +28,12 @@ var TEMPLATE_EXECUTE_RESPONSE_STATUS_NORMAL_MARKUP = '\
 			<label class="wps-item-label">Status</label><span class="wps-item-value">${status}</span> \
 	</li>';
 
-//TODO add functionalities to show exception
 var TEMPLATE_EXECUTE_RESPONSE_STATUS_FAILED_MARKUP = '\
 	<li class="wps-execute-response-list-entry"> \
 			<label class="wps-item-label">Status</label><span class="wps-item-error-value">${status}</span> \
+	</li> \
+	<li class="wps-execute-response-list-entry"> \
+			<label class="wps-item-label">Message</label><span class="wps-item-error-message-value">${message}</span> \
 	</li>';
 
 var ExecuteResponse = BaseResponse.extend({
@@ -68,7 +70,8 @@ var ExecuteResponse = BaseResponse.extend({
 		
 		var properties = null;
 		var extensions = {};
-		var statusText = null;		
+		var statusText = null;
+		var statusMessage = null;
 		var processFailed = false;
 		
 		if (process && process[0] && status && status[0]) {
@@ -108,7 +111,12 @@ var ExecuteResponse = BaseResponse.extend({
 				var failed = status[0].getElementsByTagNameNS(WPS_100_NAMESPACE, "ProcessFailed");
 				if (failed && failed.length > 0) {
 					statusText = "Process failed";
-					//TODO display exception text
+					
+					exceptionText = status[0].getElementsByTagNameNS(OWS_11_NAMESPACE, "ExceptionText");
+					if(exceptionText) {
+						statusMessage = exceptionText.item(0).innerHTML;
+						//TODO display more than one exception text
+					}
 					processFailed = true;
 				}
 			}
@@ -167,7 +175,8 @@ var ExecuteResponse = BaseResponse.extend({
 		var statusList = statusDiv.children('#wps-execute-response-list');
 		
 		statusProperties = {
-			status: statusText
+			status: statusText,
+			message: statusMessage
 		};
 		
 		if(!processFailed){
