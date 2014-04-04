@@ -40,7 +40,7 @@ Make sure you use the following parameters in jprox's ``web.xml`` and deploy it 
 [...]
 ```
 
-Alternatively, you can also import jproxy as a project in Eclipse and configure it as a web module for your testing server in the WTP plug-in.
+Alternatively, you can also import jproxy as a project in Eclipse and configure it as a web module for your testing server in the WTP plug-in using the path ``/wps_proxy``.
 
 ## License
 
