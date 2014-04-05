@@ -18,9 +18,14 @@ var TEMPLATE_EXECUTE_RESPONSE_MARKUP = '\
 		<div id="wps-execute-response-extension"></div> \
 	</div>';
 
-var TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP = '\
-	<div> \
-			<label class="wps-extension-item-label">${key}</label><span class="wps-item-value"><a href="${value}">download</a></span></li> \
+var TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_DOWNLOAD = '\
+	<div class="wps-execute-response-result"> \
+			<label class="wps-extension-item-label">${key}</label><span class="wps-item-value"><a href="${value}" title="${title}">download</a></span></li> \
+	</div>';
+
+var TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_VALUE = '\
+	<div class="wps-execute-response-result"> \
+			<label class="wps-extension-item-label">${key}</label><span class="wps-item-value" title="${title} | ${valueType}">${value}</span></li> \
 	</div>';
 
 var TEMPLATE_EXECUTE_RESPONSE_STATUS_NORMAL_MARKUP = '\
@@ -45,18 +50,42 @@ var ExecuteResponse = BaseResponse.extend({
 		for (var i = 0; i < outputs.length; i++) {
 			var element = outputs[i];
 			var identifier = element.getElementsByTagNameNS(OWS_11_NAMESPACE, "Identifier");
+			var title = element.getElementsByTagNameNS(OWS_11_NAMESPACE, "Title");
 			var reference = element.getElementsByTagNameNS(WPS_100_NAMESPACE, "Reference");
+			var data = element.getElementsByTagNameNS(WPS_100_NAMESPACE, "Data");
 			var value;
-			if (reference && reference.length > 0) {
+			var valueType = null;
+			if (reference && reference.length > 0) { // create link from reference
 				value = reference[0].getAttribute("href");
+				array[i] = {
+						key : jQuery(identifier).text(),
+						title: jQuery(title).text(),
+						value : value,
+						ref: true
+				};
 			}
 			else {
-				value = "n/a";
+				if(data && data.length > 0) { // show inline values
+					value = "", valueType = "";
+					// each data child element
+					jQuery(data).children().each(function(key, val) {
+						var $val = jQuery(val);
+						value += $val.text();
+						valueType += $val.attr("dataType");
+					});
+				}
+				else {
+					value = "n/a";
+				}
+				
+				array[i] = {
+						key : jQuery(identifier).text(),
+						title: jQuery(title).text(),
+						value : value,
+						valueType: valueType,
+						ref: false
+				};
 			}
-			array[i] = {
-					key : jQuery(identifier).text(),
-					value : value
-			};
 		}
 		
 		var result = {outputs : array};
@@ -188,7 +217,14 @@ var ExecuteResponse = BaseResponse.extend({
 		if (extensions && !jQuery.isEmptyObject(extensions)) {
 			var extensionDiv = result.children('#wps-execute-response-extension');
 			if (extensions.outputs) {
-				jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP, extensions.outputs).appendTo(extensionDiv);
+				jQuery(extensions.outputs).each(function(key, value) {
+						if(value.ref == true) {
+							jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_DOWNLOAD, value).appendTo(extensionDiv);
+						}
+						else {
+							jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_VALUE, value).appendTo(extensionDiv);
+						}
+					});
 			}
 		}
 		
