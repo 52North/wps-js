@@ -26,13 +26,13 @@ div.wps-waiting {
 	height:32px;
 }
 
-ul.wps-execute-response-list {
+ul.wps-execute-response-list, ul.wps-capabilities-list {
 	list-style-type: none;
 	padding: 0;
 	margin-top: 0;
 }
 
-ul.wps-execute-response-list li {
+ul.wps-execute-response-list li, ul.wps-capabilities-list li {
 	margin: 0.2em 0;
 }
 
