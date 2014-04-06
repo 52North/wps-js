@@ -80,20 +80,22 @@ var FormBuilder = Class.extend({
 	},
 	
 	buildExecuteForm : function(targetDiv, processDescription, executeCallback) {
-		jQuery("#abstract").html(processDescription["abstract"]);
-
 	 	var formElement = jQuery('<form id="wps-execute-form"></form>');
 	 	formElement.submit(function() {
 	 			executeCallback("wps-execute-form");
 	        	return false;
 	        });
+	 	if(processDescription["abstract"] != null && processDescription["abstract"] != "null") {
+	 		formElement.append(jQuery('<span id="abstract">' + processDescription["abstract"] + "</span>"));
+	 	}
 	 	formElement.append(this.createFormInputs(processDescription.dataInputs));
 		formElement.append(this.createFormOutputs(processDescription));
 	 	formElement.append(jQuery('<input type="hidden" name="processIdentifier" value="'+processDescription.identifier+'" />'));
-		targetDiv.append(formElement);
 	        
         var executeButton = jQuery("<button id=\"btn_execute\">Execute</button>");
         formElement.append(executeButton);
+        
+        targetDiv.append(jQuery("<div>").append(formElement));
 	},
 	
 	createFormInputs : function(inputs){

@@ -143,8 +143,9 @@ function describeProcess(processIdentifier, wpsUrl, targetContainer) {
     	processIdentifier: processIdentifier
     });
     
+    // build form for execute
     describeProcess.execute(function(response, targetDomElement, originalRequest, updateSwitch) {
-    	//TODO read response with DescribeProcessResponse.js
+    		// TODO read response with DescribeProcessResponse.js
             var parsed = new OpenLayers.Format.WPSDescribeProcess().read(
                 response
             );
@@ -154,6 +155,11 @@ function describeProcess(processIdentifier, wpsUrl, targetContainer) {
             var formBuilder = new FormBuilder();
             formBuilder.clearForm(jQuery('#'+targetContainer));
             formBuilder.buildExecuteForm(jQuery('#'+targetContainer), process, execute);
+            
+            // create a link to the full process description
+            var processDescriptionLink = jQuery('<a title="Full process description" target="_blank">Show Description</a>');
+            processDescriptionLink.attr("href", describeProcess.settings.url);
+            jQuery('#'+targetContainer).prepend(jQuery('<div class="wps-description-link">').append(processDescriptionLink));
         });
     
 }
