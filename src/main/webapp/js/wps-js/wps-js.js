@@ -68,8 +68,8 @@ function callbackOnResponseParsed(responseData, domElement, originalRequest) {
 	}
 }
 
-function removePocessesFromSelectFast(){
-	var selectObj = document.getElementById("processes");
+function removePocessesFromSelectFast(targetDomElement){
+	var selectObj = document.getElementById(targetDomElement);
 	var selectParentNode = selectObj.parentNode;
 	var newSelectObj = selectObj.cloneNode(false); // Make a shallow copy
 	selectParentNode.replaceChild(newSelectObj, selectObj);
@@ -85,29 +85,40 @@ function removePocessesFromSelectFast(){
 // using OpenLayers.Format.WPSCapabilities to read the capabilities
 // and fill available process list
 function getCapabilities(wpsUrl) {
+	var processesDropdown = "processes";
     
 	jQuery.wpsSetup({configuration : {url : wpsUrl}});
-//    wps = this.options[this.selectedIndex].value;
+	// wps = this.options[this.selectedIndex].value;
     
-    removePocessesFromSelectFast();
+    removePocessesFromSelectFast(processesDropdown);
     
     var getCap = new GetCapabilitiesGetRequest({
     	url : wps.getServiceUrl()
     });
     
     getCap.execute(function(response, targetDomElement, originalRequest, updateSwitch) {
-    	//TODO read response with GetCapabilitiesResponse.js
+    	//TODO read response with GetCapabilitiesResponse.js instead of OpenLayers
         capabilities = new OpenLayers.Format.WPSCapabilities().read(
                 response);
-        var dropdown = document.getElementById("processes");
+        var dropdown = document.getElementById(processesDropdown);
         var offerings = capabilities.processOfferings, option;
         // populate the dropdown
+        // TODO extract populating the dropbown - this function should allow any output for the processes. maybe just return the parsed offerings? or accept an offeringCallback!
         for (var p in offerings) {
             option = document.createElement("option");
             option.innerHTML = offerings[p].identifier;
             option.value = p;
             dropdown.appendChild(option);				
         }
+        
+    	jQuery("#"+processesDropdown).each(function() {
+	    	var selectedValue = jQuery(this).val();
+	    	// Sort all options by text
+	    	jQuery(this).html(jQuery("option", jQuery(this)).sort(function(a, b) {
+	    		return a.text.toUpperCase() == b.text.toUpperCase() ? 0 : a.text.toUpperCase() < b.text.toUpperCase() ? -1 : 1;
+	    	}));
+	    	jQuery(this).val(selectedValue);
+    	});
     });
     
 }
