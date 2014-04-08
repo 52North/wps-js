@@ -97,13 +97,16 @@ function getCapabilities(wpsUrl) {
     });
     
     getCap.execute(function(response, targetDomElement, originalRequest, updateSwitch) {
-    	//TODO read response with GetCapabilitiesResponse.js instead of OpenLayers
+    	// TODO read response with GetCapabilitiesResponse.js instead of
+		// OpenLayers
         capabilities = new OpenLayers.Format.WPSCapabilities().read(
                 response);
         var dropdown = document.getElementById(processesDropdown);
         var offerings = capabilities.processOfferings, option;
         // populate the dropdown
-        // TODO extract populating the dropbown - this function should allow any output for the processes. maybe just return the parsed offerings? or accept an offeringCallback!
+        // TODO extract populating the dropbown - this function should allow any
+		// output for the processes. maybe just return the parsed offerings? or
+		// accept an offeringCallback!
         for (var p in offerings) {
             option = document.createElement("option");
             option.innerHTML = offerings[p].identifier;
@@ -160,6 +163,18 @@ function describeProcess(processIdentifier, wpsUrl, targetContainer) {
             var processDescriptionLink = jQuery('<a title="Full process description" target="_blank">Show Description</a>');
             processDescriptionLink.attr("href", describeProcess.settings.url);
             jQuery('#'+targetContainer).prepend(jQuery('<div class="wps-description-link">').append(processDescriptionLink));
+            
+            // create links to the metadata elements
+            var metadata = jQuery(response.getElementsByTagNameNS(OWS_11_NAMESPACE, "Metadata"));
+            if(metadata.length > 0) {
+	            var formMetadata = jQuery('<div class="wps-description-metadata">');
+	            formMetadata.append("<span>Metadata</span>");
+	            metadata.each(function(index, value) {
+	            	var m = jQuery(value);
+	            	formMetadata.append(jQuery("<span class=\"wps-metadata-link\"><a id=\"wps-description-metadata-" + index + "\" href=\"" + m.attr("xlin:href") + "\">" + m.attr("xlin:title") + "</a></span>"));
+	    		});
+	            jQuery('#'+targetContainer).prepend(formMetadata);
+            }
         });
     
 }
@@ -202,14 +217,14 @@ function execute(formId, wpsUrl) {
 	    	var settings;
 	    	if (options && options.viaUrl) {
 	    		/*
-	    		 * Call via GET parameters
-	    		 */
+				 * Call via GET parameters
+				 */
 	    		settings = jQuery.extend(resolveGetParameters(), {method: METHOD_GET});
 	    	}
 	    	else {
 	            /*
-	             * Custom User Call
-	             */
+				 * Custom User Call
+				 */
 	            settings = jQuery.extend({
 	                method: METHOD_GET
 	            }, options);
@@ -261,8 +276,8 @@ function execute(formId, wpsUrl) {
 	    		USE_PROXY = true;
 	    		PROXY_URL = setup.proxy.url;
 	    		/*
-	    		 * setup OpenLayers to use the proxy as well
-	    		 */
+				 * setup OpenLayers to use the proxy as well
+				 */
 	    		if (OpenLayers) {
 	    			OpenLayers.ProxyHost = setup.proxy.url;
 	    		}

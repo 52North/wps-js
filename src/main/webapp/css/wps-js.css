@@ -114,3 +114,7 @@ div.wps-execute-response-result {
 p.infotext {
 	color: #afafaf;
 }
+
+span.wps-metadata-link {
+	margin: 0 0.2em 0 0.2em;
+}
