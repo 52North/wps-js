@@ -9,7 +9,7 @@ Standalone Javascript OGC Web Processing Service (WPS) client with the following
 
 wps-js is a plain Javascipt client and all required libraries are shipped with the code. To try out examples follow these steps:
 
-* Start a proxy server so that it servers requests at ``/wps_proxy/wps_proxy?url=``
+* Start a proxy server so that it serves requests preprended with ``/wps_proxy/wps_proxy?url=``
 * Check out the code: ``git clone https://github.com/52North/wps-js.git``
 * Change to the directory and build the application with Maven: ``cd wps-js``, then ``mvn clean install``
 * Open the file ``../target/wps-js-<version>/index.html`` in a browser to try out the client
