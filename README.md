@@ -1,8 +1,40 @@
 # wps-js
 
-Standalone JavaScript WPS client.
+Standalone Javascript OGC Web Processing Service (WPS) client with the following functions:
+
+* Generation of an HTML form based on WPS process descriptions
+* Encoding and parsing of WPS requests (GetCapabilities, DescribeProcess, Execute)
+
+## Installation
+
+wps-js is a plain Javascipt client and all required libraries are shipped with the code. To try out examples follow these steps:
+
+* Start a proxy server so that it servers requests at ``/wps_proxy/wps_proxy?url=``
+* Check out the code: ``git clone https://github.com/52North/wps-js.git``
+* Change to the directory and build the application with Maven: ``cd wps-js``, then ``mvn clean install``
+* Open the file ``../target/wps-js-<version>/index.html`` in a browser to try out the client
+* Use the file ``../target/wps-js-<versionjs/wps-js/wps-js.<version>(.min).js`` in your own application.
+
+## Configuration
+
+Configuration of the proxy URL:
+
+```
+$(document).ready(function() {
+	$.wpsSetup({
+		proxy : {
+			url : "/wps_proxy/wps_proxy?url=",
+			type : "parameter"
+		}
+	});
+});
+```
+
+You can also use a template file to pre-configure the contents of the form that is generated - see example ``src/main/webapp/demo/geca-intercomparison/client.html``.
 
 ## Development
+
+wps-js uses Maven for the build process, which means that the source code is split up across many files in the folder ``src/main/webapp/js/wps-js``. Within this directory, a **Javscript class hierarchy** for reqeusts and responses is implemented in the directories ``request`` and ``response`` respectively.
 
 ### Tomcat configuration
 
@@ -23,7 +55,7 @@ Alternatively configuration with the web tools plug-in in Eclipse: Open your ser
 
 ### Proxy
 
-wps-js needs a proxy server to connect to WPS server instances. A simple one is jproxy, see https://github.com/matthesrieke/jprox. wps-js will by default look for a proxy at ``/wps_proxy/wps_proxy?``.
+wps-js needs a proxy server to connect to WPS server instances. A simple one is jproxy, see https://github.com/matthesrieke/jprox. wps-js will by default look for a proxy at ``/wps_proxy/wps_proxy?url=``.
 
 #### jprox configuration
 
@@ -51,3 +83,10 @@ The used libraries are:
 * jQuery - MIT License (https://jquery.org/license/)
 * OpenLayers - 2-clause BSD License (http://openlayers.org/)
 * js-test-driver - Apache License 2.0 (http://code.google.com/p/js-test-driver/)
+
+## Contact / Support
+To get help in running wps-js, please use the Geoprocessing community mailing list and forum: http://geoprocessing.forum.52north.org/
+
+Please leave an issue on GitHub if you have any bug reports or feature requests: https://github.com/52North/sos-js/issues
+
+Contact: Matthes Rieke (m.rieke@52north.org), Daniel Nüst (d.nuest@52north.org)
