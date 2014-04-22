@@ -87,6 +87,7 @@
 								<jsSourceFiles>response/DescribeProcessResponse.js</jsSourceFiles>
 								<jsSourceFiles>response/ExecuteResponse.js</jsSourceFiles>
 								<jsSourceFiles>response/ResponseFactory.js</jsSourceFiles>
+								<jsSourceFiles>response/ExceptionReportResponse.js</jsSourceFiles>
 
 								<!-- Request classes -->
 								<jsSourceFile>request/BaseRequest.js</jsSourceFile>
