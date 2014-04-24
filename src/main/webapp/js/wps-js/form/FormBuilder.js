@@ -56,18 +56,18 @@ var TEMPLATE_EXECUTE_OUTPUTS_MARKUP = '\
 
 var TEMPLATE_EXECUTE_COMPLEX_OUTPUTS_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}</label>{{html shouldBeRequested}}</li> \
+					<label class="wps-input-item-label">${identifier}</label>{{html settings}}</li> \
 				<li class="wps-execute-response-list-entry"> \
 					{{html formats}}</li>';
 
 
 var TEMPLATE_EXECUTE_LITERAL_OUTPUTS_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}</label>{{html shouldBeRequested}}</li>';
+					<label class="wps-input-item-label">${identifier}</label>{{html settings}}</li>';
 
 var TEMPLATE_EXECUTE_BBOX_OUTPUTS_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}</label>{{html shouldBeRequested}}</li>';
+					<label class="wps-input-item-label">${identifier}</label>{{html settings}}</li>';
 
 var FormBuilder = Class.extend({
 	
@@ -223,7 +223,7 @@ var FormBuilder = Class.extend({
 	      
 	    var checkBoxDiv = jQuery('<div />'); 
 	    
-	    var checkBox = jQuery('<input type="checkbox" name="checkbox_'+fieldName + '" value="asReference"/>');
+	    var checkBox = jQuery('<input type="checkbox" name="checkbox_'+fieldName + '" value="asReference" title="This input is a reference to the actual input."/>');
 	    
 	    checkBoxDiv.append(checkBox);
 	    checkBoxDiv.append("asReference");
@@ -358,6 +358,28 @@ var FormBuilder = Class.extend({
 		
 		return typeInput;
 	},
+	
+	createFormatDrowpdownEntry : function(format) {
+		var formatString = "";
+		
+		//if these exist, append with semicolon, else return empty string
+    	var schema = format.schema;
+    	var encoding = format.encoding;
+    	var mimeType = format.mimeType;
+    	
+		//mimeType is mandatory, schema and encoding are not
+    	if(schema && encoding){
+    		formatString = mimeType + "; " + schema + "; " + encoding;
+    	}else if(!schema && encoding){
+    		formatString = mimeType + "; " + encoding;
+    	}else if(schema && !encoding){
+    		formatString = mimeType + "; " + schema;
+    	}else{
+    		formatString = mimeType;
+    	}
+    	
+    	return formatString;
+	},
 
 	createFormOutputs : function(processDescription){
 		var container = jQuery('<div id="output"></div>');
@@ -378,31 +400,38 @@ var FormBuilder = Class.extend({
 	    	
 	    	var template = null;
 	    	
-	    	var checkBoxDiv = jQuery("<div />");
+	    	var outputSettingsDiv = jQuery("<div />");
 	    	
 	    	var checkBox = jQuery('<input type="checkbox"/>');
 	    	checkBox.attr("name", id);
+	    	checkBox.attr("title", "Enable this output.");
+	    	
 	    	var typeField = this.createInputTypeElement(output.complexOutput ? "complex" : "literal", id);
 	    	
 	    	if (output.selected) {
 	    		checkBox.attr("checked", "checked");
 	    	}
 	    	
-	    	checkBoxDiv.append(checkBox);
-	    	checkBoxDiv.append(typeField);
+	    	outputSettingsDiv.append(checkBox);
+	    	outputSettingsDiv.append(typeField);
 	    	
 	    	templateProperties.identifier = id;
-	    	templateProperties.shouldBeRequested = checkBoxDiv.html();
+	    	templateProperties.settings = outputSettingsDiv.html();
 	    	
 	    	if (output.complexOutput) {
 	    		var formats = output.complexOutput.supported.formats;
+	    		var defaultFormat = output.complexOutput["default"].formats[0];
 	    		
 	    		var formatDropBox = this.createFormatDropdown("format_"+id, formats, output);
+	    		
+	    		// set the default as selected in the dropdown
+	    		formatDropBox.val(JSON.stringify(defaultFormat));
 	    		
 	    		var formatDropBoxDiv = jQuery("<div />");
 	    		
 	    		formatDropBoxDiv.append(formatDropBox);
 	    		    		
+	    		// FIXME this looses the selection again!
 	    		templateProperties.formats = formatDropBoxDiv.html();
 	    		
 	    		template = TEMPLATE_EXECUTE_COMPLEX_OUTPUTS_MARKUP;
@@ -432,28 +461,10 @@ var FormBuilder = Class.extend({
 	    var option;
 	    for (var i = 0; i < formats.length; i++) {
 	    	var format = formats[i];
-	    	//var formatString = format.schema + "; " + format.mimeType + "; " + format.encoding;
 	    	
-	    	//if these exist, append semicolon, else make empty string
-	    	var schema = format.schema;
-	    	var encoding = format.encoding;
-	    	var mimeType = format.mimeType;
-	    	
-	    	var formatString = "";
-	    	
-	    	//mimeType is mandatory, schema and encoding are not
-	    	if(schema && encoding){
-	    		formatString = mimeType + "; " + schema + "; " + encoding;
-	    	}else if(!schema && encoding){
-	    		formatString = mimeType + "; " + encoding;
-	    	}else if(schema && !encoding){
-	    		formatString = mimeType + "; " + schema;
-	    	}else{
-	    		formatString = mimeType;
-	    	}
-	    	
-	    	//var formatString = format.mimeType + schema + encoding;
-	        option = jQuery('<option>'+formatString+'</option>');
+	    	var formatString = this.createFormatDrowpdownEntry(format);
+
+	    	option = jQuery('<option>'+formatString+'</option>');
 	        option.val(JSON.stringify(format));
 	        field.append(option);
 	    }
