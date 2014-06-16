@@ -26,13 +26,13 @@ div.wps-waiting {
 	height:32px;
 }
 
-ul.wps-execute-response-list {
+ul.wps-execute-response-list, ul.wps-capabilities-list {
 	list-style-type: none;
 	padding: 0;
 	margin-top: 0;
 }
 
-ul.wps-execute-response-list li {
+ul.wps-execute-response-list li, ul.wps-capabilities-list li {
 	margin: 0.2em 0;
 }
 
@@ -81,6 +81,14 @@ span.wps-item-error-value {
 	color: red;
 }
 
+span.wps-item-error-message-value {
+	color: red;
+	display: block;
+    unicode-bidi: embed;
+    font-family: monospace;
+    white-space: pre;
+}
+
 textarea.wps-complex-input-textarea {
 	width: 377px;
 	height: 17px;
@@ -98,6 +106,15 @@ div.wps-execute-autoUpdate {
 	height: 16px;
 }
 
+div.wps-execute-response-result {
+	margin: 0.2em 0;
+	padding: 0;
+}
+
 p.infotext {
 	color: #afafaf;
+}
+
+span.wps-metadata-link {
+	margin: 0 0.2em 0 0.2em;
 }

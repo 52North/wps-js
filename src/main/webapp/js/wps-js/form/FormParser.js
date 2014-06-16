@@ -7,16 +7,19 @@ var FormParser = Class.extend({
 	
 	parseInputs : function(formValues) {
 		var inputs = [];
-		var inputNameToPosition = [];
+		var inputNameToPosition = {};
 		
 		for (var i = 0; i < formValues.length; i++) {
 			var prop = formValues[i];
 			if (stringStartsWith(prop.name, "input_")) {
-				var j = inputs.length;
-				inputs[j] = {};
-				inputs[j].identifier = prop.name.substring(6, prop.name.length);
-				inputs[j].value = prop.value;
-				inputNameToPosition[prop.name] = j;
+				// only add input elements with non-emtpy value:
+				if(prop.value) {
+					var j = inputs.length;
+					inputs[j] = {};
+					inputs[j].identifier = prop.name.substring(6, prop.name.length);
+					inputs[j].value = prop.value;
+					inputNameToPosition[prop.name] = j;
+				}
 			}
 		}
 		
@@ -27,14 +30,17 @@ var FormParser = Class.extend({
 			var prop = formValues[i];
 			if (stringStartsWith(prop.name, "type_input")) {
 				var originalInputName = prop.name.substring(5, prop.name.length);
-				inputs[inputNameToPosition[originalInputName]].type = prop.value;
 				
-				if (stringStartsWith(prop.value, "complex")) {
-					inputs[inputNameToPosition[originalInputName]].complexPayload = inputs[inputNameToPosition[originalInputName]].value;
-				}
-				
-				else if (stringStartsWith(prop.value, "bbox")) {
-					this.parseBboxValue(inputs[inputNameToPosition[originalInputName]].value, inputs[inputNameToPosition[originalInputName]]);
+				// check if input is set before setting the type
+				if(inputNameToPosition[originalInputName] != null) {
+					inputs[inputNameToPosition[originalInputName]].type = prop.value;
+					
+					if (stringStartsWith(prop.value, "complex")) {
+						inputs[inputNameToPosition[originalInputName]].complexPayload = inputs[inputNameToPosition[originalInputName]].value;
+					}
+					else if (stringStartsWith(prop.value, "bbox")) {
+						this.parseBboxValue(inputs[inputNameToPosition[originalInputName]].value, inputs[inputNameToPosition[originalInputName]]);
+					}
 				}
 			}
 		}
@@ -49,7 +55,7 @@ var FormParser = Class.extend({
 				/*
 				 * its only present in the array if checked
 				 */
-				inputs[inputNameToPosition[originalInputName]].aReference = true;
+				inputs[inputNameToPosition[originalInputName]].asReference = true;
 			}
 		}
 		
@@ -87,7 +93,7 @@ var FormParser = Class.extend({
 	
 	parseOutputs : function(formValues) {
 		var outputs = [];
-		var outputNameToPosition = [];
+		var outputNameToPosition = {};
 		
 		for (var i = 0; i < formValues.length; i++) {
 			var prop = formValues[i];
@@ -109,11 +115,15 @@ var FormParser = Class.extend({
 			var prop = formValues[i];
 			if (stringStartsWith(prop.name, "type_output")) {
 				var originalName = prop.name.substring(5, prop.name.length);
-				outputs[outputNameToPosition[originalName]].type = prop.value;
 				
-				//TODO: set via form
-				if (stringStartsWith(prop.value, "complex")) {
-					outputs[outputNameToPosition[originalName]].asReference = true;
+				// only set output properties for selected outputs
+				if(outputNameToPosition[originalName] != null) {
+					outputs[outputNameToPosition[originalName]].type = prop.value;
+					
+					//TODO: set via form
+					if (stringStartsWith(prop.value, "complex")) {
+						outputs[outputNameToPosition[originalName]].asReference = true;
+					}
 				}
 			}
 		}
@@ -126,7 +136,10 @@ var FormParser = Class.extend({
 			if (stringStartsWith(prop.name, "format_output")) {
 				var originalName = prop.name.substring(7, prop.name.length);
 				var formatObject = JSON.parse(prop.value);
-				this.parseFormatObject(formatObject, outputs[outputNameToPosition[originalName]]);
+				
+				if(outputNameToPosition[originalName] != null) {
+					this.parseFormatObject(formatObject, outputs[outputNameToPosition[originalName]]);
+				}
 			}
 		}
 		

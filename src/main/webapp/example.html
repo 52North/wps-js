@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="js/jquery/jquery.1.8.3.min.js"></script>
+<script src="js/jquery/jquery-ui.1.8.3.min.js"></script>
+<script src="js/openlayers/OpenLayers-closure.js"></script>
+<script src="js/wps-js/wps-js.${project.version}.js"></script>
+<link type="text/css" rel="stylesheet" href="css/wps-js.css">
+<title>wps-js example</title>
+<link rel="shortcut icon" href="favicon.ico" />
+</head>
+<body>
+	<div id="wrapper">
+		<div>
+			<h1>wps-js example</h1>
+			<p>wps-js is an <a href="https://github.com/52North/wps-js/" title="wps-js on GitHub">open source client library</a> for connecting Javascript client to <a href="http://www.opengeospatial.org/standards/wps" title="WPS @ Open Geospatial Consortium">OGC Web Processing</a> services. This page demonstrates how you can use it. More documentation is available in the <a href="https://wiki.52north.org/bin/view/Geoprocessing/Wps-js" title="wps-js wiki page">52&deg;North Wiki</a> and on <a href="https://github.com/52North/wps-js/blob/master/README.md" title="wps-js readme">GitHub</a>.</p>
+		</div>
+		<hl>
+		<div>
+			<select id="wps">
+				<option>Select a WPS</option>
+				<option>http://geoviqua.stcorp.nl/wps</option>
+				<option>http://geoprocessing.demo.52north.org:8080/wps/WebProcessingService</option>
+				<option>http://localhost:8080/wps/WebProcessingService</option>
+				<!-- pyWPS: -->
+				<option>http://openwps.statkart.no/skwms1/wps.elevation</option>
+			</select>
+		</div>
+		<div>
+			<h3>
+				Capabilities <a href="#" id="wpscaller">Show Capabilities</a>
+			</h3>
+			<div class="wps-container">
+				<div id="capabilitiesByClick"></div>
+			</div>
+		</div>
+		<div>
+			<h3>Execute Process</h3>
+			<div class="wps-container">
+				<select id="processes"><option>Select a process</option></select>
+				<span id="processDescriptionLink"></span>
+				<div class="wps-execute-container" id="wps-execute-container"></div>
+			</div>
+			<p></p>
+			<div class="wps-container">
+				<div id="executeProcess"></div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var capabilities, // the capabilities, read by Format.WPSCapabilities::read
+		process; // the process description from Format.WPSDescribeProcess::read
+
+		$('#wpscaller').click(function() {
+			var sel = document.getElementById("wps");
+			
+			$('#capabilitiesByClick').wpsCall({
+				url : sel.options[sel.selectedIndex].text,
+				requestType : GET_CAPABILITIES_TYPE
+			});
+		});
+		$(document).ready(function() {
+			$.wpsSetup({
+				proxy : {
+					url : "/wps_proxy/wps_proxy?url=",
+					type : "parameter"
+				}
+			});
+		});
+
+		// add behavior to html elements
+		document.getElementById("processes").onchange = function() {
+			var sel = document.getElementById("processes");
+			
+			describeProcess(sel.options[sel.selectedIndex].text);
+		};
+		document.getElementById("wps").onchange = function() {
+			var sel = document.getElementById("wps");
+			
+			getCapabilities(sel.options[sel.selectedIndex].text);
+		};
+		
+	</script>
+
+	<div>
+		<p class="infotext">${project.build.finalName} #${build-commit-abbrev} as of ${build-tstamp}, build at ${buildTimestamp}</p>
+	</div>
+</body>
+</html>
