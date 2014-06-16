@@ -32,6 +32,10 @@ $(document).ready(function() {
 
 You can also use a template file to pre-configure the contents of the form that is generated - see example ``src/main/webapp/demo/geca-intercomparison/client.html``.
 
+## Documentation
+
+Project and user documentation can be found in the 52°North wiki: https://wiki.52north.org/bin/view/Geoprocessing/Wps-js
+
 ## Development
 
 wps-js uses Maven for the build process, which means that the source code is split up across many files in the folder ``src/main/webapp/js/wps-js``. Within this directory, a **Javscript class hierarchy** for reqeusts and responses is implemented in the directories ``request`` and ``response`` respectively.
