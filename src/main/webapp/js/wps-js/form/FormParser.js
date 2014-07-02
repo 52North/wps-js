@@ -1,14 +1,14 @@
 
 var FormParser = Class.extend({
-	
+
 	init : function(settings) {
 		this.settings = settings;
 	},
-	
+
 	parseInputs : function(formValues) {
 		var inputs = [];
 		var inputNameToPosition = {};
-		
+
 		for (var i = 0; i < formValues.length; i++) {
 			var prop = formValues[i];
 			if (stringStartsWith(prop.name, "input_")) {
@@ -22,7 +22,7 @@ var FormParser = Class.extend({
 				}
 			}
 		}
-		
+
 		/*
 		 * look for each input's type
 		 */
@@ -30,11 +30,11 @@ var FormParser = Class.extend({
 			var prop = formValues[i];
 			if (stringStartsWith(prop.name, "type_input")) {
 				var originalInputName = prop.name.substring(5, prop.name.length);
-				
+
 				// check if input is set before setting the type
 				if(inputNameToPosition[originalInputName] != null) {
 					inputs[inputNameToPosition[originalInputName]].type = prop.value;
-					
+
 					if (stringStartsWith(prop.value, "complex")) {
 						inputs[inputNameToPosition[originalInputName]].complexPayload = inputs[inputNameToPosition[originalInputName]].value;
 					}
@@ -44,7 +44,7 @@ var FormParser = Class.extend({
 				}
 			}
 		}
-		
+
 		/*
 		 * check asReference flag
 		 */
@@ -58,7 +58,7 @@ var FormParser = Class.extend({
 				inputs[inputNameToPosition[originalInputName]].asReference = true;
 			}
 		}
-		
+
 		/*
 		 * look for each input's format
 		 */
@@ -66,14 +66,16 @@ var FormParser = Class.extend({
 			var prop = formValues[i];
 			if (stringStartsWith(prop.name, "format_input")) {
 				var originalInputName = prop.name.substring(7, prop.name.length);
-				var formatObject = JSON.parse(prop.value);
-				this.parseFormatObject(formatObject, inputs[inputNameToPosition[originalInputName]]);
+				if (inputNameToPosition[originalInputName] != null) {
+					var formatObject = JSON.parse(prop.value);
+					this.parseFormatObject(formatObject, inputs[inputNameToPosition[originalInputName]]);
+				}
 			}
 		}
-		
+
 		return inputs;
 	},
-	
+
 	parseBboxValue : function(bboxString, targetObject) {
 		var array = bboxString.split(",");
 
@@ -86,15 +88,15 @@ var FormParser = Class.extend({
 				array[i] = "0.0";
 			}
 		}
-		
+
 		targetObject.lowerCorner = jQuery.trim(array[0]) + " " + jQuery.trim(array[1]);
 		targetObject.upperCorner = jQuery.trim(array[2]) + " " + jQuery.trim(array[3]);
 	},
-	
+
 	parseOutputs : function(formValues) {
 		var outputs = [];
 		var outputNameToPosition = {};
-		
+
 		for (var i = 0; i < formValues.length; i++) {
 			var prop = formValues[i];
 			if (stringStartsWith(prop.name, "output_")) {
@@ -107,7 +109,7 @@ var FormParser = Class.extend({
 				outputNameToPosition[prop.name] = j;
 			}
 		}
-		
+
 		/*
 		 * look for each outputs type
 		 */
@@ -115,11 +117,11 @@ var FormParser = Class.extend({
 			var prop = formValues[i];
 			if (stringStartsWith(prop.name, "type_output")) {
 				var originalName = prop.name.substring(5, prop.name.length);
-				
+
 				// only set output properties for selected outputs
 				if(outputNameToPosition[originalName] != null) {
 					outputs[outputNameToPosition[originalName]].type = prop.value;
-					
+
 					//TODO: set via form
 					if (stringStartsWith(prop.value, "complex")) {
 						outputs[outputNameToPosition[originalName]].asReference = true;
@@ -127,7 +129,7 @@ var FormParser = Class.extend({
 				}
 			}
 		}
-		
+
 		/*
 		 * look for each outputs format
 		 */
@@ -136,30 +138,30 @@ var FormParser = Class.extend({
 			if (stringStartsWith(prop.name, "format_output")) {
 				var originalName = prop.name.substring(7, prop.name.length);
 				var formatObject = JSON.parse(prop.value);
-				
+
 				if(outputNameToPosition[originalName] != null) {
 					this.parseFormatObject(formatObject, outputs[outputNameToPosition[originalName]]);
 				}
 			}
 		}
-		
+
 		return outputs;
 	},
-	
+
 	parseFormatObject : function(formatObject, targetObject) {
 		if (formatObject.mimeType) {
 			targetObject.mimeType = formatObject.mimeType;
 		}
-		
+
 		if (formatObject.schema) {
 			targetObject.schema = formatObject.schema;
 		}
-		
+
 		if (formatObject.encoding) {
 			targetObject.encoding = formatObject.encoding;
 		}
 	},
-	
+
 	parseProcessIdentifier : function(formValues) {
 		for (var i = 0; i < formValues.length; i++) {
 			var prop = formValues[i];
@@ -169,7 +171,7 @@ var FormParser = Class.extend({
 		}
 		return "";
 	},
-	
+
 	parseOutputStyle : function(formValues) {
 		return {
 			   storeExecuteResponse: true,
