@@ -8,7 +8,7 @@
 	<name>52North WPS JavaScript Client</name>
 
 	 <!-- http://semver.org/ -->
-	<version>0.1.0</version>
+	<version>0.1.1</version>
 
 	<url>https://wiki.52north.org/bin/view/Processing/Wps-js/</url>
 	<inceptionYear>2013</inceptionYear>
