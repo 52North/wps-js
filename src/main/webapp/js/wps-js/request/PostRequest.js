@@ -22,15 +22,7 @@ var PostRequest = BaseRequest.extend({
 	},
 	
 	fillTemplate : function(template, properties) {
-		var result = template;
-		
-		for (var key in properties) {
-			if (properties.hasOwnProperty(key)) {
-				result = result.replace("${"+key+"}", properties[key]);	
-			}
-		}
-		
-		return result;
+		return fillXMLTemplate(template, properties);
 	}
 
 });

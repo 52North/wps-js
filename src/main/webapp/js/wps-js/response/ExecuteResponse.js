@@ -1,6 +1,6 @@
 var TEMPLATE_EXECUTE_RESPONSE_MARKUP = '\
 	<div class="wps-execute-response"> \
-	<div class="wps-execute-autoUpdate" id="wps-execute-autoUpdate" style="${updateSwitchEnabled}"></div> \
+		<div class="wps-execute-autoUpdate" id="wps-execute-autoUpdate" style="${updateSwitchEnabled}"></div> \
 		<div class="wps-execute-response-process"> \
 			<ul class="wps-execute-response-list"> \
 				<li class="wps-execute-response-list-entry"> \
@@ -18,9 +18,14 @@ var TEMPLATE_EXECUTE_RESPONSE_MARKUP = '\
 		<div id="wps-execute-response-extension"></div> \
 	</div>';
 
-var TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP = '\
-	<div> \
-			<label class="wps-extension-item-label">${key}</label><span class="wps-item-value"><a href="${value}">download</a></span></li> \
+var TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_DOWNLOAD = '\
+	<div class="wps-execute-response-result"> \
+			<label class="wps-extension-item-label">${key}</label><span class="wps-item-value"><a href="${value}" title="${title}">download</a></span></li> \
+	</div>';
+
+var TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_VALUE = '\
+	<div class="wps-execute-response-result"> \
+			<label class="wps-extension-item-label">${key}</label><span class="wps-item-value" title="${title} | ${valueType}">${value}</span></li> \
 	</div>';
 
 var TEMPLATE_EXECUTE_RESPONSE_STATUS_NORMAL_MARKUP = '\
@@ -28,10 +33,12 @@ var TEMPLATE_EXECUTE_RESPONSE_STATUS_NORMAL_MARKUP = '\
 			<label class="wps-item-label">Status</label><span class="wps-item-value">${status}</span> \
 	</li>';
 
-//TODO add functionalities to show exception
 var TEMPLATE_EXECUTE_RESPONSE_STATUS_FAILED_MARKUP = '\
 	<li class="wps-execute-response-list-entry"> \
 			<label class="wps-item-label">Status</label><span class="wps-item-error-value">${status}</span> \
+	</li> \
+	<li class="wps-execute-response-list-entry"> \
+			<label class="wps-item-label">Message</label><span class="wps-item-error-message-value">${message}</span> \
 	</li>';
 
 var ExecuteResponse = BaseResponse.extend({
@@ -43,18 +50,42 @@ var ExecuteResponse = BaseResponse.extend({
 		for (var i = 0; i < outputs.length; i++) {
 			var element = outputs[i];
 			var identifier = element.getElementsByTagNameNS(OWS_11_NAMESPACE, "Identifier");
+			var title = element.getElementsByTagNameNS(OWS_11_NAMESPACE, "Title");
 			var reference = element.getElementsByTagNameNS(WPS_100_NAMESPACE, "Reference");
+			var data = element.getElementsByTagNameNS(WPS_100_NAMESPACE, "Data");
 			var value;
-			if (reference && reference.length > 0) {
+			var valueType = null;
+			if (reference && reference.length > 0) { // create link from reference
 				value = reference[0].getAttribute("href");
+				array[i] = {
+						key : jQuery(identifier).text(),
+						title: jQuery(title).text(),
+						value : value,
+						ref: true
+				};
 			}
 			else {
-				value = "n/a";
+				if(data && data.length > 0) { // show inline values
+					value = "", valueType = "";
+					// each data child element
+					jQuery(data).children().each(function(key, val) {
+						var $val = jQuery(val);
+						value += $val.text();
+						valueType += $val.attr("dataType");
+					});
+				}
+				else {
+					value = "n/a";
+				}
+				
+				array[i] = {
+						key : jQuery(identifier).text(),
+						title: jQuery(title).text(),
+						value : value,
+						valueType: valueType,
+						ref: false
+				};
 			}
-			array[i] = {
-					key : jQuery(identifier).text(),
-					value : value
-			};
 		}
 		
 		var result = {outputs : array};
@@ -68,7 +99,8 @@ var ExecuteResponse = BaseResponse.extend({
 		
 		var properties = null;
 		var extensions = {};
-		var statusText = null;		
+		var statusText = null;
+		var statusMessage = null;
 		var processFailed = false;
 		
 		if (process && process[0] && status && status[0]) {
@@ -108,7 +140,12 @@ var ExecuteResponse = BaseResponse.extend({
 				var failed = status[0].getElementsByTagNameNS(WPS_100_NAMESPACE, "ProcessFailed");
 				if (failed && failed.length > 0) {
 					statusText = "Process failed";
-					//TODO display exception text
+					
+					exceptionText = status[0].getElementsByTagNameNS(OWS_11_NAMESPACE, "ExceptionText");
+					if(exceptionText) {
+						statusMessage = exceptionText.item(0).innerHTML;
+						//TODO display more than one exception text
+					}
 					processFailed = true;
 				}
 			}
@@ -167,7 +204,8 @@ var ExecuteResponse = BaseResponse.extend({
 		var statusList = statusDiv.children('#wps-execute-response-list');
 		
 		statusProperties = {
-			status: statusText
+			status: statusText,
+			message: statusMessage
 		};
 		
 		if(!processFailed){
@@ -179,7 +217,14 @@ var ExecuteResponse = BaseResponse.extend({
 		if (extensions && !jQuery.isEmptyObject(extensions)) {
 			var extensionDiv = result.children('#wps-execute-response-extension');
 			if (extensions.outputs) {
-				jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP, extensions.outputs).appendTo(extensionDiv);
+				jQuery(extensions.outputs).each(function(key, value) {
+						if(value.ref == true) {
+							jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_DOWNLOAD, value).appendTo(extensionDiv);
+						}
+						else {
+							jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_VALUE, value).appendTo(extensionDiv);
+						}
+					});
 			}
 		}
 		

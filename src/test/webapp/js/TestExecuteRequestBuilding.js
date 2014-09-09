@@ -39,7 +39,7 @@ var EXPECTED_RESULT_COMPLEX = '<wps:Execute service="WPS" version="1.0.0" \
 	<heavy><xml><markup/></xml></heavy>\
 	</wps:ComplexData>\
       </wps:Data>\
-   </wps:Input>\
+</wps:Input>\
 	</wps:DataInputs>\
 	<wps:ResponseForm>\
    <wps:ResponseDocument storeExecuteResponse="true" lineage="true" status="true">\
@@ -50,6 +50,34 @@ var EXPECTED_RESULT_COMPLEX = '<wps:Execute service="WPS" version="1.0.0" \
       </wps:Output>\
    </wps:ResponseDocument>\
 	</wps:ResponseForm>\
+	</wps:Execute>';
+
+var EXPECTED_RESULT_BBOX = '<wps:Execute service="WPS" version="1.0.0" \
+	xmlns:wps="http://www.opengis.net/wps/1.0.0" \
+	xmlns:ows="http://www.opengis.net/ows/1.1" \
+	xmlns:xlink="http://www.w3.org/1999/xlink" \
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" \
+	xsi:schemaLocation="http://www.opengis.net/wps/1.0.0    \
+	http://schemas.opengis.net/wps/1.0.0/wpsExecute_request.xsd">\
+	 	  <ows:Identifier>org.n52.wps.server.WhateverYouWannaDoWithBBOXes</ows:Identifier>\
+		  <wps:DataInputs>\
+			<wps:Input>\
+		    <ows:Identifier>myBboxInput1</ows:Identifier>\
+		    <wps:Data>\
+			    <wps:BoundingBoxData ows:crs="THE:CRS" ows:dimensions="2">\
+			       <ows:LowerCorner>52.0 7.1</ows:LowerCorner>\
+			       <ows:UpperCorner>53.2 8.5</ows:UpperCorner>\
+			    </wps:BoundingBoxData>\
+			 </wps:Data>\
+		  </wps:Input>\
+	      </wps:DataInputs>\
+		  <wps:ResponseForm>\
+	    <wps:ResponseDocument storeExecuteResponse="false" lineage="false" status="false">\
+		  <wps:Output>\
+	       <ows:Identifier>myLiteralOutput1</ows:Identifier>\
+    	  </wps:Output>\
+	    </wps:ResponseDocument>\
+	  </wps:ResponseForm>\
 	</wps:Execute>';
 
 TestCase('TestExecuteRequestBuilding', {
@@ -71,6 +99,19 @@ TestCase('TestExecuteRequestBuilding', {
 		var executeRequest = new ExecuteRequest(createSettingsComplex());
 		
 		var expectedXml = new DOMParser().parseFromString(EXPECTED_RESULT_COMPLEX, "text/xml");
+		var resultXml = new DOMParser().parseFromString(executeRequest.prepareHTTPRequest().data, "text/xml");
+		
+		jstestdriver.console.log("Expected XML: "+ new XMLSerializer().serializeToString(expectedXml));
+		jstestdriver.console.log("Resulting XML: "+ new XMLSerializer().serializeToString(resultXml));
+		
+		assertTrue('Execute request markup not as expected.', compareXmlDeep(expectedXml,
+				resultXml));
+	},
+	
+	testExpectedRequestMarkupBBOX : function() {
+		var executeRequest = new ExecuteRequest(createSettingsBBOX());
+		
+		var expectedXml = new DOMParser().parseFromString(EXPECTED_RESULT_BBOX, "text/xml");
 		var resultXml = new DOMParser().parseFromString(executeRequest.prepareHTTPRequest().data, "text/xml");
 		
 		jstestdriver.console.log("Expected XML: "+ new XMLSerializer().serializeToString(expectedXml));
@@ -140,6 +181,34 @@ function createSettingsComplex() {
 	return result;
 }
 
+function createSettingsBBOX() {
+	var result = {
+			   inputs: [
+				      {
+				    	  identifier: "myBboxInput1",
+				    	  type: "bbox",
+				    	  crs:"THE:CRS",
+				    	  dimension: 2,
+				    	  lowerCorner: "52.0 7.1",
+				    	  upperCorner: "53.2 8.5"
+				      }
+				   ],
+				outputs:[
+					  {
+						  identifier: "myLiteralOutput1",
+						  type: "literal"
+					  }
+				   ],
+				   outputStyle: {
+					   storeExecuteResponse: false,
+					   lineage: false,
+					   status: false
+				   },
+				processIdentifier: "org.n52.wps.server.WhateverYouWannaDoWithBBOXes"
+				};
+	return result;
+}
+
 function compareXmlDeep(xmlA, xmlB) {
 //	var xmlA = new Document();
 //	var xmlB = new Document();
@@ -182,7 +251,7 @@ function compareXmlDeep(xmlA, xmlB) {
 		/*
 		 * TODO: 1. for complex elements ONLY consider non-text nodes
 		 * 2. for mixed ignore empty text nodes
-		 * 3. for simple elements ignore empty text nodes
+		 * 3. for simple elements compare contents
 		 * 
 		 * The behavior is kind of unstable without the above implemented
 		 */
