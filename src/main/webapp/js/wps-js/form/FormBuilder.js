@@ -60,7 +60,6 @@ var TEMPLATE_EXECUTE_COMPLEX_OUTPUTS_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
 					{{html formats}}</li>';
 
-
 var TEMPLATE_EXECUTE_LITERAL_OUTPUTS_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
 					<label class="wps-input-item-label">${identifier}</label>{{html settings}}</li>';

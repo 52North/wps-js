@@ -87,7 +87,8 @@ function removePocessesFromSelectFast(targetDomElement){
 function getCapabilities(wpsUrl) {
 	var processesDropdown = "processes";
     
-	jQuery.wpsSetup({configuration : {url : wpsUrl}});
+	wps.settings.url = wpsUrl;
+	//jQuery.wpsSetup({configuration : {url : wpsUrl}});
 	// wps = this.options[this.selectedIndex].value;
     
     removePocessesFromSelectFast(processesDropdown);
