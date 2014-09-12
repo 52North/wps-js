@@ -1,4 +1,5 @@
 var wps;
+var imageMimetypes;
 
 function resolveRequest(type, method, settings) {
 	if (type == GET_CAPABILITIES_TYPE) {
@@ -288,6 +289,18 @@ function execute(formId, wpsUrl) {
 	    	if (setup.configuration) {
 	    		wps = new WPSConfiguration(setup.configuration);
 	    	}
+	    	
+	    	$.getJSON("./config/properties.json", function( data ) {
+            
+            var arrayLength = data.properties.length;
+            for (var i = 0; i < arrayLength; i++) {
+                var property = data.properties[i];
+                if(property.hasOwnProperty("imageMimetypes")){
+                    imageMimetypes = property.imageMimetypes;
+                }
+            }
+	    	
+	    	});
 
 		}
 	});

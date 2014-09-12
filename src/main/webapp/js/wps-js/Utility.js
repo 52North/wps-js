@@ -29,7 +29,5 @@ function fillXMLTemplate(template, properties) {
 
 function isImageMimetype(mimetype) {
 	
-	var imageMimetypes = new Array('image/gif', 'image/jpeg', 'image/jpg', 'image/png');
-	
 	return ($.inArray(mimetype, imageMimetypes) > -1);
 }
