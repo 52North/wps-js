@@ -50,8 +50,8 @@ var EXECUTE_REQUEST_XML_COMPLEX_DATA_ENCODING_INPUT = '<wps:Input>\
 
 var EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_INPUT = '<wps:Input>\
     <ows:Identifier>${identifier}</ows:Identifier>\
-    <wps:Reference schema="${schema}" \
-	xlink:href="${href}" method="${method}"/>\
+    <wps:Reference schema="${schema}" mimeType="${mimeType}"\
+	xlink:href="${complexPayload}"/>\
   </wps:Input>';
 
 var EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT = '<wps:Input>\
@@ -207,7 +207,7 @@ var ExecuteRequest = PostRequest.extend({
 	 */
 	createComplexDataInput : function(input) {
 		var markup;
-		if (input.href) {
+		if (input.asReference) {
 			markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_INPUT, input);
 		}
 		else {
