@@ -22,6 +22,11 @@ var TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_DOWNLOAD = '\
 	<div class="wps-execute-response-result"> \
 			<label class="wps-extension-item-label">${key}</label><span class="wps-item-value"><a href="${value}" title="${title}">download</a></span></li> \
 	</div>';
+	
+var TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_IMAGE = '\
+	<div class="wps-execute-response-result"> \
+			<img src="data:${mimetype};base64, ${value}" /> \
+	</div>';
 
 var TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_VALUE = '\
 	<div class="wps-execute-response-result"> \
@@ -96,6 +101,13 @@ var ExecuteResponse = BaseResponse.extend({
 	createMarkup : function() {
 		var process = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "Process");
 		var status = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "Status");
+		var reference = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "Reference");
+		
+		var mimetype = null;
+		
+		if(reference && reference[0]){
+		    mimetype = reference[0].getAttribute('mimeType');
+		}
 		
 		var properties = null;
 		var extensions = {};
@@ -218,10 +230,23 @@ var ExecuteResponse = BaseResponse.extend({
 			var extensionDiv = result.children('#wps-execute-response-extension');
 			if (extensions.outputs) {
 				jQuery(extensions.outputs).each(function(key, value) {
-						if(value.ref == true) {
-							jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_DOWNLOAD, value).appendTo(extensionDiv);
-						}
-						else {
+						if(value.ref == true) {						
+						    if(isImageMimetype(mimetype) && wps.isShowImages()){
+						    //get the image from the url
+						    
+						    $.get(value.value, function( data ) {
+			                    properties = {
+			                		    mimetype : mimetype,
+			                		    value : data
+			                    };
+			                    jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_IMAGE, properties).appendTo(extensionDiv);	
+                            });
+						    
+							
+						    }else{
+							    jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_DOWNLOAD, value).appendTo(extensionDiv);						    
+						    }
+						}else {
 							jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_VALUE, value).appendTo(extensionDiv);
 						}
 					});
