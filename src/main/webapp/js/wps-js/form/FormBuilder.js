@@ -56,18 +56,18 @@ var TEMPLATE_EXECUTE_OUTPUTS_MARKUP = '\
 
 var TEMPLATE_EXECUTE_COMPLEX_OUTPUTS_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}</label>{{html settings}}</li> \
+					<label class="wps-input-item-label">${identifier}</label>{{html settings}}{{html asReference}}</li> \
 				<li class="wps-execute-response-list-entry"> \
 					{{html formats}}</li>';
 
 
 var TEMPLATE_EXECUTE_LITERAL_OUTPUTS_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}</label>{{html settings}}</li>';
+					<label class="wps-input-item-label">${identifier}</label>{{html settings}}{{html asReference}}</li>';
 
 var TEMPLATE_EXECUTE_BBOX_OUTPUTS_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}</label>{{html settings}}</li>';
+					<label class="wps-input-item-label">${identifier}</label>{{html settings}}{{html asReference}}</li>';
 
 var FormBuilder = Class.extend({
 	
@@ -413,8 +413,14 @@ var FormBuilder = Class.extend({
 	    	}
 	    	
 	    	outputSettingsDiv.append(checkBox);
+	    	outputSettingsDiv.append("request this output");
 	    	outputSettingsDiv.append(typeField);
-	    	
+	    		    
+	        var checkBox = jQuery('<input type="checkbox" name="checkbox_'+id + '" value="asReference" title="This ouput will be requested as reference."/>');
+	        
+	        outputSettingsDiv.append(checkBox);
+	        outputSettingsDiv.append("asReference");
+	        
 	    	templateProperties.identifier = id;
 	    	templateProperties.settings = outputSettingsDiv.html();
 	    	
