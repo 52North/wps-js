@@ -153,7 +153,7 @@ var FormBuilder = Class.extend({
 	    	if (button) {
 	    	
 	    	$('#wps-execute-container').on('click', '#' + name + '-copy-button', function () { 
-	    			var templateProperties = FormBuilder.prototype.createCopy(input, propertyCreationFunction);
+	    			var templateProperties = FormBuilder.prototype.createCopy(input, container, template, copyTemplate, inputParentId, propertyCreationFunction);
 	    		
 	    			if (templateProperties) {				
 	    				var inputsUl = jQuery('#'+inputParentId);
@@ -484,7 +484,7 @@ var FormBuilder = Class.extend({
 	},
 
 	// if maxOccurs is > 1, this will add a copy of the field
-	createCopy : function(input, propertyCreationFunction) {
+	createCopy : function(input, container, template, copyTemplate, inputParentId, propertyCreationFunction) {
 	    if (input.maxOccurs && input.maxOccurs > 1) {
 	        // add another copy of the field - check maxOccurs
 	        if(input.occurrence && input.occurrence >= input.maxOccurs){
@@ -494,7 +494,7 @@ var FormBuilder = Class.extend({
 	        // we recognize copies by the occurrence property
 	        input.occurrence = (input.occurrence || 1) + 1;
 	        newInput.occurrence = input.occurrence;
-	        return propertyCreationFunction(newInput);
+	        return FormBuilder.prototype.createInput(newInput, container, template, copyTemplate, inputParentId, propertyCreationFunction);
 	    }
 	}
 	
