@@ -113,11 +113,11 @@ var FormBuilder = Class.extend({
 	        input = inputs[i];    
 	                
 	        if (input.complexData) {    		    		
-	        	this.createInput(input, container, TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP, TEMPLATE_EXECUTE_COMPLEX_INPUTS_COPY_MARKUP, "complex-inputs", this.createComplexInput);       	   
+	        	this.createInput(input, complexContainer, TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP, TEMPLATE_EXECUTE_COMPLEX_INPUTS_COPY_MARKUP, "complex-inputs", this.createComplexInput);       	   
 	        } else if (input.boundingBoxData) {            
-	        	this.createInput(input, container, TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP, TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP, "bbox-inputs", this.createBoundingBoxInput);               
+	        	this.createInput(input, bboxContainer, TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP, TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP, "bbox-inputs", this.createBoundingBoxInput);               
 	        } else if (input.literalData) {
-	        	this.createInput(input, container, TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP, TEMPLATE_EXECUTE_LITERAL_INPUTS_COPY_MARKUP, "literal-inputs", this.createLiteralInput);
+	        	this.createInput(input, literalContainer, TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP, TEMPLATE_EXECUTE_LITERAL_INPUTS_COPY_MARKUP, "literal-inputs", this.createLiteralInput);
 	        }
 	    }
 	    
@@ -151,14 +151,15 @@ var FormBuilder = Class.extend({
 	    if (input.maxOccurs > 1) {
 	    
 	    	if (button) {
-	    		button.onclick = function() { 
-	    			var templateProperties = this.createCopy(input, propertyCreationFunction);
+	    	
+	    	$('#wps-execute-container').on('click', '#' + name + '-copy-button', function () { 
+	    			var templateProperties = FormBuilder.prototype.createCopy(input, propertyCreationFunction);
 	    		
 	    			if (templateProperties) {				
 	    				var inputsUl = jQuery('#'+inputParentId);
 	    				jQuery.tmpl(copyTemplate, templateProperties).appendTo(inputsUl);
 	    			}
-	    		};	
+			});
 	    	}
 		
 		}
@@ -189,13 +190,13 @@ var FormBuilder = Class.extend({
 	    var inputType;
 	    var fieldName;
 	    if(input.maxOccurs > 1){
-	    	fieldName = "input_"+ name + number;
+	    	fieldName = "input_"+ name + "_"+ number;
 	    }else {
 	    	fieldName = "input_"+ name;
 	    }
 	    
 	    field.attr("name", fieldName);
-		inputType = self.createInputTypeElement("complex", fieldName);
+		inputType = FormBuilder.prototype.createInputTypeElement("complex", fieldName);
 	    
 	    field.attr("title", input["abstract"]);
 	    
@@ -215,7 +216,7 @@ var FormBuilder = Class.extend({
 	    }
 	        
 	    var formats = input.complexData.supported.formats;
-	    var formatDropBox = self.createFormatDropdown("format_"+fieldName, formats, input); 
+	    var formatDropBox = FormBuilder.prototype.createFormatDropdown("format_"+fieldName, formats, input); 
 	    
 	    var formatDropBoxDiv = jQuery("<div />"); 
 	      
@@ -259,7 +260,7 @@ var FormBuilder = Class.extend({
 	    var field = anyValue ? jQuery("<input />") : jQuery("<select />");    
 	    
 	    field.attr("name", fieldName);
-	    var inputType = self.createInputTypeElement("literal", fieldName);
+	    var inputType = FormBuilder.prototype.createInputTypeElement("literal", fieldName);
 
 	    field.attr("title", input["abstract"]);
 	    
@@ -329,7 +330,7 @@ var FormBuilder = Class.extend({
 	    field.attr("title", input["abstract"]);
 
 	    field.attr("name", fieldName);
-	    var inputType = self.createInputTypeElement("bbox", fieldName);
+	    var inputType = FormBuilder.prototype.createInputTypeElement("bbox", fieldName);
 
 	    field.attr("title", input["abstract"]);
 	    
@@ -478,7 +479,7 @@ var FormBuilder = Class.extend({
 	},
 
 	addInputCopyButton : function(id){
-		var button = jQuery('<button class="add-input-copy" id="'+id+'-copy-button" />');
+		var button = jQuery('<button type="button" class="add-input-copy" id="'+id+'-copy-button" />');
 		return button;
 	},
 
