@@ -16,7 +16,11 @@ var FormParser = Class.extend({
 				if(prop.value) {
 					var j = inputs.length;
 					inputs[j] = {};
-					inputs[j].identifier = prop.name.substring(6, prop.name.lastIndexOf("_"));
+					if(prop.name.lastIndexOf("_") > 5){					
+					    inputs[j].identifier = prop.name.substring(6, prop.name.lastIndexOf("_"));					
+					}else{
+					    inputs[j].identifier = prop.name.substring(6, prop.name.length);
+					}
 					inputs[j].value = prop.value;
 					inputNameToPosition[prop.name] = j;
 				}
