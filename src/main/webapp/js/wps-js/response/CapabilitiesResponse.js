@@ -38,7 +38,7 @@ var CapabilitiesResponse = BaseResponse.extend({
 	createMarkup : function() {
 		var ident = this.xmlResponse.getElementsByTagNameNS(OWS_11_NAMESPACE, "ServiceIdentification");
 		var identTitle = this.xmlResponse.getElementsByTagNameNS(OWS_11_NAMESPACE, "Title")[0];
-		var identAbstract = this.xmlResponse.getElementsByTagNameNS(OWS_11_NAMESPACE, "Abstract");
+		var identAbstract = this.xmlResponse.getElementsByTagNameNS(OWS_11_NAMESPACE, "Abstract")[0];
 		var identKeywords = this.xmlResponse.getElementsByTagNameNS(OWS_11_NAMESPACE, "Keyword");
 		var keywords = "";
 		jQuery.each(identKeywords, function(index, value) {

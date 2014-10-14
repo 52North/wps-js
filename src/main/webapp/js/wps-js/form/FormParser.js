@@ -16,7 +16,11 @@ var FormParser = Class.extend({
 				if(prop.value) {
 					var j = inputs.length;
 					inputs[j] = {};
-					inputs[j].identifier = prop.name.substring(6, prop.name.length);
+					if(prop.name.lastIndexOf("_") > 5){					
+					    inputs[j].identifier = prop.name.substring(6, prop.name.lastIndexOf("_"));					
+					}else{
+					    inputs[j].identifier = prop.name.substring(6, prop.name.length);
+					}
 					inputs[j].value = prop.value;
 					inputNameToPosition[prop.name] = j;
 				}
@@ -104,7 +108,7 @@ var FormParser = Class.extend({
 				outputs[j] = {};
 				outputs[j].identifier = prop.name.substring(7, prop.name.length);
 
-				//TODO: currently not supported in the form
+				//set asReference flag to false as default
 				outputs[j].asReference = false;
 				outputNameToPosition[prop.name] = j;
 			}
@@ -121,11 +125,6 @@ var FormParser = Class.extend({
 				// only set output properties for selected outputs
 				if(outputNameToPosition[originalName] != null) {
 					outputs[outputNameToPosition[originalName]].type = prop.value;
-
-					//TODO: set via form
-					if (stringStartsWith(prop.value, "complex")) {
-						outputs[outputNameToPosition[originalName]].asReference = true;
-					}
 				}
 			}
 		}
@@ -142,6 +141,20 @@ var FormParser = Class.extend({
 				if(outputNameToPosition[originalName] != null) {
 					this.parseFormatObject(formatObject, outputs[outputNameToPosition[originalName]]);
 				}
+			}
+		}
+
+		/*
+		 * check asReference flag
+		 */
+		for (var i = 0; i < formValues.length; i++) {
+			var prop = formValues[i];
+			if (stringStartsWith(prop.name, "checkbox_output")) {
+				var originalOutputName = prop.name.substring(9, prop.name.length);
+				/*
+				 * its only present in the array if checked
+				 */
+				outputs[outputNameToPosition[originalOutputName]].asReference = true;
 			}
 		}
 
