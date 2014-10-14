@@ -69,6 +69,9 @@ var TEMPLATE_EXECUTE_BBOX_OUTPUTS_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
 					<label class="wps-input-item-label">${identifier}</label>{{html settings}}{{html asReference}}</li>';
 
+//map for storing literalvalues, used to obtain the defaultvalues
+var literalInputsWithDefaultValues = [];
+
 var FormBuilder = Class.extend({
 	
 	init : function(settings) {
@@ -89,6 +92,30 @@ var FormBuilder = Class.extend({
 	 		formElement.append(jQuery('<span id="abstract">' + processDescription["abstract"] + "</span>"));
 	 	}
 	 	formElement.append(this.createFormInputs(processDescription.dataInputs));
+        
+        var button = jQuery('<button type="button" id="fillDefaultValues-button">Fill in default values for LiteralData inputs</button>');
+        formElement.append(button);
+	    	
+	    $('#wps-execute-container').on('click', '#fillDefaultValues-button', function () {
+	    	       
+	       for (var i=0; i < literalInputsWithDefaultValues.length; i++) {
+	           var inputIDArray = literalInputsWithDefaultValues[i];	           
+	           
+	           var input = $('input[name='+ inputIDArray[0] + ']');
+	           
+	           if(input){
+	               input.val(inputIDArray[1]);
+	           }
+	           
+	           var select = $('select[name='+ inputIDArray[0] + ']');
+	           
+	           if(select){
+	               select.val(inputIDArray[1]);
+	           }	           
+	       } 
+	        
+		});
+        
 		formElement.append(this.createFormOutputs(processDescription));
 	 	formElement.append(jQuery('<input type="hidden" name="processIdentifier" value="'+processDescription.identifier+'" />'));
 	        
@@ -255,11 +282,17 @@ var FormBuilder = Class.extend({
 	    var name = input.identifier;
 	    
 	    var fieldName = "input_"+ name + number;
+	    
+	    if(input.literalData.defaultValue){
+	        literalInputsWithDefaultValues.push([fieldName, input.literalData.defaultValue]);
+	    }
+	    
 	    var anyValue = input.literalData.anyValue;
 	    // anyValue means textfield, otherwise we create a dropdown
 	    var field = anyValue ? jQuery("<input />") : jQuery("<select />");    
 	    
 	    field.attr("name", fieldName);
+	    field.attr("id", fieldName);
 	    var inputType = FormBuilder.prototype.createInputTypeElement("literal", fieldName);
 
 	    field.attr("title", input["abstract"]);
