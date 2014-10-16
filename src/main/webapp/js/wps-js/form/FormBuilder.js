@@ -69,8 +69,11 @@ var TEMPLATE_EXECUTE_BBOX_OUTPUTS_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
 					<label class="wps-input-item-label">${identifier}</label>{{html settings}}{{html asReference}}</li>';
 
-//map for storing literalvalues, used to obtain the defaultvalues
-var literalInputsWithDefaultValues = [];
+//array for storing literalvalues, used to obtain the defaultvalues that are defined by the server for this input
+var literalInputsWithServerSideDefaultValues = [];
+
+//array for storing literalvalues, used to obtain the defaultvalues that are defined by the client for this input
+var clientSideDefaultValues = {"org.n52.wps.server.algorithm.SimpleBufferAlgorithm" : ["data", "http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3"]};
 
 var FormBuilder = Class.extend({
 	
@@ -93,28 +96,55 @@ var FormBuilder = Class.extend({
 	 	}
 	 	formElement.append(this.createFormInputs(processDescription.dataInputs));
         
-        var button = jQuery('<button type="button" id="fillDefaultValues-button">Fill in default values for LiteralData inputs</button>');
-        formElement.append(button);
-	    	
-	    $('#wps-execute-container').on('click', '#fillDefaultValues-button', function () {
-	    	       
-	       for (var i=0; i < literalInputsWithDefaultValues.length; i++) {
-	           var inputIDArray = literalInputsWithDefaultValues[i];	           
-	           
-	           var input = $('input[name='+ inputIDArray[0] + ']');
-	           
-	           if(input){
-	               input.val(inputIDArray[1]);
-	           }
-	           
-	           var select = $('select[name='+ inputIDArray[0] + ']');
-	           
-	           if(select){
-	               select.val(inputIDArray[1]);
-	           }	           
-	       } 
-	        
-		});
+        if(literalInputsWithServerSideDefaultValues.length > 0){
+        
+            var button = jQuery('<button type="button" id="fillServerSideDefaultValues-button">Fill in default values for LiteralData inputs defined by the WPS process</button>');
+            formElement.append(button);
+	        	
+	        $('#wps-execute-container').on('click', '#fillServerSideDefaultValues-button', function () {
+	        	       
+	           for (var i=0; i < literalInputsWithServerSideDefaultValues.length; i++) {
+	               var inputIDArray = literalInputsWithServerSideDefaultValues[i];	           
+	               
+	               var input = $('input[name='+ inputIDArray[0] + ']');
+	               
+	               if(input){
+	                   input.val(inputIDArray[1]);
+	               }
+	               
+	               var select = $('select[name='+ inputIDArray[0] + ']');
+	               
+	               if(select){
+	                   select.val(inputIDArray[1]);
+	               }	           
+	           } 
+	            
+		    });
+		}
+		
+        var clientSideDefaultValuesForProcess = clientSideDefaultValues[processDescription.identifier];
+        
+        if(clientSideDefaultValuesForProcess && clientSideDefaultValuesForProcess.length > 0){
+        
+            formElement.append(jQuery("<br>"));
+        
+            var button = jQuery('<button type="button" id="fillClientSideDefaultValues-button">Fill in default values defined by this client</button>');
+            formElement.append(button);
+	        	
+	        $('#wps-execute-container').on('click', '#fillClientSideDefaultValues-button', function () {
+	        	       
+	           for (var i=0; i < clientSideDefaultValuesForProcess.length; i++) {
+	               var inputIDArray = clientSideDefaultValuesForProcess[i];	           
+	               
+	               var textarea = $('textarea[name=input_'+ inputIDArray[0] + ']');
+	               
+	               if(input){
+	                   textarea.val(inputIDArray[1]);
+	               }	     
+	           } 
+	            
+		    });
+		}
         
 		formElement.append(this.createFormOutputs(processDescription));
 	 	formElement.append(jQuery('<input type="hidden" name="processIdentifier" value="'+processDescription.identifier+'" />'));
@@ -284,7 +314,7 @@ var FormBuilder = Class.extend({
 	    var fieldName = "input_"+ name + number;
 	    
 	    if(input.literalData.defaultValue){
-	        literalInputsWithDefaultValues.push([fieldName, input.literalData.defaultValue]);
+	        literalInputsWithServerSideDefaultValues.push([fieldName, input.literalData.defaultValue]);
 	    }
 	    
 	    var anyValue = input.literalData.anyValue;
@@ -394,12 +424,19 @@ var FormBuilder = Class.extend({
 	},
 	
 	createFormatDrowpdownEntry : function(format) {
-		var formatString = "";
 		
 		//if these exist, append with semicolon, else return empty string
     	var schema = format.schema;
     	var encoding = format.encoding;
     	var mimeType = format.mimeType;
+    	
+    	var formatString = FormBuilder.prototype.createFormatString(mimeType, schema, encoding);
+    	
+    	return formatString;
+	},
+	
+	createFormatString : function(mimeType, schema, encoding) {
+		var formatString = "";
     	
 		//mimeType is mandatory, schema and encoding are not
     	if(schema && encoding){
