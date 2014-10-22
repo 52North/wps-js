@@ -73,7 +73,10 @@ var TEMPLATE_EXECUTE_BBOX_OUTPUTS_MARKUP = '\
 var literalInputsWithServerSideDefaultValues = [];
 
 //array for storing literalvalues, used to obtain the defaultvalues that are defined by the client for this input
-var clientSideDefaultValues = {"org.n52.wps.server.algorithm.SimpleBufferAlgorithm" : [["data", "http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3"]]};
+var clientSideDefaultValues = {"org.n52.wps.server.algorithm.SimpleBufferAlgorithm" : [["data", {"value" :"http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3", "asReference" : true}]], "org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm" : [["data", [{"value" :"http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3", "mimeType" : "application/json", "schema" : "", "encoding" : "",  "asReference" : true}, {"value" :"http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3", "asReference" : true}]]]};
+
+var processIdentifier;
+
 var FormBuilder = Class.extend({
 	
 	init : function(settings) {
@@ -85,6 +88,9 @@ var FormBuilder = Class.extend({
 	},
 	
 	buildExecuteForm : function(targetDiv, processDescription, executeCallback) {
+	 	
+	 	processIdentifier = processDescription.identifier;
+	 	
 	 	var formElement = jQuery('<form id="wps-execute-form"></form>');
 	 	formElement.submit(function() {
 	 			executeCallback("wps-execute-form");
@@ -122,33 +128,15 @@ var FormBuilder = Class.extend({
 		}
         
 		formElement.append(this.createFormOutputs(processDescription));
-	 	formElement.append(jQuery('<input type="hidden" name="processIdentifier" value="'+processDescription.identifier+'" />'));
+	 	formElement.append(jQuery('<input type="hidden" name="processIdentifier" value="'+processIdentifier+'" />'));
 	        
         var executeButton = jQuery("<button id=\"btn_execute\">Execute</button>");
         formElement.append(executeButton);
         
         targetDiv.append(jQuery("<div>").append(formElement));
-		
-        var clientSideDefaultValuesForProcess = clientSideDefaultValues[processDescription.identifier];
-        
-        if(clientSideDefaultValuesForProcess && clientSideDefaultValuesForProcess.length > 0){
-            
-            if(literalInputsWithServerSideDefaultValues.length > 0){            
-                formElement.append(jQuery("<br>"));            
-            }
-        
-            var button = jQuery('<button type="button" id="fillClientSideDefaultValues-button">Fill in default values defined by this client</button>');
-            formElement.append(button);
-	        	
-	        $('#wps-execute-container').on('click', '#fillClientSideDefaultValues-button', function () {
-	           FormBuilder.prototype.fillInClientSideDefaultValues(clientSideDefaultValuesForProcess);
-		    });
-        
-            FormBuilder.prototype.fillInClientSideDefaultValues(clientSideDefaultValuesForProcess);
-		}
 	},
 	
-	fillInClientSideDefaultValues : function(clientSideDefaultValuesForProcess){
+	fillInClientSideDefaultValues : function(clientSideDefaultValuesForProcess, input, container, template, copyTemplate, inputParentId, propertyCreationFunction){
 	
 		for (var i=0; i < clientSideDefaultValuesForProcess.length; i++) {
 	        var inputIDArray = clientSideDefaultValuesForProcess[i];	 
@@ -160,21 +148,19 @@ var FormBuilder = Class.extend({
 	        var textarea = $('textarea[name=input_'+ name + ']');
 	        
 	        //check for multiple inputs
-	        if(values.length > 1){
-	        
-	            var button = null;
-	        
-	        	var copyButtonDiv = jQuery("<div></div>"); 
-	        
-	        	button = this.addInputCopyButton(name);    	
-	        
-	            copyButtonDiv.append(button);
-	            //templateProperties.copyButton = copyButtonDiv.html();	            
+	        if(values.length > 1){	
+	    		
+	    		var templateProperties = FormBuilder.prototype.createCopy(input, container, template, copyTemplate, inputParentId, propertyCreationFunction);
+	    		
+	    		if (templateProperties) {				
+	    			var inputsUl = jQuery('#'+inputParentId);
+	    			jQuery.tmpl(copyTemplate, templateProperties).appendTo(inputsUl);
+	    		}            
 	        }
 	        
 	        //if(textarea){
 	        //    textarea.val();
-	        //}	     
+	        //}
 	    } 
 	
 	},
@@ -228,6 +214,13 @@ var FormBuilder = Class.extend({
 	    
 	    var result = jQuery.tmpl(template, templateProperties);
 	    result.appendTo(container);
+		
+        var clientSideDefaultValuesForProcess = clientSideDefaultValues[processIdentifier];
+        
+        if(clientSideDefaultValuesForProcess && clientSideDefaultValuesForProcess.length > 0){
+            
+            FormBuilder.prototype.fillInClientSideDefaultValues(clientSideDefaultValuesForProcess, input, container, template, copyTemplate, inputParentId, propertyCreationFunction);
+		}
 	              
 	    if (input.maxOccurs > 1) {
 	    
