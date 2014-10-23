@@ -73,7 +73,7 @@ var TEMPLATE_EXECUTE_BBOX_OUTPUTS_MARKUP = '\
 var literalInputsWithServerSideDefaultValues = [];
 
 //array for storing literalvalues, used to obtain the defaultvalues that are defined by the client for this input
-var clientSideDefaultValues = {"org.n52.wps.server.algorithm.SimpleBufferAlgorithm" : [["data", {"value" :"http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3", "asReference" : true}]], "org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm" : [["data", [{"value" :"http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3", "mimeType" : "application/json", "schema" : "", "encoding" : "",  "asReference" : true}, {"value" :"http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3", "asReference" : true}]]]};
+var clientSideDefaultValues = {"org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm" : {"data": [{"value" :"http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3", "mimeType" : "application/json", "schema" : "", "encoding" : "",  "asReference" : true}, {"value" :"http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3", "asReference" : true}]}};
 
 var processIdentifier;
 
@@ -95,11 +95,19 @@ var FormBuilder = Class.extend({
 	 	formElement.submit(function() {
 	 			executeCallback("wps-execute-form");
 	        	return false;
-	        });
+	    });
+        //must be added right at the beginning so that predefined values can be added to textareas/inputs/selects
+        targetDiv.append(jQuery("<div>").append(formElement));
+        
 	 	if(processDescription["abstract"] != null && processDescription["abstract"] != "null") {
 	 		formElement.append(jQuery('<span id="abstract">' + processDescription["abstract"] + "</span>"));
 	 	}
-	 	formElement.append(this.createFormInputs(processDescription.dataInputs));
+	    
+	    var container = jQuery('<div id="input"></div>');
+	    
+	 	formElement.append(container);
+        
+        this.createFormInputs(processDescription.dataInputs, container);
         
         if(literalInputsWithServerSideDefaultValues.length > 0){
         
@@ -132,54 +140,64 @@ var FormBuilder = Class.extend({
 	        
         var executeButton = jQuery("<button id=\"btn_execute\">Execute</button>");
         formElement.append(executeButton);
-        
-        targetDiv.append(jQuery("<div>").append(formElement));
 	},
 	
-	fillInClientSideDefaultValues : function(clientSideDefaultValuesForProcess, input, container, template, copyTemplate, inputParentId, propertyCreationFunction){
+	fillInClientSideDefaultValues : function(id, values){	 
 	
-		for (var i=0; i < clientSideDefaultValuesForProcess.length; i++) {
-	        var inputIDArray = clientSideDefaultValuesForProcess[i];	 
-	
-	        var name = inputIDArray[0];          
+	        var name = id;
 	        
-	        var values = inputIDArray;
-	        
-	        var textarea = $('textarea[name=input_'+ name + ']');
-	        
-	        //check for multiple inputs
-	        if(values.length > 1){	
-	    		
-	    		var templateProperties = FormBuilder.prototype.createCopy(input, container, template, copyTemplate, inputParentId, propertyCreationFunction);
-	    		
-	    		if (templateProperties) {				
-	    			var inputsUl = jQuery('#'+inputParentId);
-	    			jQuery.tmpl(copyTemplate, templateProperties).appendTo(inputsUl);
-	    		}            
-	        }
-	        
-	        //if(textarea){
-	        //    textarea.val();
-	        //}
-	    } 
+	            var textarea = $('textarea[name=input_'+ id + ']');
+	            if(textarea){
+	                textarea.val(values.value);
+	            }	
 	
 	},
 	
-	createFormInputs : function(inputs){
+	createFormInputs : function(inputs, container){
 	    
-	    var container = jQuery('<div id="input"></div>');
 	    var complexContainer = jQuery('<div id="complex-inputs"/>');
 	    var literalContainer = jQuery('<div id="literal-inputs"/>');
 	    var bboxContainer = jQuery('<div id="bbox-inputs"/>');
 	    container.append(complexContainer);
 	    container.append(literalContainer);
 	    container.append(bboxContainer);
+		
+        var clientSideDefaultValuesForProcess = clientSideDefaultValues[processIdentifier];
+        
+        if(clientSideDefaultValuesForProcess){            
 	    
 	    var input;
 	    for (var i=0; i < inputs.length; i++) {
 	        input = inputs[i];    
 	                
-	        if (input.complexData) {    		    		
+	        if (input.complexData) {
+	            
+	            var preConfiguredValues = clientSideDefaultValuesForProcess[input.identifier]; 
+	            
+	            if(preConfiguredValues && preConfiguredValues.length > 1){
+	            
+	                for (var j=0; j < preConfiguredValues.length; j++) {
+	                    input.occurrence = j+1;
+	        	        this.createPredefinedInput(input, complexContainer, TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP, this.createComplexInput);
+                        FormBuilder.prototype.fillInClientSideDefaultValues(input.identifier + "_" + (j+1), preConfiguredValues[j]);
+	        	    }
+	            
+	            }
+	        	       	   
+	        } else if (input.boundingBoxData) {            
+	        	this.createInput(input, bboxContainer, TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP, TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP, "bbox-inputs", this.createBoundingBoxInput);               
+	        } else if (input.literalData) {
+	        	this.createInput(input, literalContainer, TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP, TEMPLATE_EXECUTE_LITERAL_INPUTS_COPY_MARKUP, "literal-inputs", this.createLiteralInput);
+	        }
+	    }
+            
+		}else{
+	    
+	    var input;
+	    for (var i=0; i < inputs.length; i++) {
+	        input = inputs[i];    
+	                
+	        if (input.complexData) {
 	        	this.createInput(input, complexContainer, TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP, TEMPLATE_EXECUTE_COMPLEX_INPUTS_COPY_MARKUP, "complex-inputs", this.createComplexInput);       	   
 	        } else if (input.boundingBoxData) {            
 	        	this.createInput(input, bboxContainer, TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP, TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP, "bbox-inputs", this.createBoundingBoxInput);               
@@ -187,8 +205,9 @@ var FormBuilder = Class.extend({
 	        	this.createInput(input, literalContainer, TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP, TEMPLATE_EXECUTE_LITERAL_INPUTS_COPY_MARKUP, "literal-inputs", this.createLiteralInput);
 	        }
 	    }
+		
+		}
 	    
-	    return container;	
 	},
 
 	createInput : function(input, container, template, copyTemplate, inputParentId, propertyCreationFunction){
@@ -237,6 +256,21 @@ var FormBuilder = Class.extend({
 	    	}
 		
 		}
+		
+	},
+
+	createPredefinedInput : function(input, container, template, propertyCreationFunction){
+
+	    var templateProperties = propertyCreationFunction(input, this);
+	    
+	    if (input.minOccurs > 0) {
+	        templateProperties.required = "*";
+	    }
+	    	
+	    var name = input.identifier;
+	    
+	    var result = jQuery.tmpl(template, templateProperties);
+	    result.appendTo(container);
 	    
 	    if (input.hidden) {
 	    	result.css("display", "none");
