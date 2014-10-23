@@ -143,14 +143,18 @@ var FormBuilder = Class.extend({
 	},
 	
 	fillInClientSideDefaultValues : function(id, values){	 
-	
-	        var name = id;
 	        
-	            var textarea = $('textarea[name=input_'+ id + ']');
-	            if(textarea){
-	                textarea.val(values.value);
-	            }	
-	
+	    var textarea = $('textarea[name=input_'+ id + ']');
+	    if(textarea){
+	        //complex input
+	        textarea.val(values.value);
+	        
+	        if(values.asReference){
+	            var checkbox = $('input[name=checkbox_input_'+ id + ']');
+	            checkbox.prop('checked', true);
+	        }
+	    }
+	    	
 	},
 	
 	createFormInputs : function(inputs, container){
