@@ -31,3 +31,9 @@ function isImageMimetype(mimetype) {
 	
 	return ($.inArray(mimetype, imageMimetypes) > -1);
 }
+
+function stringify(format){
+
+    return '{"mimeType" : "' + (format.mimeType ? format.mimeType : "") + '", "schema" : "' + (format.schema ? format.schema : "") + '", "encoding" : "' + (format.encoding ? format.encoding : "") + '"}';
+    
+}

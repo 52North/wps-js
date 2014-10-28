@@ -150,9 +150,16 @@ var FormBuilder = Class.extend({
 	        textarea.val(values.value);
 	        
 	        if(values.asReference){
-	            var checkbox = $('input[name=checkbox_input_'+ id + ']');
-	            checkbox.prop('checked', true);
+	            var asReferenceCheckbox = $('input[name=checkbox_input_'+ id + ']');
+	            asReferenceCheckbox.prop('checked', true);
 	        }
+	        
+	        var format = {"mimeType" : values.mimeType, "schema" : values.schema, "encoding" : values.encoding};
+	       
+	        var formatSelect = $('select[name=format_input_'+ id + ']');
+	        
+	        formatSelect.val(stringify(format));     
+	        
 	    }
 	    	
 	},
@@ -597,7 +604,7 @@ var FormBuilder = Class.extend({
 	    	var formatString = this.createFormatDrowpdownEntry(format);
 
 	    	option = jQuery('<option>'+formatString+'</option>');
-	        option.val(JSON.stringify(format));
+	        option.val(stringify(format));
 	        field.append(option);
 	    }
 		return field;
