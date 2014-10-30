@@ -230,24 +230,20 @@ var ExecuteResponse = BaseResponse.extend({
 			var extensionDiv = result.children('#wps-execute-response-extension');
 			if (extensions.outputs) {
 				jQuery(extensions.outputs).each(function(key, value) {
-						if(value.ref == true) {						
+						if(value.ref == true) {
+							jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_DOWNLOAD, value).appendTo(extensionDiv);	
+						}else {
 						    if(isImageMimetype(mimetype) && wps.isShowImages()){
-						    //get the image from the url
-						    
-						    $.get(value.value, function( data ) {
+						        //get the image from the url
 			                    properties = {
 			                		    mimetype : mimetype,
-			                		    value : data
+			                		    value : value.value
 			                    };
-			                    jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_IMAGE, properties).appendTo(extensionDiv);	
-                            });
-						    
+			                    jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_IMAGE, properties).appendTo(extensionDiv);
 							
 						    }else{
-							    jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_DOWNLOAD, value).appendTo(extensionDiv);						    
+							    jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_VALUE, value).appendTo(extensionDiv);					    
 						    }
-						}else {
-							jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_VALUE, value).appendTo(extensionDiv);
 						}
 					});
 			}
