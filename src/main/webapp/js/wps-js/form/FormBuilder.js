@@ -73,7 +73,32 @@ var TEMPLATE_EXECUTE_BBOX_OUTPUTS_MARKUP = '\
 var literalInputsWithServerSideDefaultValues = [];
 
 //array for storing literalvalues, used to obtain the defaultvalues that are defined by the client for this input
-var clientSideDefaultValues = {"org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm" : {"data": [{"value" :"http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3", "mimeType" : "application/json", "schema" : "", "encoding" : "",  "asReference" : true}, {"value" :"http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3", "asReference" : true}]}};
+var clientSideDefaultValues = {
+	"org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm" : {
+		"inputs" : {
+			"data" : [
+					{
+						"value" : "http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3",
+						"mimeType" : "application/json",
+						"schema" : "",
+						"encoding" : "",
+						"asReference" : true
+					},
+					{
+						"value" : "http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3",
+						"asReference" : true
+					} ]
+		},
+		"outputs" : {
+			"result" : {
+				"mimeType" : "application/json",
+				"schema" : "",
+				"encoding" : "",
+				"asReference" : true
+			}
+		}
+	}
+};
 
 var processIdentifier;
 
@@ -183,7 +208,7 @@ var FormBuilder = Class.extend({
 	                
 	        if (input.complexData) {
 	            
-	            var preConfiguredValues = clientSideDefaultValuesForProcess[input.identifier]; 
+	            var preConfiguredValues = clientSideDefaultValuesForProcess.inputs[input.identifier]; 
 	            
 	            if(preConfiguredValues && preConfiguredValues.length > 1){
 	            
