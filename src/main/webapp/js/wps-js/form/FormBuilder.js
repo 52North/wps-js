@@ -78,56 +78,35 @@ var clientSideDefaultValues = {
 		"inputs" : {
 			"data" : [
 					{
-						"value" : "http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3",
-						"mimeType" : "application/json",
+						"value" : "iVBORw0KGgoAAAANSUhEUgAAAeAAAAHgCAMAAABKCk6nAAAAA1BMVEX///+nxBvIAAAA9klEQVR4"
+                                 +"nO3BAQ0AAADCoPdPbQ8HFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                                 +"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                                 +"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                                 +"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                                 +"AAAAAAAAAAAAAAD8G4YNAAGL73n/AAAAAElFTkSuQmCC",
+						"mimeType" : "image/png",
+						"schema" : "",
+						"encoding" : "base64"
+					},{
+						"value" : "http://localhost:8080/testdata/52n346x346-transp.png",
+						"mimeType" : "image/png",
 						"schema" : "",
 						"encoding" : "",
-						"asReference" : true
-					},
-					{
-						"value" : "http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3",
-						"asReference" : true
-					} ]
+						"asReference" :true
+					}]
 		},
 		"outputs" : {
 			"result" : {
-				"mimeType" : "application/json",
+				"mimeType" : "image/png",
 				"schema" : "",
 				"encoding" : "",
 				"asReference" : true
+			},			
+			"result2" : {
+				"mimeType" : "image/png",
+				"schema" : "",
+				"encoding" : "base64"
 			}
-		}
-	},
-	"org.n52.wps.server.algorithm.test.MultipleInAndOutputsDummyTestClass" : {
-		"inputs" : {
-			"complexinput" : [
-					{
-						"value" : "http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3",
-						"mimeType" : "application/json",
-						"schema" : "",
-						"encoding" : "",
-						"asReference" : true
-					},
-					{
-						"value" : "http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3",
-						"asReference" : true
-					} ],
-			"literalInput1" : [
-					{
-						"value" : "me too"
-					},
-					{
-						"value" : "if you can see this, the server side defaultvalue was set correctly"
-					} ]
-		},
-		"outputs" : {
-			"complexoutput" : {
-				"mimeType" : "application/json",
-				"schema" : "",
-				"encoding" : "",
-				"asReference" : true
-			},
-			"literalOutput1" : {}
 		}
 	}
 };
