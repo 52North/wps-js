@@ -163,8 +163,12 @@ var FormBuilder = Class.extend({
 	            
 		    });
 		}
+	    
+	    var outputContainer = jQuery('<div id="input"></div>');
         
-		formElement.append(this.createFormOutputs(processDescription));
+		formElement.append(outputContainer);
+		
+		this.createFormOutputs(processDescription, outputContainer);
 	 	formElement.append(jQuery('<input type="hidden" name="processIdentifier" value="'+processIdentifier+'" />'));
 	        
         var executeButton = jQuery("<button id=\"btn_execute\">Execute</button>");
@@ -534,8 +538,7 @@ var FormBuilder = Class.extend({
     	return formatString;
 	},
 
-	createFormOutputs : function(processDescription){
-		var container = jQuery('<div id="output"></div>');
+	createFormOutputs : function(processDescription, container){
 	    
 		jQuery.tmpl(TEMPLATE_EXECUTE_OUTPUTS_MARKUP, "").appendTo(container);
 		
@@ -557,38 +560,42 @@ var FormBuilder = Class.extend({
 	    	
 	    	var checkBox = jQuery('<input type="checkbox"/>');
 	    	checkBox.attr("name", id);
-	    	checkBox.attr("title", "Enable this output.");
+	    	checkBox.attr("title", "Request this output.");
 	    	
 	    	var typeField = this.createInputTypeElement(output.complexOutput ? "complex" : "literal", id);
 
             var preConfiguredValues = clientSideDefaultValuesForProcess.outputs[output.identifier];
 	    	
-	    	//check box if output appears in preconfigured values
-	    	if (preConfiguredValues) {
-	    		checkBox.attr("checked", "checked");
-	    	}
-	    	
 	    	outputSettingsDiv.append(checkBox);
 	    	outputSettingsDiv.append("request this output");
 	    	outputSettingsDiv.append(typeField);
 	    		    
-	        var checkBox = jQuery('<input type="checkbox" name="checkbox_'+id + '" value="asReference" title="This ouput will be requested as reference."/>');
+	        var asReferenceCheckBox = jQuery('<input type="checkbox" name="checkbox_'+id + '" value="asReference" title="This ouput will be requested as reference."/>');
+	        	    	
+	    	//check box if output appears in preconfigured values
+	    	if (preConfiguredValues) {
+	    		checkBox.attr("checked", "checked");
+	    		
+	    		if(preConfiguredValues.asReference){
+	    		    asReferenceCheckBox.attr("checked", "checked");
+	    		}
+	    		
+	    	}
 	        
-	        outputSettingsDiv.append(checkBox);
+	        outputSettingsDiv.append(asReferenceCheckBox);
 	        outputSettingsDiv.append("asReference");
 	        
 	    	templateProperties.identifier = id;
 	    	templateProperties.settings = outputSettingsDiv.html();
 	    	
+	    	var formatDropBox;
+	    	var defaultFormat;
+	    	
 	    	if (output.complexOutput) {
 	    		var formats = output.complexOutput.supported.formats;
-	    		var defaultFormat = output.complexOutput["default"].formats[0];
+	    		defaultFormat = output.complexOutput["default"].formats[0];
 	    		
-	    		var formatDropBox = this.createFormatDropdown("format_"+id, formats, output);
-	    		
-	    		// set the default as selected in the dropdown
-	    		formatDropBox.val(JSON.stringify(defaultFormat));
-	    		
+	    		formatDropBox = this.createFormatDropdown("format_"+id, formats, output);
 	    		var formatDropBoxDiv = jQuery("<div />");
 	    		
 	    		formatDropBoxDiv.append(formatDropBox);
@@ -612,7 +619,22 @@ var FormBuilder = Class.extend({
 	    	}
 		}
 		
-		return container;
+		//value of format dropbox can only be set after it is in the dom tree
+	    
+	    var formatDropBox = $('select[name=format_'+ id + ']');
+	    		
+	    if(preConfiguredValues && formatDropBox){
+	       
+	        var format = {"mimeType" : preConfiguredValues.mimeType, "schema" : preConfiguredValues.schema, "encoding" : preConfiguredValues.encoding};
+	              
+	        formatDropBox.val(stringify(format));
+	        	    
+	    }else if(formatDropBox && defaultFormat){	    	
+	    	
+	        // set the default as selected in the dropdown
+	        formatDropBox.val(stringify(defaultFormat));
+	    }
+		
 	},
 
 	createFormatDropdown : function(id, formats, input){
