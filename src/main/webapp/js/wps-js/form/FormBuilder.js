@@ -101,6 +101,8 @@ var clientSideDefaultValues = {
 };
 
 var processIdentifier;
+		
+var clientSideDefaultValuesForProcess = clientSideDefaultValues[processIdentifier];
 
 var FormBuilder = Class.extend({
 	
@@ -115,6 +117,8 @@ var FormBuilder = Class.extend({
 	buildExecuteForm : function(targetDiv, processDescription, executeCallback) {
 	 	
 	 	processIdentifier = processDescription.identifier;
+
+        clientSideDefaultValuesForProcess = clientSideDefaultValues[processIdentifier];
 	 	
 	 	var formElement = jQuery('<form id="wps-execute-form"></form>');
 	 	formElement.submit(function() {
@@ -167,7 +171,7 @@ var FormBuilder = Class.extend({
         formElement.append(executeButton);
 	},
 	
-	fillInClientSideDefaultValues : function(id, values){	 
+	fillInClientSideDefaultValuesForInput : function(id, values){	 
 	        
 	    var textarea = $('textarea[name=input_'+ id + ']');
 	    if(textarea){
@@ -186,6 +190,7 @@ var FormBuilder = Class.extend({
 	        formatSelect.val(stringify(format));     
 	        
 	    }
+	    //TODO else (literal-/ bboxinputs)
 	    	
 	},
 	
@@ -197,33 +202,30 @@ var FormBuilder = Class.extend({
 	    container.append(complexContainer);
 	    container.append(literalContainer);
 	    container.append(bboxContainer);
-		
-        var clientSideDefaultValuesForProcess = clientSideDefaultValues[processIdentifier];
         
         if(clientSideDefaultValuesForProcess){            
 	    
 	    var input;
 	    for (var i=0; i < inputs.length; i++) {
-	        input = inputs[i];    
+	        input = inputs[i];
+
+            var preConfiguredValues = clientSideDefaultValuesForProcess.inputs[input.identifier];
+	            
+	        if(preConfiguredValues && preConfiguredValues.length > 1){
 	                
 	        if (input.complexData) {
-	            
-	            var preConfiguredValues = clientSideDefaultValuesForProcess.inputs[input.identifier]; 
-	            
-	            if(preConfiguredValues && preConfiguredValues.length > 1){
 	            
 	                for (var j=0; j < preConfiguredValues.length; j++) {
 	                    input.occurrence = j+1;
 	        	        this.createPredefinedInput(input, complexContainer, TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP, this.createComplexInput);
-                        FormBuilder.prototype.fillInClientSideDefaultValues(input.identifier + "_" + (j+1), preConfiguredValues[j]);
+                        FormBuilder.prototype.fillInClientSideDefaultValuesForInput(input.identifier + "_" + (j+1), preConfiguredValues[j]);
 	        	    }
-	            
-	            }
 	        	       	   
 	        } else if (input.boundingBoxData) {            
 	        	this.createInput(input, bboxContainer, TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP, TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP, "bbox-inputs", this.createBoundingBoxInput);               
 	        } else if (input.literalData) {
 	        	this.createInput(input, literalContainer, TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP, TEMPLATE_EXECUTE_LITERAL_INPUTS_COPY_MARKUP, "literal-inputs", this.createLiteralInput);
+	        }
 	        }
 	    }
             
@@ -269,14 +271,7 @@ var FormBuilder = Class.extend({
 	    
 	    var result = jQuery.tmpl(template, templateProperties);
 	    result.appendTo(container);
-		
-        var clientSideDefaultValuesForProcess = clientSideDefaultValues[processIdentifier];
-        
-        if(clientSideDefaultValuesForProcess && clientSideDefaultValuesForProcess.length > 0){
-            
-            FormBuilder.prototype.fillInClientSideDefaultValues(clientSideDefaultValuesForProcess, input, container, template, copyTemplate, inputParentId, propertyCreationFunction);
-		}
-	              
+	    
 	    if (input.maxOccurs > 1) {
 	    
 	    	if (button) {
@@ -565,8 +560,11 @@ var FormBuilder = Class.extend({
 	    	checkBox.attr("title", "Enable this output.");
 	    	
 	    	var typeField = this.createInputTypeElement(output.complexOutput ? "complex" : "literal", id);
+
+            var preConfiguredValues = clientSideDefaultValuesForProcess.outputs[output.identifier];
 	    	
-	    	if (output.selected) {
+	    	//check box if output appears in preconfigured values
+	    	if (preConfiguredValues) {
 	    		checkBox.attr("checked", "checked");
 	    	}
 	    	
