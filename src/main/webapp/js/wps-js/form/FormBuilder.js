@@ -97,6 +97,38 @@ var clientSideDefaultValues = {
 				"asReference" : true
 			}
 		}
+	},
+	"org.n52.wps.server.algorithm.test.MultipleInAndOutputsDummyTestClass" : {
+		"inputs" : {
+			"complexinput" : [
+					{
+						"value" : "http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3",
+						"mimeType" : "application/json",
+						"schema" : "",
+						"encoding" : "",
+						"asReference" : true
+					},
+					{
+						"value" : "http://geoprocessing.demo.52north.org:8080/geoserver/wfs?SERVICE=WFS&amp;VERSION=1.0.0&amp;REQUEST=GetFeature&amp;TYPENAME=topp:tasmania_roads&amp;SRS=EPSG:4326&amp;OUTPUTFORMAT=GML3",
+						"asReference" : true
+					} ],
+			"literalInput1" : [
+					{
+						"value" : "me too"
+					},
+					{
+						"value" : "if you can see this, the server side defaultvalue was set correctly"
+					} ]
+		},
+		"outputs" : {
+			"complexoutput" : {
+				"mimeType" : "application/json",
+				"schema" : "",
+				"encoding" : "",
+				"asReference" : true
+			},
+			"literalOutput1" : {}
+		}
 	}
 };
 
@@ -115,6 +147,8 @@ var FormBuilder = Class.extend({
 	},
 	
 	buildExecuteForm : function(targetDiv, processDescription, executeCallback) {
+	 	
+	 	literalInputsWithServerSideDefaultValues = [];
 	 	
 	 	processIdentifier = processDescription.identifier;
 
@@ -194,7 +228,18 @@ var FormBuilder = Class.extend({
 	        formatSelect.val(stringify(format));     
 	        
 	    }
-	    //TODO else (literal-/ bboxinputs)
+	    
+	    var input = $('input[name=input_'+ id + ']');
+	    
+	    if(input){
+	       input.val(values.value);
+	    }
+	    
+	    var select = $('select[name=input_'+ id + ']');
+	    
+	    if(select){
+	       select.val(values.value);
+	    }
 	    	
 	},
 	
@@ -215,7 +260,7 @@ var FormBuilder = Class.extend({
 
             var preConfiguredValues = clientSideDefaultValuesForProcess.inputs[input.identifier];
 	            
-	        if(preConfiguredValues && preConfiguredValues.length > 1){
+	        if(preConfiguredValues){
 	                
 	        if (input.complexData) {
 	            
@@ -225,10 +270,20 @@ var FormBuilder = Class.extend({
                         FormBuilder.prototype.fillInClientSideDefaultValuesForInput(input.identifier + "_" + (j+1), preConfiguredValues[j]);
 	        	    }
 	        	       	   
-	        } else if (input.boundingBoxData) {            
-	        	this.createInput(input, bboxContainer, TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP, TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP, "bbox-inputs", this.createBoundingBoxInput);               
+	        } else if (input.boundingBoxData) {  
+	            
+	                for (var j=0; j < preConfiguredValues.length; j++) {
+	                    input.occurrence = j+1;
+	        	        this.createPredefinedInput(input, bboxContainer, TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP, this.createBoundingBoxInput);
+                        FormBuilder.prototype.fillInClientSideDefaultValuesForInput(input.identifier + "_" + (j+1), preConfiguredValues[j]);
+	        	    }           
 	        } else if (input.literalData) {
-	        	this.createInput(input, literalContainer, TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP, TEMPLATE_EXECUTE_LITERAL_INPUTS_COPY_MARKUP, "literal-inputs", this.createLiteralInput);
+	            
+	                for (var j=0; j < preConfiguredValues.length; j++) {
+	                    input.occurrence = j+1;
+	        	        this.createPredefinedInput(input, literalContainer, TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP, this.createLiteralInput);
+                        FormBuilder.prototype.fillInClientSideDefaultValuesForInput(input.identifier + "_" + (j+1), preConfiguredValues[j]);
+	        	    }
 	        }
 	        }
 	    }
@@ -333,7 +388,7 @@ var FormBuilder = Class.extend({
 	    var inputType;
 	    var fieldName;
 	    if(input.maxOccurs > 1){
-	    	fieldName = "input_"+ name + "_"+ number;
+	    	fieldName = "input_"+ name + "_" + number;
 	    }else {
 	    	fieldName = "input_"+ name;
 	    }
@@ -397,7 +452,12 @@ var FormBuilder = Class.extend({
 	    
 	    var name = input.identifier;
 	    
-	    var fieldName = "input_"+ name + number;
+	    var fieldName;
+	    if(input.maxOccurs > 1){
+	    	fieldName = "input_"+ name + "_" + number;
+	    }else {
+	    	fieldName = "input_"+ name;
+	    }
 	    
 	    if(input.literalData.defaultValue){
 	        literalInputsWithServerSideDefaultValues.push([fieldName, input.literalData.defaultValue]);
@@ -474,7 +534,12 @@ var FormBuilder = Class.extend({
 	    
 	    var name = input.identifier;
 	    
-	    var fieldName = "input_"+ name + number;
+	    var fieldName;
+	    if(input.maxOccurs > 1){
+	    	fieldName = "input_"+ name + "_" + number;
+	    }else {
+	    	fieldName = "input_"+ name;
+	    }
 	    var field = jQuery("<input />");
 	    field.attr("title", input["abstract"]);
 
@@ -564,7 +629,11 @@ var FormBuilder = Class.extend({
 	    	
 	    	var typeField = this.createInputTypeElement(output.complexOutput ? "complex" : "literal", id);
 
-            var preConfiguredValues = clientSideDefaultValuesForProcess.outputs[output.identifier];
+            var preConfiguredValues;
+
+            if(clientSideDefaultValuesForProcess){
+                preConfiguredValues = clientSideDefaultValuesForProcess.outputs[output.identifier];
+            }
 	    	
 	    	outputSettingsDiv.append(checkBox);
 	    	outputSettingsDiv.append("request this output");
@@ -617,23 +686,23 @@ var FormBuilder = Class.extend({
 	    	if (template) {
 	    		jQuery.tmpl(template, templateProperties).appendTo(outputsUl);
 	    	}
-		}
 		
-		//value of format dropbox can only be set after it is in the dom tree
-	    
-	    var formatDropBox = $('select[name=format_'+ id + ']');
-	    		
-	    if(preConfiguredValues && formatDropBox){
-	       
-	        var format = {"mimeType" : preConfiguredValues.mimeType, "schema" : preConfiguredValues.schema, "encoding" : preConfiguredValues.encoding};
-	              
-	        formatDropBox.val(stringify(format));
-	        	    
-	    }else if(formatDropBox && defaultFormat){	    	
-	    	
-	        // set the default as selected in the dropdown
-	        formatDropBox.val(stringify(defaultFormat));
-	    }
+		    //value of format dropbox can only be set after it is in the dom tree
+	        
+	        var formatDropBox = $('select[name=format_'+ id + ']');
+	        		
+	        if(preConfiguredValues && formatDropBox){
+	           
+	            var format = {"mimeType" : preConfiguredValues.mimeType, "schema" : preConfiguredValues.schema, "encoding" : preConfiguredValues.encoding};
+	                  
+	            formatDropBox.val(stringify(format));
+	            	    
+	        }else if(formatDropBox && defaultFormat){	    	
+	        	
+	            // set the default as selected in the dropdown
+	            formatDropBox.val(stringify(defaultFormat));
+	        }
+		}
 		
 	},
 
