@@ -40,7 +40,7 @@ function stringify(format){
 
 function escapeCharactersForSelect(id){
 
-    var result = id.replace(".","\\.");
+    var result = id.replace(/\./g,"\\.");
 
     return result;
 }
