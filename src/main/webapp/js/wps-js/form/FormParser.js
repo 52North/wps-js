@@ -154,7 +154,9 @@ var FormParser = Class.extend({
 				/*
 				 * its only present in the array if checked
 				 */
-				outputs[outputNameToPosition[originalOutputName]].asReference = true;
+				if(outputNameToPosition[originalOutputName]){
+				    outputs[outputNameToPosition[originalOutputName]].asReference = true;
+				}
 			}
 		}
 

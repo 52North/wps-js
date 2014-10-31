@@ -25,6 +25,7 @@ var TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_DOWNLOAD = '\
 	
 var TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_IMAGE = '\
 	<div class="wps-execute-response-result"> \
+			<label class="wps-extension-item-label">${key}</label><br/> \
 			<img src="data:${mimetype};base64, ${value}" /> \
 	</div>';
 
@@ -102,11 +103,14 @@ var ExecuteResponse = BaseResponse.extend({
 		var process = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "Process");
 		var status = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "Status");
 		var reference = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "Reference");
+		var complexData = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "ComplexData");
 		
 		var mimetype = null;
 		
 		if(reference && reference[0]){
 		    mimetype = reference[0].getAttribute('mimeType');
+		}else if(complexData && complexData[0]){
+		    mimetype = complexData[0].getAttribute('mimeType');		
 		}
 		
 		var properties = null;
@@ -236,6 +240,7 @@ var ExecuteResponse = BaseResponse.extend({
 						    if(isImageMimetype(mimetype) && wps.isShowImages()){
 						        //get the image from the url
 			                    properties = {
+			                            key : value.key,
 			                		    mimetype : mimetype,
 			                		    value : value.value
 			                    };
