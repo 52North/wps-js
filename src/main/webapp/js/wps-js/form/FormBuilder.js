@@ -1,10 +1,10 @@
 
 var TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP = '\
-	<div class="wps-execute-complex-inputs" id="input_${identifier}"> \
+	<div class="wps-execute-complex-inputs" id="${identifier}"> \
 		<div class="wps-execute-response-process"> \
 			<ul class="wps-execute-response-list"> \
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}{{html asReference}}</li> \
+					<label class="wps-input-item-label">${labelText}${required}</label>{{html inputField}}{{html asReference}}</li> \
 				<li class="wps-execute-response-list-entry"> \
 					{{html formats}}{{html copyButton}}</li> \
 			</ul> \
@@ -13,38 +13,38 @@ var TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP = '\
 
 var TEMPLATE_EXECUTE_COMPLEX_INPUTS_COPY_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}{{html asReference}}</li> \
+					<label class="wps-input-item-label">${labelText}${required}</label>{{html inputField}}{{html asReference}}</li> \
 				<li class="wps-execute-response-list-entry"> \
 					{{html formats}}</li>';
 
 var TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP = '\
-	<div class="wps-execute-literal-inputs" id="input_${identifier}"> \
+	<div class="wps-execute-literal-inputs" id="${identifier}"> \
 		<div class="wps-execute-response-process"> \
 			<ul class="wps-execute-response-list"> \
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}{{html copyButton}}</li> \
+					<label class="wps-input-item-label">${labelText}${required}</label>{{html inputField}}{{html copyButton}}</li> \
 			</ul> \
 		</div> \
 	</div>';
 	
 var TEMPLATE_EXECUTE_LITERAL_INPUTS_COPY_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}</li>';
+					<label class="wps-input-item-label">${labelText}${required}</label>{{html inputField}}</li>';
 
 
 var TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP = '\
-	<div class="wps-execute-bbox-inputs" id="input_${identifier}"> \
+	<div class="wps-execute-bbox-inputs" id="${identifier}"> \
 		<div class="wps-execute-response-process"> \
 			<ul class="wps-execute-response-list"> \
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}<label>${description}</label>{{html copyButton}}</li> \
+					<label class="wps-input-item-label">${labelText}${required}</label>{{html inputField}}<label>${description}</label>{{html copyButton}}</li> \
 			</ul> \
 		</div> \
 	</div>';
 
 var TEMPLATE_EXECUTE_BBOX_INPUTS_COPY_MARKUP = '\
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}${required}</label>{{html inputField}}<label>${description}</label></li>';
+					<label class="wps-input-item-label">${labelText}${required}</label>{{html inputField}}<label>${description}</label></li>';
 
 var TEMPLATE_EXECUTE_OUTPUTS_MARKUP = '\
 	<div class="wps-execute-complex-inputs"> \
@@ -55,20 +55,25 @@ var TEMPLATE_EXECUTE_OUTPUTS_MARKUP = '\
 	</div>';
 
 var TEMPLATE_EXECUTE_COMPLEX_OUTPUTS_MARKUP = '\
+	    <div class="wps-execute-complex-inputs" id="${identifier}"> \
 				<li class="wps-execute-response-list-entry"> \
 					<label class="wps-input-item-label">${identifier}</label>{{html settings}}{{html asReference}}</li> \
 				<li class="wps-execute-response-list-entry"> \
-					{{html formats}}</li>';
-
+					{{html formats}}</li> \
+	    </div>';
 
 var TEMPLATE_EXECUTE_LITERAL_OUTPUTS_MARKUP = '\
+	<div class="wps-execute-complex-inputs" id="${identifier}"> \
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}</label>{{html settings}}{{html asReference}}</li>';
+					<label class="wps-input-item-label">${identifier}</label>{{html settings}}{{html asReference}}</li> \
+	</div>';
 
 var TEMPLATE_EXECUTE_BBOX_OUTPUTS_MARKUP = '\
+	<div class="wps-execute-complex-inputs" id="${identifier}"> \
 				<li class="wps-execute-response-list-entry"> \
-					<label class="wps-input-item-label">${identifier}</label>{{html settings}}{{html asReference}}</li>';
-
+					<label class="wps-input-item-label">${identifier}</label>{{html settings}}{{html asReference}}</li> \
+	</div>';
+	
 //array for storing literalvalues, used to obtain the defaultvalues that are defined by the server for this input
 var literalInputsWithServerSideDefaultValues = [];
 
@@ -86,7 +91,8 @@ var clientSideDefaultValues = {
                                  +"AAAAAAAAAAAAAAD8G4YNAAGL73n/AAAAAElFTkSuQmCC",
 						"mimeType" : "image/png",
 						"schema" : "",
-						"encoding" : "base64"
+						"encoding" : "base64",
+						"hidden" : true 
 					},{
 						"value" : "http://localhost:8080/testdata/52n346x346-transp.png",
 						"mimeType" : "image/png",
@@ -99,13 +105,14 @@ var clientSideDefaultValues = {
 			"result" : {
 				"mimeType" : "image/png",
 				"schema" : "",
-				"encoding" : "",
+				"encoding" : "base64",
 				"asReference" : true
 			},			
 			"result2" : {
 				"mimeType" : "image/png",
 				"schema" : "",
-				"encoding" : "base64"
+				"encoding" : "base64",
+				"hidden" : true
 			}
 		}
 	}
@@ -190,8 +197,8 @@ var FormBuilder = Class.extend({
         formElement.append(executeButton);
 	},
 	
-	fillInClientSideDefaultValuesForInput : function(id, values){	 
-	        
+	fillInClientSideDefaultValuesForInput : function(id, values){
+	    
 	    var textarea = $('textarea[name=input_'+ escapeCharactersForSelect(id) + ']');
 	    if(textarea){
 	        //complex input
@@ -220,6 +227,12 @@ var FormBuilder = Class.extend({
 	    
 	    if(select){
 	       select.val(values.value);
+	    }	 
+	    
+	    var inputDiv = $('div[id=input_'+ escapeCharactersForSelect(id) + ']');
+	    
+	    if(inputDiv && values.hidden){
+	        inputDiv.css("display", "none");
 	    }
 	    	
 	},
@@ -245,26 +258,47 @@ var FormBuilder = Class.extend({
 	                
 	        if (input.complexData) {
 	            
+	            if(input.maxOccurs > 1){
+	            
 	                for (var j=0; j < preConfiguredValues.length; j++) {
 	                    input.occurrence = j+1;
 	        	        this.createPredefinedInput(input, complexContainer, TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP, this.createComplexInput);
                         FormBuilder.prototype.fillInClientSideDefaultValuesForInput(input.identifier + "_" + (j+1), preConfiguredValues[j]);
 	        	    }
+	        	    
+	        	}else{
+	        	    this.createPredefinedInput(input, complexContainer, TEMPLATE_EXECUTE_COMPLEX_INPUTS_MARKUP, this.createComplexInput);
+                    FormBuilder.prototype.fillInClientSideDefaultValuesForInput(input.identifier, preConfiguredValues[0]);	        	
+	        	}
 	        	       	   
 	        } else if (input.boundingBoxData) {  
+	            
+	            if(input.maxOccurs > 1){
 	            
 	                for (var j=0; j < preConfiguredValues.length; j++) {
 	                    input.occurrence = j+1;
 	        	        this.createPredefinedInput(input, bboxContainer, TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP, this.createBoundingBoxInput);
                         FormBuilder.prototype.fillInClientSideDefaultValuesForInput(input.identifier + "_" + (j+1), preConfiguredValues[j]);
-	        	    }           
-	        } else if (input.literalData) {
+	        	    }
+	        	    
+	        	}else{
+	        	    this.createPredefinedInput(input, bboxContainer, TEMPLATE_EXECUTE_BBOX_INPUTS_MARKUP, this.createBoundingBoxInput);
+                    FormBuilder.prototype.fillInClientSideDefaultValuesForInput(input.identifier, preConfiguredValues[0]);  	
+	        	}
+	        } else if (input.literalData) {  
+	            
+	            if(input.maxOccurs > 1){
 	            
 	                for (var j=0; j < preConfiguredValues.length; j++) {
 	                    input.occurrence = j+1;
 	        	        this.createPredefinedInput(input, literalContainer, TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP, this.createLiteralInput);
                         FormBuilder.prototype.fillInClientSideDefaultValuesForInput(input.identifier + "_" + (j+1), preConfiguredValues[j]);
 	        	    }
+	        	    
+	        	}else{
+	        	    this.createPredefinedInput(input, literalContainer, TEMPLATE_EXECUTE_LITERAL_INPUTS_MARKUP, this.createLiteralInput);
+                    FormBuilder.prototype.fillInClientSideDefaultValuesForInput(input.identifier, preConfiguredValues[0]);
+	        	}
 	        }
 	        }
 	    }
@@ -408,7 +442,8 @@ var FormBuilder = Class.extend({
 	    checkBoxDiv.append(checkBox);
 	    checkBoxDiv.append("asReference");
 	    
-	    complexInputElements.identifier = labelText;
+	    complexInputElements.identifier = fieldName;
+	    complexInputElements.labelText = labelText;
 	    complexInputElements.inputField = fieldDiv.html();
 	    complexInputElements.asReference = checkBoxDiv.html();
 	    complexInputElements.formats = formatDropBoxDiv.html();
@@ -490,9 +525,10 @@ var FormBuilder = Class.extend({
 	    	if (anyValue) {
 	    		field.attr("value", input.predefinedValue);
 	    	}
-	    }
+	    }	    
 	    
-	    literalInputElements.identifier = labelText;
+	    literalInputElements.identifier = fieldName;
+	    literalInputElements.labelText = labelText;
 	    literalInputElements.inputField = fieldDiv.html();
 	    
 	    return literalInputElements; 
@@ -540,9 +576,10 @@ var FormBuilder = Class.extend({
 	    	labelText = input.identifier + "(" + number + "/" + input.maxOccurs + ")";
 	    }else{
 	    	labelText= input.identifier;
-	    }
+	    }	    
 	    
-	    bboxInputElements.identifier = labelText;
+	    bboxInputElements.identifier = fieldName;
+	    bboxInputElements.labelText = labelText;
 	    bboxInputElements.inputField = fieldDiv.html();
 	    bboxInputElements.description = "left, bottom, right, top";
 		
@@ -683,6 +720,18 @@ var FormBuilder = Class.extend({
 	            // set the default as selected in the dropdown
 	            formatDropBox.val(stringify(defaultFormat));
 	        }
+	        
+	        if(clientSideDefaultValuesForProcess){
+	            //if there is a pre-configuration
+	            //hide output, if not present in pre-configuration
+	            //or if flag hidden is set
+	            if(preConfiguredValues == null || (preConfiguredValues && preConfiguredValues.hidden)){
+	               	var outputDiv = $('div[id='+ escapeCharactersForSelect(id) + ']');
+	                outputDiv.css("display", "none");	                
+	            }
+	        
+	        }
+	        
 		}
 		
 	},
