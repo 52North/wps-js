@@ -233,7 +233,7 @@ var FormBuilder = Class.extend({
 	    container.append(literalContainer);
 	    container.append(bboxContainer);
         
-        if(clientSideDefaultValuesForProcess && clientSideDefaultValuesForProcess.inputs && clientSideDefaultValuesForProcess.inputs.length > 0){            
+        if(clientSideDefaultValuesForProcess && clientSideDefaultValuesForProcess.inputs){            
 	    
 	    var input;
 	    for (var i=0; i < inputs.length; i++) {
