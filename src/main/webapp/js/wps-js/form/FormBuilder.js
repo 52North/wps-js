@@ -113,7 +113,7 @@ var clientSideDefaultValues = {
 
 var processIdentifier;
 		
-var clientSideDefaultValuesForProcess = clientSideDefaultValues[processIdentifier];
+var clientSideDefaultValuesForProcess;
 
 var FormBuilder = Class.extend({
 	
@@ -131,7 +131,9 @@ var FormBuilder = Class.extend({
 	 	
 	 	processIdentifier = processDescription.identifier;
 
-        clientSideDefaultValuesForProcess = clientSideDefaultValues[processIdentifier];
+        if(typeof clientSideDefaultValues !== 'undefined'){
+            clientSideDefaultValuesForProcess = clientSideDefaultValues[processIdentifier];
+        }
 	 	
 	 	var formElement = jQuery('<form id="wps-execute-form"></form>');
 	 	formElement.submit(function() {
@@ -161,13 +163,13 @@ var FormBuilder = Class.extend({
 	           for (var i=0; i < literalInputsWithServerSideDefaultValues.length; i++) {
 	               var inputIDArray = literalInputsWithServerSideDefaultValues[i];	           
 	               
-	               var input = $('input[name='+ inputIDArray[0] + ']');
+	               var input = $('input[name='+ escapeCharactersForSelect(inputIDArray[0]) + ']');
 	               
 	               if(input){
 	                   input.val(inputIDArray[1]);
 	               }
 	               
-	               var select = $('select[name='+ inputIDArray[0] + ']');
+	               var select = $('select[name='+ escapeCharactersForSelect(inputIDArray[0]) + ']');
 	               
 	               if(select){
 	                   select.val(inputIDArray[1]);
@@ -190,7 +192,7 @@ var FormBuilder = Class.extend({
 	
 	fillInClientSideDefaultValuesForInput : function(id, values){	 
 	        
-	    var textarea = $('textarea[name=input_'+ id + ']');
+	    var textarea = $('textarea[name=input_'+ escapeCharactersForSelect(id) + ']');
 	    if(textarea){
 	        //complex input
 	        textarea.val(values.value);
@@ -202,19 +204,19 @@ var FormBuilder = Class.extend({
 	        
 	        var format = {"mimeType" : values.mimeType, "schema" : values.schema, "encoding" : values.encoding};
 	       
-	        var formatSelect = $('select[name=format_input_'+ id + ']');
+	        var formatSelect = $('select[name=format_input_'+ escapeCharactersForSelect(id) + ']');
 	        
 	        formatSelect.val(stringify(format));     
 	        
 	    }
 	    
-	    var input = $('input[name=input_'+ id + ']');
+	    var input = $('input[name=input_'+ escapeCharactersForSelect(id) + ']');
 	    
 	    if(input){
 	       input.val(values.value);
 	    }
 	    
-	    var select = $('select[name=input_'+ id + ']');
+	    var select = $('select[name=input_'+ escapeCharactersForSelect(id) + ']');
 	    
 	    if(select){
 	       select.val(values.value);
@@ -231,7 +233,7 @@ var FormBuilder = Class.extend({
 	    container.append(literalContainer);
 	    container.append(bboxContainer);
         
-        if(clientSideDefaultValuesForProcess){            
+        if(clientSideDefaultValuesForProcess && clientSideDefaultValuesForProcess.inputs && clientSideDefaultValuesForProcess.inputs.length > 0){            
 	    
 	    var input;
 	    for (var i=0; i < inputs.length; i++) {
@@ -668,7 +670,7 @@ var FormBuilder = Class.extend({
 		
 		    //value of format dropbox can only be set after it is in the dom tree
 	        
-	        var formatDropBox = $('select[name=format_'+ id + ']');
+	        var formatDropBox = $('select[name=format_'+ escapeCharactersForSelect(id) + ']');
 	        		
 	        if(preConfiguredValues && formatDropBox){
 	           

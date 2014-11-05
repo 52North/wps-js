@@ -37,3 +37,10 @@ function stringify(format){
     return '{"mimeType" : "' + (format.mimeType ? format.mimeType : "") + '", "schema" : "' + (format.schema ? format.schema : "") + '", "encoding" : "' + (format.encoding ? format.encoding : "") + '"}';
     
 }
+
+function escapeCharactersForSelect(id){
+
+    var result = id.replace(".","\\.");
+
+    return result;
+}
