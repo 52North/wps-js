@@ -77,47 +77,6 @@ var TEMPLATE_EXECUTE_BBOX_OUTPUTS_MARKUP = '\
 //array for storing literalvalues, used to obtain the defaultvalues that are defined by the server for this input
 var literalInputsWithServerSideDefaultValues = [];
 
-//array for storing literalvalues, used to obtain the defaultvalues that are defined by the client for this input
-var clientSideDefaultValues = {
-	"org.n52.wps.server.algorithm.test.MultiReferenceBinaryInputAlgorithm" : {
-		"inputs" : {
-			"data" : [
-					{
-						"value" : "iVBORw0KGgoAAAANSUhEUgAAAeAAAAHgCAMAAABKCk6nAAAAA1BMVEX///+nxBvIAAAA9klEQVR4"
-                                 +"nO3BAQ0AAADCoPdPbQ8HFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-                                 +"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-                                 +"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-                                 +"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-                                 +"AAAAAAAAAAAAAAD8G4YNAAGL73n/AAAAAElFTkSuQmCC",
-						"mimeType" : "image/png",
-						"schema" : "",
-						"encoding" : "base64",
-						"hidden" : true 
-					},{
-						"value" : "http://localhost:8080/testdata/52n346x346-transp.png",
-						"mimeType" : "image/png",
-						"schema" : "",
-						"encoding" : "",
-						"asReference" :true
-					}]
-		},
-		"outputs" : {
-			"result" : {
-				"mimeType" : "image/png",
-				"schema" : "",
-				"encoding" : "base64",
-				"asReference" : true
-			},			
-			"result2" : {
-				"mimeType" : "image/png",
-				"schema" : "",
-				"encoding" : "base64",
-				"hidden" : true
-			}
-		}
-	}
-};
-
 var processIdentifier;
 		
 var clientSideDefaultValuesForProcess;
