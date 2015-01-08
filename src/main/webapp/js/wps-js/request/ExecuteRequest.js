@@ -48,9 +48,27 @@ var EXECUTE_REQUEST_XML_COMPLEX_DATA_ENCODING_INPUT = '<wps:Input>\
     </wps:Data>\
 </wps:Input>';
 
-var EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_INPUT = '<wps:Input>\
+var EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_ALL_INPUT = '<wps:Input>\
+    <ows:Identifier>${identifier}</ows:Identifier>\
+    <wps:Reference schema="${schema}" mimeType="${mimeType}" encoding="${encoding}"\
+	xlink:href="${complexPayload}"/>\
+  </wps:Input>';
+
+var EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_SCHEMA_INPUT = '<wps:Input>\
     <ows:Identifier>${identifier}</ows:Identifier>\
     <wps:Reference schema="${schema}" mimeType="${mimeType}"\
+	xlink:href="${complexPayload}"/>\
+  </wps:Input>';
+
+var EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_ENCODING_INPUT = '<wps:Input>\
+    <ows:Identifier>${identifier}</ows:Identifier>\
+    <wps:Reference encoding="${encoding}" mimeType="${mimeType}"\
+	xlink:href="${complexPayload}"/>\
+  </wps:Input>';
+
+var EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_INPUT = '<wps:Input>\
+    <ows:Identifier>${identifier}</ows:Identifier>\
+    <wps:Reference mimeType="${mimeType}"\
 	xlink:href="${complexPayload}"/>\
   </wps:Input>';
 
@@ -208,7 +226,21 @@ var ExecuteRequest = PostRequest.extend({
 	createComplexDataInput : function(input) {
 		var markup;
 		if (input.asReference) {
-			markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_INPUT, input);
+			if (input.schema && input.encoding) {
+				markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_ALL_INPUT, input);
+			}
+			
+			else if (input.schema && !input.encoding) {
+				markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_SCHEMA_INPUT, input);
+			}
+			
+			else if (!input.schema && input.encoding) {
+				markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_ENCODING_INPUT, input);
+			}
+			
+			else {
+			    markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_INPUT, input);
+			}
 		}
 		else {
 			if (input.schema && input.encoding) {

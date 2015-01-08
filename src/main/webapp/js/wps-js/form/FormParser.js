@@ -154,7 +154,9 @@ var FormParser = Class.extend({
 				/*
 				 * its only present in the array if checked
 				 */
-				outputs[outputNameToPosition[originalOutputName]].asReference = true;
+				if(outputNameToPosition[originalOutputName] != null){
+				    outputs[outputNameToPosition[originalOutputName]].asReference = true;
+				}
 			}
 		}
 
@@ -162,15 +164,15 @@ var FormParser = Class.extend({
 	},
 
 	parseFormatObject : function(formatObject, targetObject) {
-		if (formatObject.mimeType) {
+		if (formatObject.mimeType && formatObject.mimeType != "") {
 			targetObject.mimeType = formatObject.mimeType;
 		}
 
-		if (formatObject.schema) {
+		if (formatObject.schema && formatObject.schema != "") {
 			targetObject.schema = formatObject.schema;
 		}
 
-		if (formatObject.encoding) {
+		if (formatObject.encoding && formatObject.encoding != "") {
 			targetObject.encoding = formatObject.encoding;
 		}
 	},
