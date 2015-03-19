@@ -30,7 +30,31 @@ $(document).ready(function() {
 });
 ```
 
+### Configure wps-js to display image outputs directly in the client
+
+In order to display image outputs directly, you will have to set a flag in the configuration:
+```
+$(document).ready(function() {
+	$.wpsSetup({
+		proxy : {
+			url : "/wps_proxy/wps_proxy?url=",
+			type : "parameter"
+		},
+		configuration : {
+		    showImages : true
+		}
+	});
+});
+```
+The image will be displayed inside a HTML ``<img>``-tag using the data URI scheme: http://en.wikipedia.org/wiki/Data_URI_scheme
+**Note that only base64-encoded images can be displayed directly at the moment, so the process will have to support this output encoding.**
+Some common image MIME types are defined in the properties.json: ``"imageMimetypes": ["image/gif","image/jpeg","image/jpg","image/png"]``
+Depending on the MIME types your browser and WPS are supporting, you can modify this list. 
+
+### Configure wps-js to use client-side default values for inputs and outputs
+
 You can also use a template file to pre-configure the contents of the form that is generated - see example ``src/main/webapp/demo/geca-intercomparison/client.html``.
+TO BE ENHANCED...
 
 ## Documentation
 
