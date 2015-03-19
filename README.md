@@ -34,7 +34,7 @@ You can also use a template file to pre-configure the contents of the form that 
 
 ## Documentation
 
-Project and user documentation can be found in the 52Â°North wiki: https://wiki.52north.org/bin/view/Geoprocessing/Wps-js
+Project and user documentation can be found in the 52°North wiki: https://wiki.52north.org/bin/view/Geoprocessing/Wps-js
 
 ## Development
 
