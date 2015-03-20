@@ -30,11 +30,146 @@ $(document).ready(function() {
 });
 ```
 
-You can also use a template file to pre-configure the contents of the form that is generated - see example ``src/main/webapp/demo/geca-intercomparison/client.html``.
+### Configure wps-js to display image outputs directly in the client
+
+In order to display image outputs directly, you will have to set a flag in the configuration:
+```
+$(document).ready(function() {
+	$.wpsSetup({
+		proxy : {
+			url : "/wps_proxy/wps_proxy?url=",
+			type : "parameter"
+		},
+		configuration : {
+		    showImages : true
+		}
+	});
+});
+```
+The image will be displayed inside a HTML ``<img>``-tag using the data URI scheme: http://en.wikipedia.org/wiki/Data_URI_scheme
+
+**Note that only base64-encoded images can be displayed directly at the moment, so the process will have to support this output encoding.**
+
+Some common image MIME types are defined in the properties.json: ``"imageMimetypes": ["image/gif","image/jpeg","image/jpg","image/png"]``
+
+Depending on the MIME types your browser and WPS are supporting, you can modify this list. 
+
+### Configure wps-js to use client-side default values for inputs and outputs
+
+You can also use a template to pre-configure the contents of the form that is generated.
+
+For this you will have to define a JavaScript variable called ``clientSideDefaultValues`` with the following structure:
+
+```
+var clientSideDefaultValues = {
+	"algorithm.identifier1" : {
+		"inputs" : {
+			"input.id1" : [
+					{
+						"value" : "",
+						"mimeType" : "",
+						"schema" : "",
+						"encoding" : "",
+						"hidden" : true/false
+						"asReference" : true/false 
+					},{
+						"value" : "",
+						...
+					}]
+		},
+		"outputs" : {
+			"output.id1" : {
+				"mimeType" : "",
+				"schema" : "",
+				"encoding" : "",
+				"asReference" : true/false,
+				"hidden" : true/false
+			},			
+			"output.id2" : {
+				"mimeType" : "",
+				...
+			}
+		}
+	},
+	"algorithm.identifier2" : {
+		"inputs" : 
+    ...
+	}
+};
+```
+
+For each process you want a pre-configured form for, you will have to specify an object named like the process identifier.
+This object will have two sub-objects for the inputs and outputs, named accordingly. These sub-objects can in turn have sub-objects for each input/output named like the respective identifier.
+The single input/output output basically have the same structure. They can have the following attributes (all optional):
+
+* "mimeType" : String containing the MIME type of the input/output
+* "schema" : String containing the schema of the input/output
+* "encoding" : String containing the encoding of the input/output
+* "asReference" : Boolean to specify whether the input/output should be fetched from an URL  
+* "hidden" : Boolean to specify whether the input/output should be hidden in the execute form
+* "value" : **Only input**, the value of the input as String
+
+**Note:** Each input object needs an array (``[]``) wrapped around the object(s) with the above structure, as there can be multiple inputs with the same identifier.
+For an input/output to appear on the form it has to be specified in the inputs/outputs object. The object can be empty, but has to be there. Otherwise it will not be shown in the form at all.
+If there are allowed values specified for LiteralData on server side, a pre-configured literal value will become selected value in the dropdown box holding the allowed values in the execute form.
+
+Example:
+
+```
+var clientSideDefaultValues = {
+	"org.n52.wps.server.algorithm.test.MultipleComplexInAndOutputsDummyTestClass" : {
+		"inputs" : {
+			"ComplexInputData1" : [
+					{
+						"value" : "iVBORw0KGgoAAAANSUhEUgAAAeAAAAHgCAMAAABKCk6nAAAAA1BMVEX///+nxBvIAAAA9klEQVR4"
+                                 +"nO3BAQ0AAADCoPdPbQ8HFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                                 +"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                                 +"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                                 +"AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                                 +"AAAAAAAAAAAAAAD8G4YNAAGL73n/AAAAAElFTkSuQmCC",
+						"mimeType" : "image/png",
+						"encoding" : "base64",
+					}],
+			"ComplexInputData2" : [
+			        {
+						"value" : "http://localhost:8080/testdata/52n346x346-transp.png",
+						"mimeType" : "image/png",
+						"asReference" :true
+					}],
+			"LiteralInputData" : [
+			        {
+						"value" : "XYZ",
+						"hidden" : true 
+					}],
+			"BBOXInputData" : [
+			        {
+						"value" : "7,51,8,52",
+					}]
+		},
+		"outputs" : {
+			"ComplexOutputData1" : {
+				"mimeType" : "image/png",
+				"encoding" : "base64",
+				"asReference" : true
+			},			
+			"ComplexOutputData2" : {
+				"mimeType" : "image/png",
+				"encoding" : "base64",
+				"hidden" : true 
+			},
+			"LiteralOutputData" : {
+				"hidden" : true 
+			},
+			"BBOXOutputData" : { 
+			}
+		}
+	}
+};
+```
 
 ## Documentation
 
-Project and user documentation can be found in the 52Â°North wiki: https://wiki.52north.org/bin/view/Geoprocessing/Wps-js
+Project and user documentation can be found in the 52°North wiki: https://wiki.52north.org/bin/view/Geoprocessing/Wps-js
 
 ## Development
 
