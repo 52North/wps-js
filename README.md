@@ -111,6 +111,7 @@ The single input/output output basically have the same structure. They can have 
 
 **Note:** Each input object needs an array (``[]``) wrapped around the object(s) with the above structure, as there can be multiple inputs with the same identifier.
 For an input/output to appear on the form it has to be specified in the inputs/outputs object. The object can be empty, but has to be there. Otherwise it will not be shown in the form at all.
+If there are allowed values specified for LiteralData on server side, a pre-configured literal value will become selected value in the dropdown box holding the allowed values in the execute form.
 
 Example:
 
