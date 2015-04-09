@@ -60,14 +60,17 @@ var ExecuteResponse = BaseResponse.extend({
 			var reference = element.getElementsByTagNameNS(WPS_100_NAMESPACE, "Reference");
 			var data = element.getElementsByTagNameNS(WPS_100_NAMESPACE, "Data");
 			var value;
+			var mimetype;
 			var valueType = null;
 			if (reference && reference.length > 0) { // create link from reference
 				value = reference[0].getAttribute("href");
+				mimetype = reference[0].getAttribute('mimeType');
 				array[i] = {
 						key : jQuery(identifier).text(),
 						title: jQuery(title).text(),
 						value : value,
-						ref: true
+						ref: true,
+						mimetype : mimetype
 				};
 			}
 			else {
@@ -83,13 +86,18 @@ var ExecuteResponse = BaseResponse.extend({
 				else {
 					value = "n/a";
 				}
+				var complexData = element.getElementsByTagNameNS(WPS_100_NAMESPACE, "ComplexData");
+				if(complexData) {
+				    mimetype = complexData[0].getAttribute('mimeType');
+				}
 				
 				array[i] = {
 						key : jQuery(identifier).text(),
 						title: jQuery(title).text(),
 						value : value,
 						valueType: valueType,
-						ref: false
+						ref: false,
+						mimetype : mimetype
 				};
 			}
 		}
@@ -103,16 +111,8 @@ var ExecuteResponse = BaseResponse.extend({
 		var process = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "Process");
 		var status = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "Status");
 		var reference = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "Reference");
-		var complexData = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "ComplexData");
-		
-		var mimetype = null;
-		
-		if(reference && reference[0]){
-		    mimetype = reference[0].getAttribute('mimeType');
-		}else if(complexData && complexData[0]){
-		    mimetype = complexData[0].getAttribute('mimeType');		
-		}
-		
+		var complexData = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "ComplexData");		
+	
 		var properties = null;
 		var extensions = {};
 		var statusText = null;
@@ -237,6 +237,7 @@ var ExecuteResponse = BaseResponse.extend({
 						if(value.ref == true) {
 							jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_EXTENSION_MARKUP_DOWNLOAD, value).appendTo(extensionDiv);	
 						}else {
+						    var mimetype = value.mimetype;
 						    if(isImageMimetype(mimetype) && wps.isShowImages()){
 						        //get the image from the url
 			                    properties = {
