@@ -87,7 +87,7 @@ var ExecuteResponse = BaseResponse.extend({
 					value = "n/a";
 				}
 				var complexData = element.getElementsByTagNameNS(WPS_100_NAMESPACE, "ComplexData");
-				if(complexData) {
+				if(complexData && complexData.length > 0) {
 				    mimetype = complexData[0].getAttribute('mimeType');
 				}
 				
