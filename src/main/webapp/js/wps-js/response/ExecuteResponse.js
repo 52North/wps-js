@@ -1,6 +1,6 @@
 var TEMPLATE_EXECUTE_RESPONSE_MARKUP = '\
 	<div class="wps-execute-response"> \
-		<div class="wps-execute-autoUpdate" id="wps-execute-autoUpdate" style="${updateSwitchEnabled}"></div> \
+		<div class="wps-execute-autoUpdate" id="wps-execute-autoUpdate" style="${updateSwitchEnabled}"></div><input type="checkbox" name="auto-update" id="auto-update"/><input type="text" name="auto-update-seconds" value="3" id="auto-update-seconds"/> \
 		<div class="wps-execute-response-process"> \
 			<ul class="wps-execute-response-list"> \
 				<li class="wps-execute-response-list-entry"> \

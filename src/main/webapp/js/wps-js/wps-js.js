@@ -1,5 +1,6 @@
 var wps;
 var imageMimetypes;
+var autoExecuteTimer;
 
 function resolveRequest(type, method, settings) {
 	if (type == GET_CAPABILITIES_TYPE) {
@@ -42,6 +43,34 @@ function callbackOnResponseParsed(responseData, domElement, originalRequest) {
 	if (responseHandler) {
 		domElement.html(responseHandler.createMarkup());
 	}
+
+    $('#auto-update').change(function() {
+        if(this.checked){    
+            var seconds = $('#auto-update-seconds').val();
+        
+            if($.isNumeric(seconds)){
+                seconds = seconds * 1000;
+                autoExecuteTimer = setInterval(function () {console.log("Update status every " + seconds + " seconds.")}, seconds);
+            }
+        }else{
+            clearInterval(autoExecuteTimer);
+        }
+    });
+
+    $('#auto-update-seconds').change(function() {
+    
+        var seconds = $('#auto-update-seconds').val();
+        
+        if($.isNumeric(seconds)){
+            seconds = seconds * 1000;
+            if($('#auto-update').prop('checked')){
+               //timer is running already, so stop it first and start again
+               clearInterval(autoExecuteTimer);
+               autoExecuteTimer = setInterval(function () {console.log("Update status every " + seconds + " seconds.")}, seconds);
+            }
+            //if auto update checkbox is not checked, we don't have to do anything here    
+        }
+    });
 	
 	if (originalRequest.updateSwitch) {
 		if (!originalRequest.updateSwitch.callback) {
@@ -205,7 +234,7 @@ function execute(formId, wpsUrl) {
 	};
 
 	var originalRequest = new ExecuteRequest(settings);
-
+    
 	originalRequest.execute(callbackOnResponseParsed, {});
 }
 
