@@ -43,36 +43,9 @@ function callbackOnResponseParsed(responseData, domElement, originalRequest) {
 	if (responseHandler) {
 		domElement.html(responseHandler.createMarkup());
 	}
-
-    $('#auto-update').change(function() {
-        if(this.checked){    
-            var seconds = $('#auto-update-seconds').val();
-        
-            if($.isNumeric(seconds)){
-                seconds = seconds * 1000;
-                autoExecuteTimer = setInterval(function () {console.log("Update status every " + seconds + " seconds.")}, seconds);
-            }
-        }else{
-            clearInterval(autoExecuteTimer);
-        }
-    });
-
-    $('#auto-update-seconds').change(function() {
-    
-        var seconds = $('#auto-update-seconds').val();
-        
-        if($.isNumeric(seconds)){
-            seconds = seconds * 1000;
-            if($('#auto-update').prop('checked')){
-               //timer is running already, so stop it first and start again
-               clearInterval(autoExecuteTimer);
-               autoExecuteTimer = setInterval(function () {console.log("Update status every " + seconds + " seconds.")}, seconds);
-            }
-            //if auto update checkbox is not checked, we don't have to do anything here    
-        }
-    });
 	
 	if (originalRequest.updateSwitch) {
+	
 		if (!originalRequest.updateSwitch.callback) {
 			originalRequest.updateSwitch.callback = callbackOnResponseParsed;
 		}
@@ -115,6 +88,9 @@ function removePocessesFromSelectFast(targetDomElement){
 // using OpenLayers.Format.WPSCapabilities to read the capabilities
 // and fill available process list
 function getCapabilities(wpsUrl) {
+    //remove any auto update timers
+    clearInterval(autoExecuteTimer);
+    
 	var processesDropdown = "processes";
     
 	wps.settings.url = wpsUrl;
@@ -160,6 +136,13 @@ function getCapabilities(wpsUrl) {
 // using OpenLayers.Format.WPSDescribeProcess to get information about a
 // process
 function describeProcess(processIdentifier, wpsUrl, targetContainer) {
+	
+	//empty execute divs
+	$("#executeProcess").empty();
+	$("#auto-update-container").empty();
+    //remove any auto update timers
+    clearInterval(autoExecuteTimer);
+	
 	if (!processIdentifier) {
 		processIdentifier = this.options[this.selectedIndex].value;		
 	}
@@ -212,6 +195,46 @@ function describeProcess(processIdentifier, wpsUrl, targetContainer) {
 
 // execute the process
 function execute(formId, wpsUrl) {
+	
+	//remove auto update elements and timer in case execute was hit again
+	clearInterval(autoExecuteTimer);
+	$("#auto-update-container").empty();
+	
+	//add auto status update elements to wps-container
+	$("#auto-update-container").append("<label>Request status automatically</label><input type=\"checkbox\" name=\"auto-update\" id=\"auto-update\"/><input type=\"text\" name=\"auto-update-seconds\" value=\"3\" id=\"auto-update-seconds\" style=\"width:20px\"/><label>seconds</label>");
+	
+    $('#auto-update').change(function() {
+        if(this.checked){    
+            var seconds = $('#auto-update-seconds').val();
+        
+            if($.isNumeric(seconds)){
+                seconds = seconds * 1000;
+                autoExecuteTimer = setInterval(function () {
+                jQuery('#'+originalRequest.updateSwitch.element).click();
+                }, seconds);
+            }
+        }else{
+            clearInterval(autoExecuteTimer);
+        }
+    });
+    
+    $('#auto-update-seconds').change(function() {
+    
+        var seconds = $('#auto-update-seconds').val();
+        
+        if($.isNumeric(seconds)){
+            seconds = seconds * 1000;
+            if($('#auto-update').prop('checked')){
+               //timer is running already, so stop it first and start again
+               clearInterval(autoExecuteTimer);
+               autoExecuteTimer = setInterval(function () {
+               jQuery('#'+originalRequest.updateSwitch.element).click();
+               }, seconds);
+            }
+            //if auto update checkbox is not checked, we don't have to do anything here    
+        }
+    });
+	
     var formValues = jQuery('#'+formId).serializeArray();
     
     var parser = new FormParser();
