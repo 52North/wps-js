@@ -1,6 +1,8 @@
 var TEMPLATE_EXECUTE_RESPONSE_MARKUP = '\
 	<div class="wps-execute-response"> \
-		<div class="wps-execute-autoUpdate" id="wps-execute-autoUpdate" style="${updateSwitchEnabled}"></div> \
+		<div class="auto-update-wrapper" id="auto-update-wrapper"> \
+		<label>Request status manually</label><div class="wps-execute-autoUpdate" id="wps-execute-autoUpdate" style="${updateSwitchEnabled}"></div> \
+		</div> \
 		<div class="wps-execute-response-process"> \
 			<ul class="wps-execute-response-list"> \
 				<li class="wps-execute-response-list-entry"> \
@@ -108,6 +110,7 @@ var ExecuteResponse = BaseResponse.extend({
 	},
 	
 	createMarkup : function() {
+				
 		var process = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "Process");
 		var status = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "Status");
 		var reference = this.xmlResponse.getElementsByTagNameNS(WPS_100_NAMESPACE, "Reference");
@@ -118,6 +121,7 @@ var ExecuteResponse = BaseResponse.extend({
 		var statusText = null;
 		var statusMessage = null;
 		var processFailed = false;
+		var processSucceeded = false;
 		
 		if (process && process[0] && status && status[0]) {
 			var identifier = jQuery(process[0].getElementsByTagNameNS(OWS_11_NAMESPACE, "Identifier")).text();
@@ -149,6 +153,7 @@ var ExecuteResponse = BaseResponse.extend({
 					if (processOutputs && processOutputs.length > 0) {
 						extensions = jQuery.extend(this.resolveProcessOutputs(processOutputs[0]), extensions);	
 					}
+					processSucceeded = true;
 				}
 			}
 			//process failed
@@ -213,7 +218,7 @@ var ExecuteResponse = BaseResponse.extend({
 			template = TEMPLATE_EXECUTE_RESPONSE_MARKUP;
 		}
 		
-		var result = jQuery.tmpl(template, properties);
+		var result = jQuery.tmpl(template, properties);		
 		
 		//insert status entry depending on normal status (started, accepted, paused, succeeded) or failed status
 		var statusDiv = result.children('#wps-execute-response-status');
@@ -228,6 +233,11 @@ var ExecuteResponse = BaseResponse.extend({
 			jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_STATUS_NORMAL_MARKUP, statusProperties).appendTo(statusList);			
 		}else{
 			jQuery.tmpl(TEMPLATE_EXECUTE_RESPONSE_STATUS_FAILED_MARKUP, statusProperties).appendTo(statusList);
+		}
+		
+		//stop auto update if process failed or succeeded
+		if(processFailed || processSucceeded){
+		    clearInterval(autoExecuteTimer);
 		}
 		
 		if (extensions && !jQuery.isEmptyObject(extensions)) {
