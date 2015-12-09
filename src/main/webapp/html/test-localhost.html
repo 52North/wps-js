@@ -18,6 +18,7 @@
 				<option>Select a WPS</option>
 				<option>http://localhost:8080/wps/WebProcessingService</option>
 				<option>http://localhost:8080/52n-wps-webapp-3.2.0/WebProcessingService</option>
+				<option>http://localhost:8080/52n-wps-webapp/WebProcessingService</option>
 			</select>
 		</div>
 		<div>
@@ -55,10 +56,10 @@
 		});
 		$(document).ready(function() {
 			$.wpsSetup({
-				proxy : {
-					url : "/wps_proxy/wps_proxy?url=",
-					type : "parameter"
-				}
+// 				proxy : {
+// 					url : "/wps_proxy/wps_proxy?url=",
+// 					type : "parameter"
+// 				}
 			});
 		});
 
