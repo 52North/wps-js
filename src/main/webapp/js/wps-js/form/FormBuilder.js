@@ -145,7 +145,7 @@ var FormBuilder = Class.extend({
 		    });
 		}
 	    
-	    var outputContainer = jQuery('<div id="input"></div>');
+	    var outputContainer = jQuery('<div id="output"></div>');
         
 		formElement.append(outputContainer);
 		
