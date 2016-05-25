@@ -5,15 +5,35 @@ Standalone Javascript OGC Web Processing Service (WPS) client with the following
 * Generation of an HTML form based on WPS process descriptions
 * Encoding and parsing of WPS requests (GetCapabilities, DescribeProcess, Execute)
 
+## Requirements to develop or build the client
+
+* git
+* [nodejs](https://nodejs.org)
+* [npm](https://www.npmjs.com/)
+* [grunt](http://gruntjs.com/)
+
+## Get ready to start
+
+* `git clone` this repository
+* run `npm install` to get all dependencies
+
+### Get a static files folder which can be added to a web-server
+
+* with `grunt` all files are collected and build in a `dist` folder. The content of this folder can be deployed in a 
+
+### Get the client as war-file
+
+* with `grunt buildWar` you get a war-file in the `build`-directory
+
 ## Installation
 
-wps-js is a plain Javascipt client and all required libraries are shipped with the code. To try out examples follow these steps:
+wps-js is a plain Javascipt client. The required OpenLayers-closure.js file is shipped with the code and will automatically be installed as `index.html` in the local `bower_components` repository. To try out examples follow these steps:
 
 * Start a proxy server so that it serves requests preprended with ``/wps_proxy/wps_proxy?url=``
-* Check out the code: ``git clone https://github.com/52North/wps-js.git``
-* Change to the directory and build the application with Maven: ``cd wps-js``, then ``mvn clean install``
-* Open the file ``../target/wps-js-<version>/index.html`` in a browser to try out the client
-* Use the file ``../target/wps-js-<versionjs/wps-js/wps-js.<version>(.min).js`` in your own application.
+* Check out the code: ``git clone https://github.com/cDanowski/wps-js.git``
+* Change to the directory and perform Grunt's `npm install` and `grunt buildWar --force` to build the application (which will create a .WAR file in a new `build` folder)
+* Deploy the .WAR file on a server and to open the `example.html` document in a browser and try out the client
+* Use the file ``dist/wps-js-all.min.js`` in your own application.
 
 ## Configuration
 
@@ -169,28 +189,11 @@ var clientSideDefaultValues = {
 
 ## Documentation
 
-Project and user documentation can be found in the 52°North wiki: https://wiki.52north.org/bin/view/Geoprocessing/Wps-js
+Project and user documentation can be found in the 52Â°North wiki: https://wiki.52north.org/bin/view/Geoprocessing/Wps-js
 
 ## Development
 
 wps-js uses Maven for the build process, which means that the source code is split up across many files in the folder ``src/main/webapp/js/wps-js``. Within this directory, a **Javscript class hierarchy** for reqeusts and responses is implemented in the directories ``request`` and ``response`` respectively.
-
-### Tomcat configuration
-
-#### Catalina context
-A simple configuration of a Tomcat servlet container to develop wps-js is to point the context of the webapp to the Maven target directory. Put the following lines into a file ``<Tomcat dir>\conf\Catalina\localhost\wps-js.xml`` and restart the servlet container:
-
-```
-<Context 
-  docBase="/your/path/to/wps-js/target/wps-js-1.0.0-SNAPSHOT/" 
-/>
-```
-
-You can then update the deployed copy by running ``mvn package -DskiptTests=true``.
-
-#### Eclipse WTP
-
-Alternatively configuration with the web tools plug-in in Eclipse: Open your server configuration, then the tab "Modules" and add the path ``<your path>/wps-js/target/wps-js-1.0.0-SNAPSHOT`` as the document base and any path, for example ``/wps-js``.
 
 ### Proxy
 
@@ -228,4 +231,4 @@ To get help in running wps-js, please use the Geoprocessing community mailing li
 
 Please leave an issue on GitHub if you have any bug reports or feature requests: https://github.com/52North/sos-js/issues
 
-Contact: Matthes Rieke (m.rieke@52north.org), Daniel Nüst (d.nuest@52north.org)
+Contact: Matthes Rieke (m.rieke@52north.org), Daniel NÃ¼st (d.nuest@52north.org)
