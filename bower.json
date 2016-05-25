@@ -10,7 +10,10 @@
   ],
   "description": "Web Processing Service JavaScript library",
   "keywords": [
-    "TBD"
+    "WPS",
+    "Web Processing Service",
+    "JavaScript library",
+    "JavaScript client"
   ],
   "license": "Apache2",
   "private": true,

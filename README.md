@@ -30,7 +30,7 @@ Standalone Javascript OGC Web Processing Service (WPS) client with the following
 wps-js is a plain Javascipt client. The required OpenLayers-closure.js file is shipped with the code and will automatically be installed as `index.html` in the local `bower_components` repository. To try out examples follow these steps:
 
 * Start a proxy server so that it serves requests preprended with ``/wps_proxy/wps_proxy?url=``
-* Check out the code: ``git clone https://github.com/cDanowski/wps-js.git``
+* Check out the code: ``git clone https://github.com/52North/wps-js.git``
 * Change to the directory and perform Grunt's `npm install` and `grunt buildWar --force` to build the application (which will create a .WAR file in a new `build` folder)
 * Deploy the .WAR file on a server and to open the `example.html` document in a browser and try out the client
 * Use the file ``dist/wps-js-all.min.js`` in your own application.

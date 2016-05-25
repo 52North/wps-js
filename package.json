@@ -9,7 +9,10 @@
     "url": "git+https://github.com/52North/wps-js.git"
   },
   "keywords": [
-    "TBD"
+    "WPS",
+    "Web Processing Service",
+    "JavaScript library",
+    "JavaScript client"
   ],
   "license": "Apache-2.0",
   "bugs": {
