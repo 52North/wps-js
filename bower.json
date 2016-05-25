@@ -1,0 +1,30 @@
+{
+  "name": "wps-js",
+  "homepage": "https://github.com/52North/wps-js",
+  "authors": [
+    "Benjamin Proß <b.pross@52north.org>",
+    "Matthes Rieke <m.rieke@52north.org>",
+    "Daniel Nüst <d.nuest@52north.org>",
+    "Christian Autermann <c.autermann@52north.org>",
+    "Christian Danowski <c.danowski@52north.org>"
+  ],
+  "description": "Web Processing Service JavaScript library",
+  "keywords": [
+    "TBD"
+  ],
+  "license": "Apache2",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "src/web/bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "1.8.3",
+    "openlayers": "./src/web/js/openlayers/OpenLayers-closure.js",
+    "jquery-ui": "1.8.23"
+  }
+}

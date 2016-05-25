@@ -1,8 +1,8 @@
-/target
 .project
 .settings
 .classpath
 
-/target
-/target
-/target
+/node_modules/
+/src/web/bower_components/
+/dist/
+/build/

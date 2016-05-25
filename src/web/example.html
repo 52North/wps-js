@@ -2,11 +2,55 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<script src="js/jquery/jquery.1.8.3.min.js"></script>
-<script src="js/jquery/jquery-ui.1.8.3.min.js"></script>
-<script src="js/openlayers/OpenLayers-closure.js"></script>
-<script src="js/wps-js/wps-js.${project.version}.js"></script>
-<link type="text/css" rel="stylesheet" href="css/wps-js.css">
+
+<!-- build:js js/deps.wps-js.min.js -->
+<!-- start lib script tags -->
+<script src="bower_components/jquery/jquery.js" type="text/javascript"></script>
+<script src="bower_components/jquery-ui/jquery-ui.js" type="text/javascript"></script>
+<script src="bower_components/openlayers/index.js" type="text/javascript"></script>
+<!-- end lib script tags -->
+<!-- /build -->
+
+<!-- build:js wps-js-all.min.js -->
+<!-- start client script tags -->
+<script src="js/wps-js/lib/Class.js" type="text/javascript"></script>
+<script src="js/wps-js/lib/purl.js" type="text/javascript"></script>
+<script src="js/wps-js/lib/jquery.tmpl.1.0.0pre.js" type="text/javascript"></script>
+<script src="js/wps-js/Constants.js" type="text/javascript"></script>
+<script src="js/wps-js/Utility.js" type="text/javascript"></script>
+<script src="js/wps-js/model/WPSConfiguration.js" type="text/javascript"></script>
+<script src="js/wps-js/response/BaseResponse.js" type="text/javascript"></script>
+<script src="js/wps-js/response/CapabilitiesResponse.js" type="text/javascript"></script>
+<script src="js/wps-js/response/DescribeProcessResponse.js" type="text/javascript"></script>
+<script src="js/wps-js/response/ExecuteResponse.js" type="text/javascript"></script>
+<script src="js/wps-js/response/ResponseFactory.js" type="text/javascript"></script>
+<script src="js/wps-js/response/ExceptionReportResponse.js" type="text/javascript"></script>
+<script src="js/wps-js/request/BaseRequest.js" type="text/javascript"></script>
+<script src="js/wps-js/request/GetRequest.js" type="text/javascript"></script>
+<script src="js/wps-js/request/PostRequest.js" type="text/javascript"></script>
+<script src="js/wps-js/request/ExecuteRequest.js" type="text/javascript"></script>
+<script src="js/wps-js/request/DescribeProcessGetRequest.js" type="text/javascript"></script>
+<script src="js/wps-js/request/GetCapabilitiesGetRequest.js" type="text/javascript"></script>
+<script src="js/wps-js/request/DescribeProcessPostRequest.js" type="text/javascript"></script>
+<script src="js/wps-js/request/GetCapabilitiesPostRequest.js" type="text/javascript"></script>
+<script src="js/wps-js/form/FormBuilder.js" type="text/javascript"></script>
+<script src="js/wps-js/form/FormParser.js" type="text/javascript"></script>
+<script src="js/wps-js/wps-js.js" type="text/javascript"></script>
+<!-- end client script tags -->
+<!-- /build -->
+
+<!-- build:css css/deps.wps-js.min.css -->
+<!-- start lib style tags -->
+<!-- end lib style tags -->
+<!-- /build -->
+
+<!-- build:css css/wps-js.min.css -->
+<!-- start client style tags -->
+<link href="css/wps-js.css" rel="stylesheet" type="text/css"/>
+<!-- end client style tags -->
+<!-- /build -->
+
+
 <title>wps-js example</title>
 <link rel="shortcut icon" href="favicon.ico" />
 </head>

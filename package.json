@@ -1,0 +1,41 @@
+{
+  "name": "wps-js",
+  "version": "0.1.2",
+  "private": true,
+  "description": "Web Processing Service JavaScrict library",
+  "main": "TBD",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/52North/wps-js.git"
+  },
+  "keywords": [
+    "TBD"
+  ],
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/52North/wps-js/issues"
+  },
+  "homepage": "https://github.com/52North/wps-js#readme",
+  "devDependencies": {
+    "bower": "^1.7.9",
+    "grunt": "^1.0.1",
+    "grunt-contrib-clean": "^1.0.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-cssmin": "^1.0.1",
+    "grunt-contrib-jshint": "^1.0.0",
+    "grunt-contrib-nodeunit": "^1.0.0",
+    "grunt-contrib-qunit": "^1.2.0",
+    "grunt-contrib-uglify": "^1.0.1",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-exec": "^0.4.7",
+    "grunt-processhtml": "^0.3.13",
+    "grunt-script-link-tags": "^1.0.2",
+    "grunt-war": "^0.5.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "bower install",
+    "prestart": "npm install"
+  }
+}
