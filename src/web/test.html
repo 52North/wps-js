@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<!-- JQuery and wps-js-->
+<script src="bower_components/jquery/jquery.min.js" type="text/javascript"></script>
+
+<script src="js/wps-js-lib/lib/Class.js" type="text/javascript"></script>
+
+<script src="js/wps-js-lib/Constants.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/Utility.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/model/WPSConfiguration.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/response/BaseResponse.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/response/CapabilitiesResponse.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/response/CapabilitiesResponse_v1_xml.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/response/CapabilitiesResponse_v2_xml.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/response/DescribeProcessResponse.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/response/DescribeProcessResponse_xml.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/response/DescribeProcessResponse_v1_xml.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/response/DescribeProcessResponse_v2_xml.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/response/ExecuteResponse.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/response/ResponseFactory.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/response/ExceptionReportResponse.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/request/BaseRequest.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/request/GetRequest.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/request/PostRequest.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/request/ExecuteRequest.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/request/DescribeProcessGetRequest.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/request/GetCapabilitiesGetRequest.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/request/DescribeProcessPostRequest.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/request/GetCapabilitiesPostRequest.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/WpsService.js" type="text/javascript"></script>
+
+
+
+<title>wps-js example</title>
+<link rel="shortcut icon" href="favicon.ico" />
+</head>
+<body>
+	<div id="wrapper">
+		<div>
+			<h1>wps-js example</h1>
+			<p>wps-js is an <a href="https://github.com/52North/wps-js/" title="wps-js on GitHub">open source client library</a> for connecting Javascript client to <a href="http://www.opengeospatial.org/standards/wps" title="WPS @ Open Geospatial Consortium">OGC Web Processing</a> services. This page demonstrates how you can use it. More documentation is available in the <a href="https://wiki.52north.org/bin/view/Geoprocessing/Wps-js" title="wps-js wiki page">52&deg;North Wiki</a> and on <a href="https://github.com/52North/wps-js/blob/master/README.md" title="wps-js readme">GitHub</a>.</p>
+		</div>
+		<div>
+			<select id="wps-selection">
+				<option>Select a WPS</option>
+				<option>http://geoprocessing.demo.52north.org:8080/wps/WebProcessingService</option>
+				<option>http://geostatistics.demo.52north.org/wps/WebProcessingService</option>
+			</select>
+		</div>
+		<div><button id="wps-describeProcess" onclick=describeProcess()>describeProcess</button></div>
+		<div>
+			<h3>
+				XML
+			</h3>
+			<div class="xml-container">
+				<textarea id="xml"></textarea>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+
+	var wps;
+
+		// add behavior to html elements
+//		document.getElementById("processes").onchange = function() {
+//			var sel = document.getElementById("processes");
+//			
+//			describeProcess(sel.options[sel.selectedIndex].text);
+//		};
+
+		var capabilitiesCallback = function(response) {
+			
+			var test = response.capabilities.processes;
+			
+			alert("success");
+		};
+		
+var describeProcessCallback = function(response) {
+			
+			var test = response.processDescription;
+			
+			alert("success");
+		};
+		
+var describeProcess = function() {
+			
+			wps.getProcessDescription(describeProcessCallback, "addeventtheme");
+		};
+
+		$(document).ready(function() {
+			document.getElementById("wps-selection").onchange = function() {
+				// get selected wps (url)
+				var wpsUrl = $('#wps-selection option:selected').text();
+
+				wps = new WpsService({url : wpsUrl, version : "1.0.0"});
+				
+				wps.getCapabilities(capabilitiesCallback);
+				
+				
+				//alert("test");
+			};
+		});
+		
+		
+
+		
+		
+	</script>
+
+	<!-- build:template
+	<div>
+		<p class="infotext"><%= message %></p>
+	</div>
+	/build -->
+	
+</body>
+</html>
