@@ -13,6 +13,7 @@
 <script src="js/wps-js-lib/model/WPSConfiguration.js" type="text/javascript"></script>
 <script src="js/wps-js-lib/response/BaseResponse.js" type="text/javascript"></script>
 <script src="js/wps-js-lib/response/CapabilitiesResponse.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/response/CapabilitiesResponse_xml.js" type="text/javascript"></script>
 <script src="js/wps-js-lib/response/CapabilitiesResponse_v1_xml.js" type="text/javascript"></script>
 <script src="js/wps-js-lib/response/CapabilitiesResponse_v2_xml.js" type="text/javascript"></script>
 <script src="js/wps-js-lib/response/DescribeProcessResponse.js" type="text/javascript"></script>
@@ -95,7 +96,7 @@ var describeProcess = function() {
 				// get selected wps (url)
 				var wpsUrl = $('#wps-selection option:selected').text();
 
-				wps = new WpsService({url : wpsUrl, version : "1.0.0"});
+				wps = new WpsService({url : wpsUrl, version : "2.0.0"});
 				
 				wps.getCapabilities(capabilitiesCallback);
 				
