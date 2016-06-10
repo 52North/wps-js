@@ -92,8 +92,8 @@ var CapabilitiesResponse_v1_xml = CapabilitiesResponse.extend({
 			var identifier = xmlProcess.find("Identifier").text();
 			var processVersion = xmlProcess.attr("processVersion") || xmlProcess.attr("wps:processVersion");
 			//TODO how to initiate those two?
-			var jobControlOutputs = "";
-			var outputTransmission = "";
+			var jobControlOutputs = "For WPS 1.0 please execute a DescribeProcess request with this process identifier. This parameter will be included in the returned process description!";
+			var outputTransmission = "For WPS 1.0 please execute a DescribeProcess request with this process identifier. This parameter will be included in the returned process description!";
 			
 			array[int] = this.createProcess(title, identifier, processVersion, jobControlOutputs, outputTransmission);
 			
