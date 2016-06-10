@@ -79,6 +79,8 @@ var CapabilitiesResponse = BaseResponse
 			 */
 
 			init : function(wpsResponse) {
+				this.responseDocument = wpsResponse;
+				
 				/*
 				 * create an empty new instance of capabilities object
 				 */

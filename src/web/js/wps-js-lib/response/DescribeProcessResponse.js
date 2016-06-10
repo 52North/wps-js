@@ -1,6 +1,7 @@
 var DescribeProcessResponse = BaseResponse.extend({
 
 	init : function(wpsResponse) {
+		this.responseDocument = wpsResponse;
 		
 		/*
 		 * empty process description

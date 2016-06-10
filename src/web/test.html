@@ -57,7 +57,7 @@
 				XML
 			</h3>
 			<div class="xml-container">
-				<textarea id="xml"></textarea>
+				<textarea id="xml">test</textarea>
 			</div>
 		</div>
 	</div>
@@ -73,6 +73,8 @@
 //		};
 
 		var capabilitiesCallback = function(response) {
+			var doc = response.getRawResponseDocument();
+			$("textarea#xml").val((new XMLSerializer()).serializeToString(doc));
 			
 			var test = response.capabilities.processes;
 			
@@ -81,6 +83,9 @@
 		
 var describeProcessCallback = function(response) {
 			
+	var doc = response.getRawResponseDocument();
+	$("textarea#xml").val((new XMLSerializer()).serializeToString(doc));
+	
 			var test = response.processOffering;
 			
 			alert("success");
@@ -88,8 +93,7 @@ var describeProcessCallback = function(response) {
 		
 var describeProcess = function() {
 			
-			//wps.getProcessDescription(describeProcessCallback, "addeventtheme");
-			wps.getProcessDescription(describeProcessCallback, "R Annotation Validation");
+			wps.getProcessDescription(describeProcessCallback, "addeventtheme");
 		};
 
 		$(document).ready(function() {
