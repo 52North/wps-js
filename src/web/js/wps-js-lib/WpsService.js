@@ -81,7 +81,7 @@ var WpsService = Class.extend({
 	 * @callbackFunction is triggered on success-event of JQuery.ajax method. 
 	 * Takes the response object as argument
 	 */
-	getProcessDescription_GET : function(callbackFunction, identifier){
+	describeProcess_GET : function(callbackFunction, identifier){
 		var processDescriptionRequest;
 		
 		processDescriptionRequest = new DescribeProcessGetRequest({
@@ -99,7 +99,7 @@ var WpsService = Class.extend({
 	 * @callbackFunction is triggered on success-event of JQuery.ajax method. 
 	 * Takes the response object as argument
 	 */
-	getProcessDescription_POST : function(callbackFunction, identifier){
+	describeProcess_POST : function(callbackFunction, identifier){
 		var processDescriptionRequest;
 		
 		processDescriptionRequest = new DescribeProcessPostRequest({
