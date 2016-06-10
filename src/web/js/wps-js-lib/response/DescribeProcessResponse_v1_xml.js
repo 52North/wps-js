@@ -34,7 +34,7 @@ var DescribeProcessResponse_v1_xml = DescribeProcessResponse_xml.extend({
 		 * 
 		 * if false, then only sync-execution and return in document is possible.
 		 */
-		var storeSupported = processOfferingXml.attr("storeSupported");
+		var storeSupported = processOfferingXml.attr("storeSupported") || false;
 		if (storeSupported)
 			return "sync-execute async-execute";
 		
@@ -51,7 +51,7 @@ var DescribeProcessResponse_v1_xml = DescribeProcessResponse_xml.extend({
 		 * 
 		 * if false, then only sync-execution and return in document is possible.
 		 */
-		var storeSupported = processOfferingXml.attr("storeSupported");
+		var storeSupported = processOfferingXml.attr("storeSupported") || false;
 		if (storeSupported)
 			return "value reference";
 		
