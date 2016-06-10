@@ -81,14 +81,15 @@
 		
 var describeProcessCallback = function(response) {
 			
-			var test = response.processDescription;
+			var test = response.processOffering;
 			
 			alert("success");
 		};
 		
 var describeProcess = function() {
 			
-			wps.getProcessDescription(describeProcessCallback, "addeventtheme");
+			//wps.getProcessDescription(describeProcessCallback, "addeventtheme");
+			wps.getProcessDescription(describeProcessCallback, "R Annotation Validation");
 		};
 
 		$(document).ready(function() {
@@ -96,7 +97,7 @@ var describeProcess = function() {
 				// get selected wps (url)
 				var wpsUrl = $('#wps-selection option:selected').text();
 
-				wps = new WpsService({url : wpsUrl, version : "2.0.0"});
+				wps = new WpsService({url : wpsUrl, version : "1.0.0"});
 				
 				wps.getCapabilities(capabilitiesCallback);
 				

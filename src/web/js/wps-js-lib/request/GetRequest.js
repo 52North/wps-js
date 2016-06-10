@@ -43,7 +43,7 @@ var GetRequest = BaseRequest.extend({
 			targetUrl += "&" + targetUrlQuery;
 		}
 		
-		return targetUrl;
+		return encodeURI(targetUrl);
 	}
 
 });
