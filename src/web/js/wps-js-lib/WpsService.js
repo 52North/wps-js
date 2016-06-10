@@ -34,15 +34,18 @@ var WpsService = Class.extend({
 	},
 
 	/**
-	 * getCapabilities
+	 * getCapabilities via HTTP GET
 	 * 
 	 * @callbackFunction is triggered on success-event of JQuery.ajax method
 	 */
-	getCapabilities : function(callbackFunction) {
+	getCapabilities_GET : function(callbackFunction) {
 		var capabilitiesRequest;
 		
-		/*
-		 * TODO has to be instantiated depending on the version
+		/**
+		 * getCapabilities via HTTP GET
+		 * 
+		 * @callbackFunction is triggered on success-event of JQuery.ajax method. 
+		 * Takes the response object as argument
 		 */
 		capabilitiesRequest = new GetCapabilitiesGetRequest({
 			url : this.settings.url,
@@ -52,10 +55,54 @@ var WpsService = Class.extend({
 		capabilitiesRequest.execute(callbackFunction);
 	},
 	
-	getProcessDescription : function(callbackFunction, identifier){
+	/**
+	 * getCapabilities via HTTP POST
+	 * 
+	 * @callbackFunction is triggered on success-event of JQuery.ajax method. 
+	 * Takes the response object as argument
+	 */
+	getCapabilities_POST : function(callbackFunction) {
+		var capabilitiesRequest;
+		
+		/*
+		 * TODO has to be instantiated depending on the version
+		 */
+		capabilitiesRequest = new GetCapabilitiesPostRequest({
+			url : this.settings.url,
+			version : this.settings.version
+		});
+
+		capabilitiesRequest.execute(callbackFunction);
+	},
+	
+	/**
+	 * process description via HTTP GET
+	 * 
+	 * @callbackFunction is triggered on success-event of JQuery.ajax method. 
+	 * Takes the response object as argument
+	 */
+	getProcessDescription_GET : function(callbackFunction, identifier){
 		var processDescriptionRequest;
 		
 		processDescriptionRequest = new DescribeProcessGetRequest({
+			url : this.settings.url,
+			version : this.settings.version,
+			processIdentifier : identifier
+		});
+		
+		processDescriptionRequest.execute(callbackFunction);
+	},
+	
+	/**
+	 * process description via HTTP POST
+	 * 
+	 * @callbackFunction is triggered on success-event of JQuery.ajax method. 
+	 * Takes the response object as argument
+	 */
+	getProcessDescription_POST : function(callbackFunction, identifier){
+		var processDescriptionRequest;
+		
+		processDescriptionRequest = new DescribeProcessPostRequest({
 			url : this.settings.url,
 			version : this.settings.version,
 			processIdentifier : identifier

@@ -93,7 +93,7 @@ var describeProcessCallback = function(response) {
 		
 var describeProcess = function() {
 			
-			wps.getProcessDescription(describeProcessCallback, "addeventtheme");
+			wps.getProcessDescription_POST(describeProcessCallback, "addeventtheme");
 		};
 
 		$(document).ready(function() {
@@ -101,9 +101,9 @@ var describeProcess = function() {
 				// get selected wps (url)
 				var wpsUrl = $('#wps-selection option:selected').text();
 
-				wps = new WpsService({url : wpsUrl, version : "1.0.0"});
+				wps = new WpsService({url : wpsUrl, version : "2.0.0"});
 				
-				wps.getCapabilities(capabilitiesCallback);
+				wps.getCapabilities_POST(capabilitiesCallback);
 				
 				
 				//alert("test");
