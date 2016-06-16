@@ -17,9 +17,10 @@ var OutputGenerator = Class.extend({
 	 * 
 	 * @asReference boolean, "true" or "false"
 	 */
-	createOutput_WPS_1_0 : function(identifier, mimeType, schema, encoding,
-			uom, asReference, title, abstractValue) {
+	createComplexOutput_WPS_1_0 : function(identifier, mimeType, schema,
+			encoding, uom, asReference, title, abstractValue) {
 		var output = new Object({
+			type : "complex",
 			identifier : identifier,
 			mimeType : mimeType,
 			schema : schema,
@@ -38,15 +39,49 @@ var OutputGenerator = Class.extend({
 	 * 
 	 * the rest might be null!
 	 * 
+	 * @asReference boolean, "true" or "false"
+	 */
+	createLiteralOutput_WPS_1_0 : function(identifier) {
+		var output = new Object({
+			type : "literal",
+			identifier : identifier,
+		});
+
+		return output;
+	},
+
+	/**
+	 * the following parameters are mandatory: identifier
+	 * 
+	 * the rest might be null!
+	 * 
 	 * @transmission either "value" or "reference"
 	 */
-	createOutput_WPS_2_0 : function(identifier, mimeType, schema, encoding,
-			transmission) {
+	createComplexOutput_WPS_2_0 : function(identifier, mimeType, schema,
+			encoding, transmission) {
 		var output = new Object({
+			type : "complex",
 			identifier : identifier,
 			mimeType : mimeType,
 			schema : schema,
 			encoding : encoding,
+			transmission : transmission,
+		});
+
+		return output;
+	},
+
+	/**
+	 * the following parameters are mandatory: identifier
+	 * 
+	 * the rest might be null!
+	 * 
+	 * @transmission either "value" or "reference"
+	 */
+	createLiteralOutput_WPS_2_0 : function(identifier, transmission) {
+		var output = new Object({
+			type : "literal",
+			identifier : identifier,
 			transmission : transmission,
 		});
 
