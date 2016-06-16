@@ -149,6 +149,12 @@ var EXECUTE_REQUEST_XML_LITERAL_OUTPUT = '<wps:Output>\
   </wps:Output>';
 
 var ExecuteRequest = PostRequest.extend({
+	
+	addRequestTypeToSettings : function() {
+
+		// set new requestType parameter to a fixed value from Constants.js
+		this.settings.requestType = EXECUTE_TYPE;
+	},
 
 	createPostPayload : function() {
 		

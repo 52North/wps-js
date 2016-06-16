@@ -41,7 +41,7 @@ var ResponseFactory = Class.extend({
 			if (version == WPS_VERSION_1_0_0)
 				return new ExecuteResponse_v1_xml(wpsResponse);
 			else if (version == WPS_VERSION_2_0_0)
-				return new ExecuteProcessResponse_v2_xml(wpsResponse);
+				return new ExecuteResponse_v2_xml(wpsResponse);
 			else {
 				return null;
 			}
