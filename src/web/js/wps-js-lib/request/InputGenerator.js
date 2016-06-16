@@ -16,30 +16,13 @@ var InputGenerator = Class
 			 * 
 			 * the rest might be null!
 			 */
-			createLiteralDataInput_wps_1_0 : function(identifier, dataType,
+			createLiteralDataInput_wps_1_0_and_2_0 : function(identifier, dataType,
 					uom, value) {
 				var input = new Object({
 					type : "literal",
 					identifier : identifier,
 					dataType : dataType,
 					uom : uom,
-					value : value
-				});
-
-				return input;
-			},
-
-			/**
-			 * the following parameters are mandatory: identifier and value
-			 * 
-			 * the rest might be null!
-			 */
-			createLiteralDataInput_wps_2_0 : function(identifier, mimeType,
-					value) {
-				var input = new Object({
-					type : "literal",
-					identifier : identifier,
-					mimeType : mimeType,
 					value : value
 				});
 
