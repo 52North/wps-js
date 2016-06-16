@@ -4,33 +4,62 @@
 <meta charset="UTF-8">
 
 <!-- JQuery and wps-js-->
-<script src="bower_components/jquery/dist/jquery.min.js" type="text/javascript"></script>
+<script src="bower_components/jquery/dist/jquery.min.js"
+	type="text/javascript"></script>
 
 <script src="js/wps-js-lib/lib/Class.js" type="text/javascript"></script>
 
 <script src="js/wps-js-lib/Constants.js" type="text/javascript"></script>
 <script src="js/wps-js-lib/Utility.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/model/WPSConfiguration.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/response/BaseResponse.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/response/CapabilitiesResponse.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/response/CapabilitiesResponse_xml.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/response/CapabilitiesResponse_v1_xml.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/response/CapabilitiesResponse_v2_xml.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/response/DescribeProcessResponse.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/response/DescribeProcessResponse_xml.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/response/DescribeProcessResponse_v1_xml.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/response/DescribeProcessResponse_v2_xml.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/response/ExecuteResponse.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/response/ResponseFactory.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/response/ExceptionReportResponse.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/request/BaseRequest.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/model/WPSConfiguration.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/BaseResponse.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/CapabilitiesResponse.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/CapabilitiesResponse_xml.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/CapabilitiesResponse_v1_xml.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/CapabilitiesResponse_v2_xml.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/DescribeProcessResponse.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/DescribeProcessResponse_xml.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/DescribeProcessResponse_v1_xml.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/DescribeProcessResponse_v2_xml.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/ExecuteResponse.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/ResponseFactory.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/ExceptionReportResponse.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/BaseRequest.js"
+	type="text/javascript"></script>
 <script src="js/wps-js-lib/request/GetRequest.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/request/PostRequest.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/request/ExecuteRequest.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/request/DescribeProcessGetRequest.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/request/GetCapabilitiesGetRequest.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/request/DescribeProcessPostRequest.js" type="text/javascript"></script>
-<script src="js/wps-js-lib/request/GetCapabilitiesPostRequest.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/request/PostRequest.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/InputGenerator.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/OutputGenerator.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/ExecuteRequest.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/ExecuteRequest_v1.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/ExecuteRequest_v2.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/DescribeProcessGetRequest.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/GetCapabilitiesGetRequest.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/DescribeProcessPostRequest.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/GetCapabilitiesPostRequest.js"
+	type="text/javascript"></script>
 <script src="js/wps-js-lib/WpsService.js" type="text/javascript"></script>
 
 
@@ -42,7 +71,19 @@
 	<div id="wrapper">
 		<div>
 			<h1>wps-js example</h1>
-			<p>wps-js is an <a href="https://github.com/52North/wps-js/" title="wps-js on GitHub">open source client library</a> for connecting Javascript client to <a href="http://www.opengeospatial.org/standards/wps" title="WPS @ Open Geospatial Consortium">OGC Web Processing</a> services. This page demonstrates how you can use it. More documentation is available in the <a href="https://wiki.52north.org/bin/view/Geoprocessing/Wps-js" title="wps-js wiki page">52&deg;North Wiki</a> and on <a href="https://github.com/52North/wps-js/blob/master/README.md" title="wps-js readme">GitHub</a>.</p>
+			<p>
+				wps-js is an <a href="https://github.com/52North/wps-js/"
+					title="wps-js on GitHub">open source client library</a> for
+				connecting Javascript client to <a
+					href="http://www.opengeospatial.org/standards/wps"
+					title="WPS @ Open Geospatial Consortium">OGC Web Processing</a>
+				services. This page demonstrates how you can use it. More
+				documentation is available in the <a
+					href="https://wiki.52north.org/bin/view/Geoprocessing/Wps-js"
+					title="wps-js wiki page">52&deg;North Wiki</a> and on <a
+					href="https://github.com/52North/wps-js/blob/master/README.md"
+					title="wps-js readme">GitHub</a>.
+			</p>
 		</div>
 		<div>
 			<select id="wps-selection">
@@ -51,11 +92,11 @@
 				<option>http://geostatistics.demo.52north.org/wps/WebProcessingService</option>
 			</select>
 		</div>
-		<div><button id="wps-describeProcess" onclick=describeProcess()>describeProcess</button></div>
 		<div>
-			<h3>
-				XML
-			</h3>
+			<button id="wps-describeProcess" onclick=describeProcess()>describeProcess</button>
+		</div>
+		<div>
+			<h3>XML</h3>
 			<div class="xml-container">
 				<textarea id="xml">test</textarea>
 			</div>
@@ -81,7 +122,7 @@
 			alert("success");
 		};
 		
-var describeProcessCallback = function(response) {
+	var describeProcessCallback = function(response) {
 			
 	var doc = response.getRawResponseDocument();
 	$("textarea#xml").val((new XMLSerializer()).serializeToString(doc));
@@ -91,23 +132,62 @@ var describeProcessCallback = function(response) {
 			alert("success");
 		};
 		
-var describeProcess = function() {
+	var describeProcess = function() {
 			
 			wps.describeProcess_POST(describeProcessCallback, "addeventtheme");
 		};
+		
+		function testExecuteRequest(){
+			var inputGenerator = new InputGenerator();
+			var literalInput = inputGenerator.createLiteralDataInput_wps_1_0_and_2_0("literalId", "myDataType",
+					"myUOM", "myValue");
+			var complexInput = inputGenerator.createComplexDataInput_wps_1_0_and_2_0("complexId",
+					"myMimeType", "mySchema", "myEncoding", false, "<test><test2>hello</test2></test>");
+			
+			var referenceInput = inputGenerator.createComplexDataInput_wps_1_0_and_2_0("complexId",
+					"myMimeType", "mySchema", "myEncoding", true, "http://myReferenceUrl");
+			
+			var inputs = [literalInput, complexInput, referenceInput];
+			
+			//outputs
+			var outputGenerator = new OutputGenerator();
+			var literalOutput = outputGenerator.createLiteralOutput_WPS_2_0("literalOutput", "reference");
+			var complexOutput = outputGenerator.createComplexOutput_WPS_2_0("complexOutput", "myMimeType", 
+					"mySchema", "myEncoding", "value");
+			
+			var outputs = [literalOutput, complexOutput];
+			
+			var executeRequest = new ExecuteRequest_v2({
+				url : "testUrl",
+				version : "2.0.0",
+				processIdentifier : "myProcess",
+				responseFormat : "document",
+				executionMode : "sync",
+				inputs : inputs,
+				outputs : outputs
+			});
+			
+			var payload = executeRequest.createPostPayload();
+			
+			$("textarea#xml").val(payload);
+			
+			var test="g";
+		}
 
 		$(document).ready(function() {
 			document.getElementById("wps-selection").onchange = function() {
 				// get selected wps (url)
 				var wpsUrl = $('#wps-selection option:selected').text();
 
-				wps = new WpsService({url : wpsUrl, version : "2.0.0"});
+				wps = new WpsService({url : wpsUrl, version : "1.0.0"});
 				
 				wps.getCapabilities_POST(capabilitiesCallback);
-				
-				
-				//alert("test");
+
 			};
+			
+			
+			testExecuteRequest();
+			
 		});
 		
 		
@@ -121,6 +201,6 @@ var describeProcess = function() {
 		<p class="infotext"><%= message %></p>
 	</div>
 	/build -->
-	
+
 </body>
 </html>

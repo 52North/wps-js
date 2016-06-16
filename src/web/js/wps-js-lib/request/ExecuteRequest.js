@@ -1,3 +1,11 @@
+/*
+ * the following variables define XML templates that will be instantiated 
+ * during request building!
+ * 
+ * in child classes they should be overridden to reflect the correct 
+ * WPS version POST request
+ */
+
 var EXECUTE_REQUEST_XML_START = '<wps:Execute service="WPS" version="1.0.0" \
 	xmlns:wps="http://www.opengis.net/wps/1.0.0" \
 	xmlns:ows="http://www.opengis.net/ows/1.1" \
@@ -72,10 +80,17 @@ var EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_INPUT = '<wps:Input>\
 	xlink:href="${complexPayload}"/>\
   </wps:Input>';
 
-var EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT = '<wps:Input>\
+var EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT_TYPE = '<wps:Input>\
     <ows:Identifier>${identifier}</ows:Identifier>\
     <wps:Data>\
       <wps:LiteralData dataType="${dataType}">${value}</wps:LiteralData>\
+    </wps:Data>\
+  </wps:Input>';
+
+var EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT_ALL = '<wps:Input>\
+    <ows:Identifier>${identifier}</ows:Identifier>\
+    <wps:Data>\
+      <wps:LiteralData dataType="${dataType}" uom="${uom}">${value}</wps:LiteralData>\
     </wps:Data>\
   </wps:Input>';
 
@@ -136,6 +151,59 @@ var EXECUTE_REQUEST_XML_LITERAL_OUTPUT = '<wps:Output>\
 var ExecuteRequest = PostRequest.extend({
 
 	createPostPayload : function() {
+		
+		/*
+		 * used to reset all templates to reflect differences in different WPS version.
+		 */
+		this.overrideTemplates();
+		
+		/*
+		 * used to analyze the given request parameters and, if needed, 
+		 * add additional parameters to properly instantiate the templates.
+		 */
+		this.addVersionDependentProperties();
+		
+		/**
+		 * instantiate templates
+		 */
+		return this.fillTemplates();
+	},
+	
+	/**
+	 * will adjust the templates stored in aforementioned variables to reflect 
+	 * the WPS version dependent execute request POST body
+	 */
+	overrideTemplates : function(){
+		/*
+		 * override in child methods
+		 */
+	},
+	
+
+	/**
+	* used to analyze the given request parameters and, if needed,
+	* add additional parameters to properly instantiate the
+	* templates.
+	*/
+	addVersionDependentProperties : function(){
+		/*
+		 * override in child methods
+		 */
+	},
+	
+	/**
+	 * add certain parameters, if necessary, to the given object
+	 */
+	addVersionDependentPropertiesToFinalExecuteProperties : function(finalExecuteProperties){
+		/*
+		 * override in child classes
+		 */
+	},
+	
+	/**
+	 * instantiate all templates and concat them to create the POST body
+	 */
+	fillTemplates : function(){
 		var inputs = this.settings.inputs;
 		var outputs = this.settings.outputs;
 		
@@ -149,13 +217,15 @@ var ExecuteRequest = PostRequest.extend({
 			responseFormMarkup = this.createResponseFormMarkup(outputs, this.settings.outputStyle);
 		}
 		
-		var templateProperties = {
+		var finalExecuteProperties = {
 				processIdentifier: this.settings.processIdentifier,
 				dataInputs: dataInputsMarkup,
 				responseForm: responseFormMarkup
 		};
 		
-		var result = this.fillTemplate(EXECUTE_REQUEST_XML_START, templateProperties);
+		finalExecuteProperties = this.addVersionDependentPropertiesToFinalExecuteProperties(finalExecuteProperties);
+		
+		var result = this.fillTemplate(EXECUTE_REQUEST_XML_START, finalExecuteProperties);
 		
 		return result;
 	},
@@ -197,7 +267,10 @@ var ExecuteRequest = PostRequest.extend({
 	createLiteralDataInput : function(input) {
 		var markup;
 		if (input.dataType) {
-			markup = this.fillTemplate(EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT, input);
+			if(input.uom)
+				markup = this.fillTemplate(EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT_ALL, input);
+			else
+				markup = this.fillTemplate(EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT_TYPE, input);
 		}
 		else {
 			markup = this.fillTemplate(EXECUTE_REQUEST_XML_LITERAL_DATA_NO_TYPE_INPUT, input);
