@@ -1,0 +1,138 @@
+/**
+ * 
+ */
+var InputGenerator = Class
+		.extend({
+			/**
+			 * 
+			 */
+			init : function(settings) {
+				this.settings = settings;
+			},
+
+			/**
+			 * the following parameters are mandatory: identifier and value
+			 * 
+			 * the rest might be null!
+			 */
+			createLiteralDataInput_wps_1_0 : function(identifier, dataType,
+					uom, value) {
+				var input = new Object({
+					type : "literal",
+					identifier : identifier,
+					dataType : dataType,
+					uom : uom,
+					value : value
+				});
+
+				return input;
+			},
+
+			/**
+			 * the following parameters are mandatory: identifier and value
+			 * 
+			 * the rest might be null!
+			 */
+			createLiteralDataInput_wps_2_0 : function(identifier, mimeType,
+					schema, encoding, value) {
+				var input = new Object({
+					type : "literal",
+					identifier : identifier,
+					mimeType : mimeType,
+					schema : schema,
+					encoding : encoding,
+					value : value
+				});
+
+				return input;
+			},
+
+			/**
+			 * Applicable for WPS 1.0 and 2.0.
+			 * 
+			 * the following parameters are mandatory (for GET requests):
+			 * identifier, href.
+			 * 
+			 * also mandatory for POST request: bodyAsReference and body (either
+			 * as URL-reference or actual body as String)
+			 * 
+			 * the rest might be null!
+			 * 
+			 * @method either "GET" or "POST", default is GET
+			 * @bodyAsReference boolean, either "true" or "false", indicating
+			 *                  whether parameter body contains a URL as
+			 *                  reference to an external body or the actual POST
+			 *                  body
+			 * @body might be either the actual POST body or a URL as reference
+			 *       to an external body
+			 */
+			createReferenceDataInput_wps_1_0_and_2_0 : function(identifier,
+					mimeType, schema, encoding, href, method, bodyAsReference,
+					body) {
+				var input = new Object({
+					type : "reference",
+					identifier : identifier,
+					mimeType : mimeType,
+					schema : schema,
+					encoding : encoding,
+					bodyAsReference : bodyAsReference,
+					body : body,
+				});
+
+				if (method != null)
+					input.method = method;
+				else {
+					input.method = "GET";
+				}
+
+				return input;
+			},
+
+			/**
+			 * the following parameters are mandatory: identifier and
+			 * complexPayload
+			 * 
+			 * the rest might be null!
+			 * 
+			 * @complexPayload the complex payload (XML tags) as String
+			 */
+			createComplexDataInput_wps_1_0_and_2_0 : function(identifier,
+					mimeType, schema, encoding, complexPayload) {
+				var input = new Object({
+					type : "complex",
+					identifier : identifier,
+					mimeType : mimeType,
+					schema : schema,
+					encoding : encoding,
+					complexPayload : complexPayload
+				});
+
+				return input;
+			},
+
+			/**
+			 * the following parameters are mandatory: identifier, crs,
+			 * lowerCorner and upperCorner
+			 * 
+			 * the rest might be null!
+			 * 
+			 * @crs coordinate reference system URI
+			 * @dimension number of dimensions in this CRS
+			 * @lowerCorner orderedSequence of double values
+			 * @upperCorner orderedSequence of double values
+			 */
+			createBboxDataInput_wps_1_0_and_2_0 : function(identifier, crs,
+					dimension, lowerCorner, upperCorner) {
+				var input = new Object({
+					type : "bbox",
+					identifier : identifier,
+					crs : crs,
+					dimension : dimension,
+					lowerCorner : lowerCorner,
+					upperCorner : upperCorner
+				});
+
+				return input;
+			},
+
+		});
