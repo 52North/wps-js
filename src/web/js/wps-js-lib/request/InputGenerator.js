@@ -1,5 +1,6 @@
 /**
- * 
+ * Helper class to construct input objects for execute requests against WPS 1.0
+ * and 2.0
  */
 var InputGenerator = Class
 		.extend({
