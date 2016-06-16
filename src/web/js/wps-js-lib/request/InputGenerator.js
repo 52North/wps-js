@@ -35,13 +35,11 @@ var InputGenerator = Class
 			 * the rest might be null!
 			 */
 			createLiteralDataInput_wps_2_0 : function(identifier, mimeType,
-					schema, encoding, value) {
+					value) {
 				var input = new Object({
 					type : "literal",
 					identifier : identifier,
 					mimeType : mimeType,
-					schema : schema,
-					encoding : encoding,
 					value : value
 				});
 
@@ -56,9 +54,8 @@ var InputGenerator = Class
 			 * 
 			 * @complexPayload the complex payload (XML tags) as String
 			 * @asReference boolean, either "true" or "false", indicating
-			 *                  whether parameter body contains a URL as
-			 *                  reference to an external body or the actual POST
-			 *                  body
+			 *              whether parameter body contains a URL as reference
+			 *              to an external body or the actual POST body
 			 */
 			createComplexDataInput_wps_1_0_and_2_0 : function(identifier,
 					mimeType, schema, encoding, asReference, complexPayload) {
