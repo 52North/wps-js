@@ -146,10 +146,11 @@
 	var executeCallback = function(response) {
 			
 		var doc = response.getRawResponseDocument();
-		$("textarea#xml").val((new XMLSerializer()).serializeToString(doc));
-			
-		var test = response.processOffering;
-					
+		try {
+			$("textarea#xml").val((new XMLSerializer()).serializeToString(doc));
+		} catch (e){
+			$("textarea#xml").val(doc);
+		}			
 		alert("success");
 	};	
 		
@@ -174,7 +175,7 @@
 		
 		
 		wps.execute(executeCallback, "org.n52.wps.server.algorithm.SimpleBufferAlgorithm", "document",
-				"sync", false, inputs, outputs);
+				"async", false, inputs, outputs);
 	};	
 	
 var execute_v2 = function() {
@@ -198,7 +199,7 @@ var execute_v2 = function() {
 		
 		
 		wps.execute(executeCallback, "org.n52.wps.server.algorithm.SimpleBufferAlgorithm", "document",
-				"async", false, inputs, outputs);
+				"sync", false, inputs, outputs);
 	};	
 		
 		function testExecuteRequest_wps_2_0(){
