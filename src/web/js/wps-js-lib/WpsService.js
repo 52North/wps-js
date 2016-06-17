@@ -132,7 +132,7 @@ var WpsService = Class.extend({
 			executionMode, lineage, inputs, outputs) {
 		var executeRequest;
 
-		if (this.settings.version == Constants.WPS_VERSION_1_0_0) {
+		if (this.settings.version == WPS_VERSION_1_0_0) {
 			executeRequest = new ExecuteRequest_v1({
 				url : this.settings.url,
 				version : this.settings.version,
