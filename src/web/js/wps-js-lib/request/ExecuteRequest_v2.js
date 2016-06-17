@@ -104,6 +104,10 @@ var ExecuteRequest_v2 = ExecuteRequest
 				EXECUTE_REQUEST_XML_COMPLEX_ALL_OUTPUT = '<wps:Output id="${identifier}" \
 			transmission="${transmission}" schema="${schema}" mimeType="${mimeType}" encoding="${encoding}">\
 		      </wps:Output>';
+				
+				EXECUTE_REQUEST_XML_COMPLEX_OUTPUT = '<wps:Output id="${identifier}"\
+					transmission="${transmission}">\
+				      </wps:Output>';
 
 				EXECUTE_REQUEST_XML_COMPLEX_MIME_TYPE_OUTPUT = '<wps:Output id="${identifier}" \
 			transmission="${transmission}" mimeType="${mimeType}">\

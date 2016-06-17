@@ -150,6 +150,11 @@ var EXECUTE_REQUEST_XML_COMPLEX_ALL_OUTPUT = '<wps:Output \
         <ows:Identifier>${identifier}</ows:Identifier>\
       </wps:Output>';
 
+var EXECUTE_REQUEST_XML_COMPLEX_OUTPUT = '<wps:Output \
+	asReference="${asReference}">\
+        <ows:Identifier>${identifier}</ows:Identifier>\
+      </wps:Output>';
+
 var EXECUTE_REQUEST_XML_COMPLEX_MIME_TYPE_OUTPUT = '<wps:Output \
 	asReference="${asReference}" mimeType="${mimeType}">\
         <ows:Identifier>${identifier}</ows:Identifier>\
@@ -467,20 +472,23 @@ var ExecuteRequest = PostRequest.extend({
 					outputString += this.fillTemplate(EXECUTE_REQUEST_XML_LITERAL_OUTPUT, outputs[i]);
 				}
 				else {
-					if (outputs[i].encoding && outputs[i].schema) {
+					if (outputs[i].encoding && outputs[i].schema && outputs[i].mimeType) {
 						outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_ALL_OUTPUT, outputs[i]);
 					}
 				
-					else if (outputs[i].encoding && !outputs[i].schema) {
+					else if (outputs[i].encoding && !outputs[i].schema && outputs[i].mimeType) {
 						outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_ENCODING_OUTPUT, outputs[i]);
 					}
 				
-					else if (!outputs[i].encoding && outputs[i].schema) {
+					else if (!outputs[i].encoding && outputs[i].schema && outputs[i].mimeType) {
 						outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_SCHEMA_OUTPUT, outputs[i]);
 					}
 				
-					else {
+					else if (outputs[i].mimeType){
 						outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_MIME_TYPE_OUTPUT, outputs[i]);
+					}
+					else{
+						outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_OUTPUT, outputs[i]);
 					}
 				}
 			}
