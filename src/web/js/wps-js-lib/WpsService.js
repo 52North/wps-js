@@ -121,29 +121,18 @@ var WpsService = Class.extend({
 	 * @processIdentifier the identifier of the process
 	 * @responseFormat either "raw" or "document", default is "document"
 	 * @executionMode either "sync" or "async";
-	 * @inputs an array of needed Input objects with structure: {id:identifier, type:literal|complex|bbox
-	 *         mimeType:mimeTypeValue, encoding:encodingValue,
-	 *         schema:schemaValue}
-	 *         
-	 *         {id:identifier,
-	 *         Data|Reference|Input}, where Data has structure
-	 *         {mimeType:mimeTypeValue, encoding:encodingValue,
-	 *         schema:schemaValue, data:dataValue} and reference has structure
-	 *         {mimeType:mimeTypeValue, encoding:encodingValue,
-	 *         schema:schemaValue, href:hrefValue,
-	 *         postRequestBody:PostRequestBody}, where PostRequestBody has
-	 *         structure {postBody:fullBodyValue |
-	 *         postBodyReference:urlToBodyValue}
-	 * @outputs an array of requested Output objects, where Output has structure
-	 *          {mimeType:mimeTypeValue, encoding:encodingValue,
-	 *          schema:schemaValue, transmission:value|reference, id:identifier,
-	 *          Output}
+	 * @lineage only relevant for WPS 1.0; boolean, if "true" then returned
+	 *          response will include original input and output definition
+	 * @inputs an array of needed Input objects, use JS-object InputGenerator to
+	 *         create inputs
+	 * @outputs an array of requested Output objects, use JS-object
+	 *          OutputGenerator to create inputs
 	 */
 	execute : function(callbackFunction, processIdentifier, responseFormat,
 			executionMode, lineage, inputs, outputs) {
 		var executeRequest;
-		
-		if (this.settings.version == Constants.WPS_VERSION_1_0_0){
+
+		if (this.settings.version == Constants.WPS_VERSION_1_0_0) {
 			executeRequest = new ExecuteRequest_v1({
 				url : this.settings.url,
 				version : this.settings.version,
@@ -156,7 +145,7 @@ var WpsService = Class.extend({
 			});
 		}
 
-		else{
+		else {
 			executeRequest = new ExecuteRequest_v2({
 				url : this.settings.url,
 				version : this.settings.version,
@@ -167,7 +156,6 @@ var WpsService = Class.extend({
 				outputs : outputs
 			});
 		}
-		
 
 		executeRequest.execute(callbackFunction);
 	},
