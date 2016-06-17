@@ -222,5 +222,33 @@ var WpsService = Class.extend({
 			throw "Get Status operation is only supported for WPS 2.0!";
 		}
 	},
+	
+	/**
+	 * WPS 2.0 getStatus operation to retrieve the status of an executed job
+	 * 
+	 * Not usable with WPS 1.0
+	 * 
+	 * @callbackFunction a callback function that will be triggered with the
+	 *                   parsed StatusInfo document as argument
+	 */
+	getResult_WPS_2_0 : function(callbackFunction, jobId) {
+		if (this.settings.version == WPS_VERSION_2_0_0) {
+			var getResultRequest;
+
+			getResultRequest = new GetResultGetRequest({
+				url : this.settings.url,
+				version : this.settings.version,
+				jobId : jobId
+			});
+
+			getResultRequest.execute(callbackFunction);
+		}
+		else{
+			/*
+			 * not supported for WPS 1.0
+			 */
+			throw "Get Result operation is only supported for WPS 2.0!";
+		}
+	},
 
 });
