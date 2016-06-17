@@ -13,7 +13,7 @@ var ExecuteResponse_v1_xml = ExecuteResponse
 					this.executeResponse.serviceVersion = "1.0.0";
 					this.executeResponse.type = "responseDocument";
 
-					this.instantiateResponseDocument(wpsResponse)
+					this.instantiateResponseDocument(wpsResponse);
 				} else {
 					/*
 					 * raw output

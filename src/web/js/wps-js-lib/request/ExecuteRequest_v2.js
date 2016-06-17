@@ -68,7 +68,11 @@ var ExecuteRequest_v2 = ExecuteRequest
 				EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_INPUT = '<wps:Input id="${identifier}">\
 		    <wps:Reference mimeType="${mimeType}" xlink:href="${complexPayload}"/>\
 		  </wps:Input>';
-
+				/*
+				 * These are the CORRECT values, currently the 52N WPS is
+				 * implemented wrongly wrt literalValue
+				 * 
+				 */
 				EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT_TYPE = '<wps:Input id="${identifier}">\
 		    <wps:Data>\
 				<wps:LiteralValue dataType="${dataType}">${value}</wps:LiteralValue>\
@@ -87,6 +91,30 @@ var ExecuteRequest_v2 = ExecuteRequest
 			</wps:Data>\
 		  </wps:Input>';
 
+				/*
+				 * The follwing 3 are NOT CORRECT, but work currently with the
+				 * 52°North WPS 2.0, which contains a false implmenetation wrt
+				 * literalValues
+				 */
+/*
+				EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT_TYPE = '<wps:Input id="${identifier}">\
+				    <wps:Data>\
+						${value}\
+					</wps:Data>\
+				  </wps:Input>';
+
+				EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT_ALL = '<wps:Input id="${identifier}">\
+				    <wps:Data>\
+						${value}\
+					</wps:Data>\
+				  </wps:Input>';
+
+				EXECUTE_REQUEST_XML_LITERAL_DATA_NO_TYPE_INPUT = '<wps:Input id="${identifier}">\
+				    <wps:Data>\
+						${value}\
+					</wps:Data>\
+				  </wps:Input>';
+*/
 				EXECUTE_REQUEST_XML_BOUNDING_BOX_INPUT = '<wps:Input id="${identifier}">\
 		    <wps:Data>\
 		       <ows:BoundingBox crs="${crs}" dimensions="${dimension}">\
@@ -104,7 +132,7 @@ var ExecuteRequest_v2 = ExecuteRequest
 				EXECUTE_REQUEST_XML_COMPLEX_ALL_OUTPUT = '<wps:Output id="${identifier}" \
 			transmission="${transmission}" schema="${schema}" mimeType="${mimeType}" encoding="${encoding}">\
 		      </wps:Output>';
-				
+
 				EXECUTE_REQUEST_XML_COMPLEX_OUTPUT = '<wps:Output id="${identifier}"\
 					transmission="${transmission}">\
 				      </wps:Output>';
