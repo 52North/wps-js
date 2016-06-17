@@ -119,6 +119,25 @@ var ExecuteRequest_v2 = ExecuteRequest
 
 				EXECUTE_REQUEST_XML_LITERAL_OUTPUT = '<wps:Output id="${identifier}" transmission="${transmission}">\
 		  </wps:Output>';
+
+				/*
+				 * raw output
+				 * 
+				 * in WPS 2.0 there is no special wrapping element for raw
+				 * outputs, hence we just use the already specified output
+				 * templates
+				 * 
+				 * also in WPS 2.0 there is no specification of UOM anymore. so
+				 * simply ignore uom.
+				 */
+				EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW_ALL = EXECUTE_REQUEST_XML_COMPLEX_ALL_OUTPUT;
+
+				EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW_TYPE_ENCODING_UOM = EXECUTE_REQUEST_XML_COMPLEX_ENCODING_OUTPUT;
+
+				EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW_TYPE_UOM = EXECUTE_REQUEST_XML_COMPLEX_MIME_TYPE_OUTPUT;
+
+				EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW_TYPE = EXECUTE_REQUEST_XML_COMPLEX_MIME_TYPE_OUTPUT;
+
 			},
 
 			/**

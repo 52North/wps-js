@@ -161,18 +161,18 @@
 			
 			//outputs
 			var outputGenerator = new OutputGenerator();
-			var literalOutput = outputGenerator.createLiteralOutput_WPS_2_0("literalOutput", "reference");
+			//var literalOutput = outputGenerator.createLiteralOutput_WPS_2_0("literalOutput", "reference");
 			var complexOutput = outputGenerator.createComplexOutput_WPS_2_0("complexOutput", "myMimeType", 
 					"mySchema", "myEncoding", "value");
 			
-			var outputs = [literalOutput, complexOutput];
+			var outputs = [complexOutput];
 			
 			var executeRequest = new ExecuteRequest_v2({
 				url : "testUrl",
 				version : "2.0.0",
 				processIdentifier : "myProcess",
-				responseFormat : null,
-				executionMode : null,
+				responseFormat : "raw",
+				executionMode : "async",
 				inputs : inputs,
 				outputs : outputs
 			});
@@ -202,17 +202,17 @@
 			
 			//outputs
 			var outputGenerator = new OutputGenerator();
-			var literalOutput = outputGenerator.createLiteralOutput_WPS_1_0("literalOutput");
+			//var literalOutput = outputGenerator.createLiteralOutput_WPS_1_0("literalOutput");
 			var complexOutput = outputGenerator.createComplexOutput_WPS_1_0("complexOutput", "myMimeType", 
 					"mySchema", "myEncoding", "myUOM", true, "MyTitle", "MyAbstract");
 			
-			var outputs = [literalOutput, complexOutput];
+			var outputs = [complexOutput];
 			
 			var executeRequest = new ExecuteRequest_v1({
 				url : "testUrl",
 				version : "1.0.0",
 				processIdentifier : "myProcess",
-				responseFormat : null,
+				responseFormat : "raw",
 				executionMode : "async",
 				lineage : false,
 				inputs : inputs,
@@ -238,8 +238,8 @@
 			};
 			
 			
-			//testExecuteRequest_wps_2_0();
-			testExecuteRequest_wps_1_0();
+			testExecuteRequest_wps_2_0();
+			//testExecuteRequest_wps_1_0();
 			
 		});
 		

@@ -111,11 +111,32 @@ var EXECUTE_REQUEST_XML_BOUNDING_BOX_INPUT = '<wps:Input>\
     </wps:Data>\
  </wps:Input>';
 
-var EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW = '<wps:ResponseForm>\
-	    <wps:RawDataOutput mimeType="${mimeType}">\
+var EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW_ALL = '<wps:ResponseForm>\
+	    <wps:RawDataOutput mimeType="${mimeType}" schema="${schema}" encoding="${encoding}" \
+			uom="${uom}">\
 	      <ows:Identifier>${identifier}</ows:Identifier>\
 	    </wps:RawDataOutput>\
 	  </wps:ResponseForm>';
+
+var EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW_TYPE_ENCODING_UOM = '<wps:ResponseForm>\
+    <wps:RawDataOutput mimeType="${mimeType}" encoding="${encoding}"\
+		uom="${uom}">\
+      <ows:Identifier>${identifier}</ows:Identifier>\
+    </wps:RawDataOutput>\
+  </wps:ResponseForm>';
+
+var EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW_TYPE_UOM = '<wps:ResponseForm>\
+    <wps:RawDataOutput mimeType="${mimeType}" \
+		uom="${uom}">\
+      <ows:Identifier>${identifier}</ows:Identifier>\
+    </wps:RawDataOutput>\
+  </wps:ResponseForm>';
+
+var EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW_TYPE = '<wps:ResponseForm>\
+    <wps:RawDataOutput mimeType="${mimeType}">\
+      <ows:Identifier>${identifier}</ows:Identifier>\
+    </wps:RawDataOutput>\
+  </wps:ResponseForm>';
 
 var EXECUTE_REQUEST_XML_RESPONSE_FORM_DOCUMENT = '<wps:ResponseForm>\
     <wps:ResponseDocument storeExecuteResponse="${storeExecuteResponse}" \
@@ -415,32 +436,59 @@ var ExecuteRequest = PostRequest.extend({
 	 */
 	createResponseFormMarkup : function(outputs, outputStyle) {
 		var outputString = "";
-		for (var i = 0; i < outputs.length; i++) {
-			if (equalsString("literal", outputs[i].type)) {
-				outputString += this.fillTemplate(EXECUTE_REQUEST_XML_LITERAL_OUTPUT, outputs[i]);
+		var result;
+		
+		if(this.settings.responseFormat == "raw" && outputs.length == 1){
+			/*
+			 * raw output requested, only one output allowed. So take the first one.
+			 */
+			var rawOutput = outputs[0];
+			
+			if (rawOutput.encoding && rawOutput.schema && rawOutput.mimeType && rawOutput.uom){
+				result = this.fillTemplate(EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW_ALL, rawOutput);
+			}
+			else if (rawOutput.encoding && rawOutput.mimeType && rawOutput.uom){
+				result = this.fillTemplate(EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW_TYPE_ENCODING_UOM, rawOutput);
+			}
+			else if (rawOutput.mimeType && rawOutput.uom){
+				result = this.fillTemplate(EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW_TYPE_UOM, rawOutput);
 			}
 			else {
-				if (outputs[i].encoding && outputs[i].schema) {
-					outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_ALL_OUTPUT, outputs[i]);
+				result = this.fillTemplate(EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW_TYPE, rawOutput);
+			}
+			
+		}
+		else{
+			/*
+			 * response document with additional attributes and multiple outputs!
+			 */
+			for (var i = 0; i < outputs.length; i++) {
+				if (equalsString("literal", outputs[i].type)) {
+					outputString += this.fillTemplate(EXECUTE_REQUEST_XML_LITERAL_OUTPUT, outputs[i]);
 				}
-				
-				else if (outputs[i].encoding && !outputs[i].schema) {
-					outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_ENCODING_OUTPUT, outputs[i]);
-				}
-				
-				else if (!outputs[i].encoding && outputs[i].schema) {
-					outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_SCHEMA_OUTPUT, outputs[i]);
-				}
-				
 				else {
-					outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_MIME_TYPE_OUTPUT, outputs[i]);
+					if (outputs[i].encoding && outputs[i].schema) {
+						outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_ALL_OUTPUT, outputs[i]);
+					}
+				
+					else if (outputs[i].encoding && !outputs[i].schema) {
+						outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_ENCODING_OUTPUT, outputs[i]);
+					}
+				
+					else if (!outputs[i].encoding && outputs[i].schema) {
+						outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_SCHEMA_OUTPUT, outputs[i]);
+					}
+				
+					else {
+						outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_MIME_TYPE_OUTPUT, outputs[i]);
+					}
 				}
 			}
-		}
-		
-		outputStyle.outputs = outputString;
-		
-		var result = this.fillTemplate(EXECUTE_REQUEST_XML_RESPONSE_FORM_DOCUMENT, outputStyle);
+			
+			outputStyle.outputs = outputString;
+			
+			result = this.fillTemplate(EXECUTE_REQUEST_XML_RESPONSE_FORM_DOCUMENT, outputStyle);
+		}	
 		
 		return result;
 	}
