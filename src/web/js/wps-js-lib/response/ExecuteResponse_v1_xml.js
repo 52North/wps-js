@@ -11,7 +11,7 @@ var ExecuteResponse_v1_xml = ExecuteResponse
 					 * set the common response parameters
 					 */
 					this.executeResponse.serviceVersion = "1.0.0";
-					this.executeResponse.type = "responseDocument"
+					this.executeResponse.type = "responseDocument";
 
 					this.instantiateResponseDocument(wpsResponse)
 				} else {
@@ -19,7 +19,7 @@ var ExecuteResponse_v1_xml = ExecuteResponse
 					 * raw output
 					 */
 					this.executeResponse.serviceVersion = "1.0.0";
-					this.executeResponse.type = "rawOutput"
+					this.executeResponse.type = "rawOutput";
 					this.executeResponse.responseDocument = wpsResponse;
 				}
 			},
