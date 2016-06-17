@@ -169,7 +169,8 @@ var WpsService = Class.extend({
 	 *                                document is located / can be retrieved
 	 *                                from
 	 */
-	parseStoredExecuteResponse_WPS_1_0 : function(callbackFunction, storedExecuteResponseLocation) {
+	parseStoredExecuteResponse_WPS_1_0 : function(callbackFunction,
+			storedExecuteResponseLocation) {
 		/*
 		 * TODO the url stores a ready-to-be-parsed executeResponse. This should
 		 * be parsed as ExecuteResponse_v1_xml object
@@ -178,18 +179,48 @@ var WpsService = Class.extend({
 		 */
 		$.ajax({
 			url : storedExecuteResponseLocation,
-			success : function (executeResponseXML) {
+			success : function(executeResponseXML) {
 				/*
 				 * create the executeResponse as JavaScript object
 				 */
-				var executeResponse = new ExecuteResponse_v1_xml(executeResponseXML);
-				
+				var executeResponse = new ExecuteResponse_v1_xml(
+						executeResponseXML);
+
 				/*
-				 * call callback function and pass executeResponse-object as argument
+				 * call callback function and pass executeResponse-object as
+				 * argument
 				 */
 				callbackFunction(executeResponse);
 			}
-		}); 
+		});
+	},
+
+	/**
+	 * WPS 2.0 getStatus operation to retrieve the status of an executed job
+	 * 
+	 * Not usable with WPS 1.0
+	 * 
+	 * @callbackFunction a callback function that will be triggered with the
+	 *                   parsed StatusInfo document as argument
+	 */
+	getStatus_WPS_2_0 : function(callbackFunction, jobId) {
+		if (this.settings.version == WPS_VERSION_2_0_0) {
+			var getStatusRequest;
+
+			getStatusRequest = new GetStatusGetRequest({
+				url : this.settings.url,
+				version : this.settings.version,
+				jobId : jobId
+			});
+
+			getStatusRequest.execute(callbackFunction);
+		}
+		else{
+			/*
+			 * not supported for WPS 1.0
+			 */
+			throw "Get Status operation is only supported for WPS 2.0!";
+		}
 	},
 
 });

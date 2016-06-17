@@ -64,6 +64,8 @@
 	type="text/javascript"></script>
 <script src="js/wps-js-lib/request/GetCapabilitiesPostRequest.js"
 	type="text/javascript"></script>
+	<script src="js/wps-js-lib/request/GetStatusGetRequest.js"
+	type="text/javascript"></script>
 <script src="js/wps-js-lib/WpsService.js" type="text/javascript"></script>
 
 
@@ -100,6 +102,7 @@
 			<button id="wps-describeProcess" onclick=describeProcess()>describeProcessTest</button>
 			<button id="wps-execute_v1" onclick=execute_v1()>execute_v1_Test</button>
 			<button id="wps-execute_v2" onclick=execute_v2()>execute_v2_Test</button>
+			<button id="wps-getStatus" onclick=getStatus()>getStatus_Test</button>
 		</div>
 		<div>
 			<h3>XML</h3>
@@ -156,8 +159,7 @@
 		
 	var execute_v1 = function() {
 		
-		wps.settings.version = "1.0.0";
-		wps.settings.url = "http://geoprocessing.demo.52north.org:8080/wps/WebProcessingService";
+		wps = new WpsService({url : "http://geoprocessing.demo.52north.org:8080/wps/WebProcessingService", version : "2.0.0"});
 		
 		//inputs
 		var inputGenerator = new InputGenerator();
@@ -180,8 +182,7 @@
 	
 var execute_v2 = function() {
 		
-		wps.settings.version = "2.0.0";
-		wps.settings.url = "http://geoprocessing.demo.52north.org:8080/wps/WebProcessingService";
+	wps = new WpsService({url : "http://geoprocessing.demo.52north.org:8080/wps/WebProcessingService", version : "2.0.0"});
 		
 		//inputs
 		var inputGenerator = new InputGenerator();
@@ -201,6 +202,22 @@ var execute_v2 = function() {
 		wps.execute(executeCallback, "org.n52.wps.server.algorithm.SimpleBufferAlgorithm", "document",
 				"sync", false, inputs, outputs);
 	};	
+	
+	var getStatusCallback = function(response){
+		var doc = response.getRawResponseDocument();
+		try {
+			$("textarea#xml").val((new XMLSerializer()).serializeToString(doc));
+		} catch (e){
+			$("textarea#xml").val(doc);
+		}			
+		alert("success");
+	}
+	
+	var getStatus = function(){
+		wps = new WpsService({url : "http://geoprocessing.demo.52north.org:8080/wps/WebProcessingService", version : "2.0.0"});
+		
+		wps.getStatus_WPS_2_0(getStatusCallback, "2f77dd20-20e5-48a8-a220-019924ef4c88");
+	}
 		
 		function testExecuteRequest_wps_2_0(){
 			var inputGenerator = new InputGenerator();

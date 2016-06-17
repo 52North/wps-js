@@ -45,6 +45,9 @@ var ResponseFactory = Class.extend({
 			else {
 				return null;
 			}
+		} else if (requestType == GET_STATUS_TYPE) {
+				return new ExecuteResponse_v2_xml(wpsResponse);
+
 		} else {
 			// TODO
 			return new ExceptionReportResponse(wpsResponse);
