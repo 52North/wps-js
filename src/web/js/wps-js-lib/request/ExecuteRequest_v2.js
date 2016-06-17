@@ -128,7 +128,7 @@ var ExecuteRequest_v2 = ExecuteRequest
 			addVersionDependentProperties : function() {
 
 				if (!this.settings.executionMode)
-					this.settings.executionMode = "auto";
+					this.settings.executionMode = "async";
 
 				if (!this.settings.responseFormat)
 					this.settings.responseFormat = "document";

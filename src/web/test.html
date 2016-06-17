@@ -33,6 +33,12 @@
 	type="text/javascript"></script>
 <script src="js/wps-js-lib/response/ExecuteResponse.js"
 	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/ExecuteResponse_xml.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/ExecuteResponse_v1_xml.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/ExecuteResponse_v2_xml.js"
+	type="text/javascript"></script>
 <script src="js/wps-js-lib/response/ResponseFactory.js"
 	type="text/javascript"></script>
 <script src="js/wps-js-lib/response/ExceptionReportResponse.js"
@@ -137,17 +143,21 @@
 			wps.describeProcess_POST(describeProcessCallback, "addeventtheme");
 		};
 		
-		function testExecuteRequest(){
+		function testExecuteRequest_wps_2_0(){
 			var inputGenerator = new InputGenerator();
 			var literalInput = inputGenerator.createLiteralDataInput_wps_1_0_and_2_0("literalId", "myDataType",
 					"myUOM", "myValue");
+			var literalInput2 = inputGenerator.createLiteralDataInput_wps_1_0_and_2_0("literalId", null,
+					null, "myValue");
 			var complexInput = inputGenerator.createComplexDataInput_wps_1_0_and_2_0("complexId",
-					"myMimeType", "mySchema", "myEncoding", false, "<test><test2>hello</test2></test>");
+					"myMimeType", null, null, false, "<test><test2>hello</test2></test>");
+			var bboxInput = inputGenerator.createBboxDataInput_wps_1_0_and_2_0("myBBOX", "EPSG:4326",
+					"2", "0.0 0.0", "50.0 50.0");
 			
 			var referenceInput = inputGenerator.createComplexDataInput_wps_1_0_and_2_0("complexId",
-					"myMimeType", "mySchema", "myEncoding", true, "http://myReferenceUrl");
+					"myMimeType", "mySchema", null, true, "http://myReferenceUrl");
 			
-			var inputs = [literalInput, complexInput, referenceInput];
+			var inputs = [literalInput, literalInput2, complexInput, bboxInput, referenceInput];
 			
 			//outputs
 			var outputGenerator = new OutputGenerator();
@@ -161,8 +171,50 @@
 				url : "testUrl",
 				version : "2.0.0",
 				processIdentifier : "myProcess",
-				responseFormat : "document",
-				executionMode : "sync",
+				responseFormat : null,
+				executionMode : null,
+				inputs : inputs,
+				outputs : outputs
+			});
+			
+			var payload = executeRequest.createPostPayload();
+			
+			$("textarea#xml").val(payload);
+			
+			var test="g";
+		}
+		
+		function testExecuteRequest_wps_1_0(){
+			var inputGenerator = new InputGenerator();
+			var literalInput = inputGenerator.createLiteralDataInput_wps_1_0_and_2_0("literalId", "myDataType",
+					"myUOM", "myValue");
+			var literalInput2 = inputGenerator.createLiteralDataInput_wps_1_0_and_2_0("literalId", null,
+					null, "myValue");
+			var complexInput = inputGenerator.createComplexDataInput_wps_1_0_and_2_0("complexId",
+					"myMimeType", "mySchema", "MyEncoding", false, "<test><test2>hello</test2></test>");
+			var bboxInput = inputGenerator.createBboxDataInput_wps_1_0_and_2_0("myBBOX", "EPSG:4326",
+					"2", "0.0 0.0", "50.0 50.0");
+			
+			var referenceInput = inputGenerator.createComplexDataInput_wps_1_0_and_2_0("complexId",
+					"myMimeType", "mySchema", null, true, "http://myReferenceUrl");
+			
+			var inputs = [literalInput, literalInput2, complexInput, bboxInput, referenceInput];
+			
+			//outputs
+			var outputGenerator = new OutputGenerator();
+			var literalOutput = outputGenerator.createLiteralOutput_WPS_1_0("literalOutput");
+			var complexOutput = outputGenerator.createComplexOutput_WPS_1_0("complexOutput", "myMimeType", 
+					"mySchema", "myEncoding", "myUOM", true, "MyTitle", "MyAbstract");
+			
+			var outputs = [literalOutput, complexOutput];
+			
+			var executeRequest = new ExecuteRequest_v1({
+				url : "testUrl",
+				version : "1.0.0",
+				processIdentifier : "myProcess",
+				responseFormat : null,
+				executionMode : "async",
+				lineage : false,
 				inputs : inputs,
 				outputs : outputs
 			});
@@ -186,7 +238,8 @@
 			};
 			
 			
-			testExecuteRequest();
+			//testExecuteRequest_wps_2_0();
+			testExecuteRequest_wps_1_0();
 			
 		});
 		

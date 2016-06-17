@@ -195,6 +195,15 @@ var ExecuteRequest = PostRequest.extend({
 		/*
 		 * override in child methods
 		 */
+		
+		/*
+		 * inspect missing values and instantiate with defaults
+		 */
+		if (!this.settings.executionMode)
+			this.settings.executionMode = "async";
+
+		if (!this.settings.responseFormat)
+			this.settings.responseFormat = "document";
 	},
 	
 	/**
@@ -204,6 +213,7 @@ var ExecuteRequest = PostRequest.extend({
 		/*
 		 * override in child classes
 		 */
+		return finalExecuteProperties;
 	},
 	
 	/**
