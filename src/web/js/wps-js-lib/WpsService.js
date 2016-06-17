@@ -160,4 +160,36 @@ var WpsService = Class.extend({
 		executeRequest.execute(callbackFunction);
 	},
 
+	/**
+	 * Only important for WPS 1.0
+	 * 
+	 * @callbackFunction a callback function that will be triggered with the
+	 *                   parsed executeResponse as argument
+	 * @storedExecuteResponseLocation the url, where the execute response
+	 *                                document is located / can be retrieved
+	 *                                from
+	 */
+	parseStoredExecuteResponse_WPS_1_0 : function(callbackFunction, storedExecuteResponseLocation) {
+		/*
+		 * TODO the url stores a ready-to-be-parsed executeResponse. This should
+		 * be parsed as ExecuteResponse_v1_xml object
+		 * 
+		 * GET request against that URL
+		 */
+		$.ajax({
+			url : storedExecuteResponseLocation,
+			success : function (executeResponseXML) {
+				/*
+				 * create the executeResponse as JavaScript object
+				 */
+				var executeResponse = new ExecuteResponse_v1_xml(executeResponseXML);
+				
+				/*
+				 * call callback function and pass executeResponse-object as argument
+				 */
+				callbackFunction(executeResponse);
+			}
+		}); 
+	},
+
 });

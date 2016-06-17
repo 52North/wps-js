@@ -155,6 +155,7 @@
 	var execute_v1 = function() {
 		
 		wps.version = "1.0.0";
+		wps.url = "http://geoprocessing.demo.52north.org:8080/wps/WebProcessingService";
 		
 		//inputs
 		var inputGenerator = new InputGenerator();
@@ -172,7 +173,7 @@
 		
 		
 		wps.execute(executeCallback, "org.n52.wps.server.algorithm.SimpleBufferAlgorithm", "document",
-				"sync", false, inputs, outputs);
+				"async", false, inputs, outputs);
 	};	
 		
 		function testExecuteRequest_wps_2_0(){
@@ -266,12 +267,15 @@
 				wps = new WpsService({url : wpsUrl, version : "1.0.0"});
 				
 				wps.getCapabilities_POST(capabilitiesCallback);
+				
+				
 
 			};
 			
 			
 			testExecuteRequest_wps_2_0();
 			//testExecuteRequest_wps_1_0();
+			
 			
 		});
 		
