@@ -517,7 +517,7 @@ var DescribeProcessResponse_xml = DescribeProcessResponse.extend({
 		 */
 		var formatArray = this.createFormatArray(formatNodes) || undefined;
 		
-		var supportedCRSs = this.createCrsArray(xmlNode.find(CRS_TAG_NAME));
+		var supportedCRSs = this.createCrsArray(outputXml.find(CRS_TAG_NAME));
 		
 		return this.createBboxOutput(title, abstractValue, identifier, 
 				formatArray, supportedCRSs);
