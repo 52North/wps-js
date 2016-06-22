@@ -155,7 +155,7 @@ var DescribeProcessResponse = BaseResponse.extend({
 		
 		var bboxOutput = new Object();
 		
-		this.instantiateCommonInputValues(title, abstractValue, identifier,
+		this.instantiateCommonOutputValues(title, abstractValue, identifier,
 				bboxOutput);
 
 		//TODO what about metadata node?
