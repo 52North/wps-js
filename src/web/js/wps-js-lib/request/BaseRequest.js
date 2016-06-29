@@ -47,28 +47,47 @@ var BaseRequest = Class.extend({
 		 */
 		var self = this;
 
-		var combinedRequestSettings = jQuery.extend(
-				{
-					success : function(responseData) {
-						/*
-						 * create an appropriate response document (which
-						 * depends on the request type)
-						 */
-						var respFactory = new ResponseFactory();
-						var response = respFactory.resolveResponseHandler(responseData,
-								self);
+		var combinedRequestSettings = jQuery.extend({
+			success : function(responseData) {
+				/*
+				 * create an appropriate response document (which depends on the
+				 * request type)
+				 */
+				var respFactory = new ResponseFactory();
+				var response = respFactory.resolveResponseHandler(responseData,
+						self);
 
-						/*
-						 * if a callback function has been defined, then call it
-						 * with the response object
-						 */
-						if (self.callback) {
-							self.callback(response);
-						}
-						
-						return response;
-					}
-				}, requestSettings);
+				/*
+				 * if a callback function has been defined, then call it with
+				 * the response object
+				 */
+				if (self.callback) {
+					self.callback(response);
+				}
+
+				return response;
+			},
+			error : function(jqXHR, textStatus, errorThrown) {
+				/*
+				 * error handling, return textStatus and errorThrown as new
+				 * object
+				 */
+
+				var errorResponse = {
+					textStatus : textStatus,
+					errorThrown : errorThrown
+				}
+				
+				/*
+				 * if a callback function has been defined, then call it with
+				 * the response object
+				 */
+				if (self.callback) {
+					self.callback(errorResponse);
+				}
+				
+			}
+		}, requestSettings);
 
 		var targetUrl;
 		if (USE_PROXY) {
