@@ -26,12 +26,12 @@ var DescribeProcessResponse_v2_xml = DescribeProcessResponse_xml.extend({
 	
 	createJobControlOptions : function(processOfferingXml){
 
-		return processOfferingXml.attr(JOB_CONTROL_OPTIONS_ATTR_NAME) || processOffering.attr(JOB_CONTROL_OPTIONS_ATTR_NAME_WITH_NS);
+		return processOfferingXml.attr(JOB_CONTROL_OPTIONS_ATTR_NAME) || processOfferingXml.attr(JOB_CONTROL_OPTIONS_ATTR_NAME_WITH_NS);
 	},
 	
 	createOutputTransmission : function(processOfferingXml){
 
-		return processOfferingXml.attr(OUTPUT_TRANSMISSION_ATTR_NAME) || processOffering.attr(OUTPUT_TRANSMISSION_ATTR_NAME_WITH_NS);
+		return processOfferingXml.attr(OUTPUT_TRANSMISSION_ATTR_NAME) || processOfferingXml.attr(OUTPUT_TRANSMISSION_ATTR_NAME_WITH_NS);
 	},
 	
 	/**
