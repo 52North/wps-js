@@ -31,7 +31,13 @@ var DescribeProcessResponse_v2_xml = DescribeProcessResponse_xml.extend({
 	
 	createOutputTransmission : function(processOfferingXml){
 
-		return processOfferingXml.attr(OUTPUT_TRANSMISSION_ATTR_NAME) || processOfferingXml.attr(OUTPUT_TRANSMISSION_ATTR_NAME_WITH_NS);
+		var outputTransmissionString = processOfferingXml.attr(OUTPUT_TRANSMISSION_ATTR_NAME) || processOfferingXml.attr(OUTPUT_TRANSMISSION_ATTR_NAME_WITH_NS);
+		
+		/*
+		 * the string holds transmission modes separated by whitespace
+		 */
+		
+		return outputTransmissionString.split(" ");
 	},
 	
 	/**

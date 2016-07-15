@@ -88,7 +88,7 @@ var DescribeProcessResponse_xml = DescribeProcessResponse.extend({
 		 processOfferingXml	 */
 		this.processOffering.processVersion = processOfferingXml.attr(PROCESS_VERSION_ATTR_NAME) || processOfferingXml.attr(PROCESS_VERSION_ATTR_NAME_WITH_NS);
 		this.processOffering.jobControlOptions = this.createJobControlOptions(processOfferingXml);
-		this.processOffering.outputTransmission = this.createOutputTransmission(processOfferingXml);
+		this.processOffering.outputTransmissionModes = this.createOutputTransmissionModes(processOfferingXml);
 		
 		/*
 		 * process
@@ -131,11 +131,11 @@ var DescribeProcessResponse_xml = DescribeProcessResponse.extend({
 		 */
 	},
 	
-	createOutputTransmission : function(processOfferingXml){
+	createOutputTransmissionModes : function(processOfferingXml){
 		/*
 		 * must be overridden in child classes
 		 * 
-		 * it differs fpr various WPS version!
+		 * it differs for various WPS version!
 		 */
 	},
 	

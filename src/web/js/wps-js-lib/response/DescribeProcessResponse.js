@@ -29,7 +29,7 @@ var DescribeProcessResponse = BaseResponse.extend({
 		 */
 		this.processOffering.processVersion = "";
 		this.processOffering.jobControlOptions = "";
-		this.processOffering.outputTransmission = "";
+		this.processOffering.outputTransmissionModes = [];
 		
 		this.instantiate(wpsResponse);	
 	},

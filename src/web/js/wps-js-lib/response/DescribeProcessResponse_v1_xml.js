@@ -42,7 +42,7 @@ var DescribeProcessResponse_v1_xml = DescribeProcessResponse_xml.extend({
 			return "sync-execute";;
 	},
 	
-	createOutputTransmission : function(processOfferingXml){
+	createOutputTransmissionModes : function(processOfferingXml){
 
 		/*
 		 * TODO for WPS 1.0 this attribut does not exist!
@@ -53,10 +53,10 @@ var DescribeProcessResponse_v1_xml = DescribeProcessResponse_xml.extend({
 		 */
 		var storeSupported = processOfferingXml.attr("storeSupported") || false;
 		if (storeSupported)
-			return "value reference";
+			return ["value", "reference"];
 		
 		else		
-			return "value";
+			return ["value"];
 	},
 	
 	/**
