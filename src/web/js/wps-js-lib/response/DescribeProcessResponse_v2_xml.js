@@ -43,7 +43,7 @@ var DescribeProcessResponse_v2_xml = DescribeProcessResponse_xml.extend({
 		return jobControlOptionsString.split(" ");
 	},
 	
-	createOutputTransmission : function(processOfferingXml){
+	createOutputTransmissionModes : function(processOfferingXml){
 
 		var outputTransmissionString = processOfferingXml.attr(OUTPUT_TRANSMISSION_ATTR_NAME) || processOfferingXml.attr(OUTPUT_TRANSMISSION_ATTR_NAME_WITH_NS);
 		
