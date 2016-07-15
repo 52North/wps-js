@@ -28,7 +28,7 @@ var DescribeProcessResponse = BaseResponse.extend({
 		 * attributes
 		 */
 		this.processOffering.processVersion = "";
-		this.processOffering.jobControlOptions = "";
+		this.processOffering.jobControlOptions = [];
 		this.processOffering.outputTransmissionModes = [];
 		
 		this.instantiate(wpsResponse);	

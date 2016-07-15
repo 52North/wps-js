@@ -36,10 +36,10 @@ var DescribeProcessResponse_v1_xml = DescribeProcessResponse_xml.extend({
 		 */
 		var storeSupported = processOfferingXml.attr("storeSupported") || false;
 		if (storeSupported)
-			return "sync-execute async-execute";
+			return ["sync-execute", "async-execute"];
 		
 		else		
-			return "sync-execute";;
+			return ["sync-execute"];
 	},
 	
 	createOutputTransmissionModes : function(processOfferingXml){
