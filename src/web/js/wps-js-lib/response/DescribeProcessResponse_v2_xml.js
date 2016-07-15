@@ -9,6 +9,8 @@ var DescribeProcessResponse_v2_xml = DescribeProcessResponse_xml.extend({
 		 * Override existing variables
 		 */
 		PROCESS_OFFERING_VERSION = "2.0.0";
+		
+		PROCESS_OFFERING_XML_TAG_NAME = "ProcessOffering";
 
 		JOB_CONTROL_OPTIONS_ATTR_NAME = "jobControlOptions";
 		JOB_CONTROL_OPTIONS_ATTR_NAME_WITH_NS = "wps:jobControlOptions";
@@ -22,6 +24,12 @@ var DescribeProcessResponse_v2_xml = DescribeProcessResponse_xml.extend({
 		
 		LITERAL_DATA_DOMAIN_TAG_NAME = "LiteralDataDomain";
 		LITERAL_DATA_UNIT_OF_MEASURE_TAG_NAME = "UOM";
+		
+		LITERAL_DATA_OUTPUT_TAG_NAME = "LiteralData";
+		COMPLEX_DATA_OUTPUT_TAG_NAME = "ComplexData";
+		BBOX_DATA_OUTPUT_TAG_NAME = "BoundingBoxData";
+		
+		CRS_TAG_NAME = "SupportedCRS";
 	},
 	
 	createJobControlOptions : function(processOfferingXml){

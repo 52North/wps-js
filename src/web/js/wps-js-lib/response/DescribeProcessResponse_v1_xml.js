@@ -18,7 +18,8 @@ var DescribeProcessResponse_v1_xml = DescribeProcessResponse_xml.extend({
 		
 		LITERAL_DATA_UNIT_OF_MEASURE_TAG_NAME = "UOM";
 
-		SUPPORTED_CRS_TAG_NAME = "SupportedCRS";
+		//SUPPORTED_CRS_TAG_NAME = "SupportedCRS";
+		CRS_TAG_NAME = "CRS";
 		
 		LITERAL_DATA_OUTPUT_TAG_NAME = "LiteralOutput";
 		COMPLEX_DATA_OUTPUT_TAG_NAME = "ComplexOutput";
