@@ -68,7 +68,72 @@ var ExecuteResponse_v2_xml = ExecuteResponse.extend({
 
 		for (var index = 0; index < outputs_xmlNodes.length; index++) {
 			var output_xmlNode = $(outputs_xmlNodes[index]);
+
+			/*
+			 * Data node;
+			 * 
+			 * in WPS 2.0.0 this node may either have a subnode named: 
+			 * - "LiteralValue" or 
+			 * - "BoundingBox" or 
+			 * - directValue for
+			 * complexOutput --> complex output does not have an own subNode!!!
+			 */
 			var data_xmlNode = output_xmlNode.find("Data");
+
+			/*
+			 * data can either be a LiteralValue or a
+			 * BoundingBox element
+			 */
+			var data;
+			var literalData_xmlNode = data_xmlNode.find("LiteralValue");
+			var bboxData_xmlNode = data_xmlNode.find("BoundingBox");
+			if (literalData_xmlNode.length > 0) {
+				
+				/*
+				 * literalData
+				 */
+				data = {
+					literalData : {
+						dataType : literalData_xmlNode.attr("dataType")
+								|| undefined,
+						uom : literalData_xmlNode.attr("uom") || undefined,
+						value : literalData_xmlNode.text()
+					}
+
+				}
+				
+				
+			} else if (bboxData_xmlNode.length > 0) {
+
+				data = {
+					boundingBoxData : {
+						crs : bboxData_xmlNode.attr("crs") || undefined,
+						dimensions : bboxData_xmlNode.attr("dimensions")
+								|| undefined,
+						lowerCorner : bboxData_xmlNode.attr("lowerCorner")
+								|| bboxData_xmlNode.find("LowerCorner").text(),
+						upperCorner : bboxData_xmlNode.attr("upperCorner")
+								|| bboxData_xmlNode.find("UpperCorner").text()
+					}
+
+				}
+			} else {
+				/*
+				 * complex data
+				 */
+				data = {
+						complexData : {
+							mimeType : data_xmlNode.attr("mimeType")
+									|| undefined,
+							schema : data_xmlNode.attr("schema")
+									|| undefined,
+							encoding : data_xmlNode.attr("encoding")
+									|| undefined,
+							value : data_xmlNode.html()
+						}
+
+					}
+			}
 
 			/*
 			 * TODO nested Output!
@@ -76,15 +141,10 @@ var ExecuteResponse_v2_xml = ExecuteResponse.extend({
 
 			outputs[index] = {
 				identifier : output_xmlNode.attr("id"),
-				data : {
-					mimeType : data_xmlNode.attr("mimeType") || undefined,
-					schema : data_xmlNode.attr("schema") || undefined,
-					encoding : data_xmlNode.attr("encoding") || undefined,
-					value : data_xmlNode.html()
-				}
+				data : data
 			};
 		}
-		
+
 		return outputs;
 	},
 
