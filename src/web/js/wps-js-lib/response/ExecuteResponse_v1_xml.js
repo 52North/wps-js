@@ -188,6 +188,7 @@ var ExecuteResponse_v1_xml = ExecuteResponse
 								
 							}
 						} else if (bboxData_xmlNode.length > 0) {
+							
 							var data = {
 									boundingBoxData : {
 										crs : bboxData_xmlNode.attr("crs") || undefined,
@@ -196,11 +197,11 @@ var ExecuteResponse_v1_xml = ExecuteResponse
 												|| undefined,
 										lowerCorner : bboxData_xmlNode
 												.attr("lowerCorner")
-												|| bboxData_xmlNode.find("lowerCorner")
+												|| bboxData_xmlNode.find("LowerCorner")
 														.text(),
 										upperCorner : bboxData_xmlNode
 												.attr("upperCorner")
-												|| bboxData_xmlNode.find("upperCorner")
+												|| bboxData_xmlNode.find("UpperCorner")
 														.text()
 									}
 								
