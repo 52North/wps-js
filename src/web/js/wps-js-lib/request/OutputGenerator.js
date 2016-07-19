@@ -22,13 +22,13 @@ var OutputGenerator = Class.extend({
 		var output = new Object({
 			type : "complex",
 			identifier : identifier,
-			mimeType : mimeType,
-			schema : schema,
-			encoding : encoding,
-			uom : uom,
-			asReference : asReference,
-			title : title,
-			abstractValue : abstractValue
+			mimeType : mimeType || undefined,
+			schema : schema || undefined,
+			encoding : encoding || undefined,
+			uom : uom || undefined,
+			asReference : asReference || false,
+			title : title  || undefined,
+			abstractValue : abstractValue || undefined
 		});
 
 		return output;
@@ -36,8 +36,6 @@ var OutputGenerator = Class.extend({
 
 	/**
 	 * the following parameters are mandatory: identifier
-	 * 
-	 * the rest might be set to 'undefined'!
 	 * 
 	 * @asReference boolean, "true" or "false"
 	 */
@@ -51,7 +49,7 @@ var OutputGenerator = Class.extend({
 	},
 
 	/**
-	 * the following parameters are mandatory: identifier
+	 * the following parameters are mandatory: identifier and transmission
 	 * 
 	 * the rest might be set to 'undefined'!
 	 * 
@@ -62,19 +60,17 @@ var OutputGenerator = Class.extend({
 		var output = new Object({
 			type : "complex",
 			identifier : identifier,
-			mimeType : mimeType,
-			schema : schema,
-			encoding : encoding,
-			transmission : transmission,
+			mimeType : mimeType || undefined,
+			schema : schema || undefined,
+			encoding : encoding || undefined,
+			transmission : transmission  || "value",
 		});
 
 		return output;
 	},
 
 	/**
-	 * the following parameters are mandatory: identifier
-	 * 
-	 * the rest might be set to 'undefined'!
+	 * the following parameters are mandatory: identifier and transmission
 	 * 
 	 * @transmission either "value" or "reference"
 	 */
@@ -82,7 +78,7 @@ var OutputGenerator = Class.extend({
 		var output = new Object({
 			type : "literal",
 			identifier : identifier,
-			transmission : transmission,
+			transmission : transmission  || "value",
 		});
 
 		return output;

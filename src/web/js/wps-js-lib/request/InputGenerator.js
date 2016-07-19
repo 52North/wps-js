@@ -21,8 +21,8 @@ var InputGenerator = Class
 				var input = new Object({
 					type : "literal",
 					identifier : identifier,
-					dataType : dataType,
-					uom : uom,
+					dataType : dataType || undefined,
+					uom : uom || undefined,
 					value : value
 				});
 
@@ -45,10 +45,10 @@ var InputGenerator = Class
 				var input = new Object({
 					type : "complex",
 					identifier : identifier,
-					mimeType : mimeType,
-					schema : schema,
-					encoding : encoding,
-					asReference : asReference,
+					mimeType : mimeType || undefined,
+					schema : schema || undefined,
+					encoding : encoding || undefined,
+					asReference : asReference || false,
 					complexPayload : complexPayload
 				});
 
@@ -72,7 +72,7 @@ var InputGenerator = Class
 					type : "bbox",
 					identifier : identifier,
 					crs : crs,
-					dimension : dimension,
+					dimension : dimension || undefined,
 					lowerCorner : lowerCorner,
 					upperCorner : upperCorner
 				});
