@@ -174,41 +174,50 @@ var ExecuteResponse_v1_xml = ExecuteResponse
 								.find("LiteralData");
 						var bboxData_xmlNode = data_xmlNode
 								.find("BoundingBoxData");
-						if (complexData_xmlNode) {
-							var data = {
-								mimeType : complexData_xmlNode.attr("mimeType")
-										|| undefined,
-								schema : complexData_xmlNode.attr("schema")
-										|| undefined,
-								encoding : complexData_xmlNode.attr("encoding")
-										|| undefined,
-								value : complexData_xmlNode.html()
+						if (complexData_xmlNode.length > 0) {
+							var data = { 
+									complexData : {
+										mimeType : complexData_xmlNode.attr("mimeType")
+											|| undefined,
+										schema : complexData_xmlNode.attr("schema")
+											|| undefined,
+										encoding : complexData_xmlNode.attr("encoding")
+											|| undefined,
+										value : complexData_xmlNode.html()
+									}
+								
 							}
-						} else if (bboxData_xmlNode) {
+						} else if (bboxData_xmlNode.length > 0) {
 							var data = {
-								crs : bboxData_xmlNode.attr("crs") || undefined,
-								dimensions : bboxData_xmlNode
-										.attr("dimensions")
-										|| undefined,
-								lowerCorner : bboxData_xmlNode
-										.attr("lowerCorner")
-										|| bboxData_xmlNode.find("lowerCorner")
-												.text(),
-								upperCorner : bboxData_xmlNode
-										.attr("upperCorner")
-										|| bboxData_xmlNode.find("upperCorner")
-												.text()
+									boundingBoxData : {
+										crs : bboxData_xmlNode.attr("crs") || undefined,
+										dimensions : bboxData_xmlNode
+												.attr("dimensions")
+												|| undefined,
+										lowerCorner : bboxData_xmlNode
+												.attr("lowerCorner")
+												|| bboxData_xmlNode.find("lowerCorner")
+														.text(),
+										upperCorner : bboxData_xmlNode
+												.attr("upperCorner")
+												|| bboxData_xmlNode.find("upperCorner")
+														.text()
+									}
+								
 							}
 						} else {
 							/*
 							 * literalData
 							 */
 							var data = {
-								dataType : literalData_xmlNode.attr("dataType")
-										|| undefined,
-								uom : literalData_xmlNode.attr("uom")
-										|| undefined,
-								value : literalData_xmlNode.text()
+									literalData : {
+										dataType : literalData_xmlNode.attr("dataType")
+											|| undefined,
+										uom : literalData_xmlNode.attr("uom")
+											|| undefined,
+										value : literalData_xmlNode.text()
+									}
+								
 							}
 						}
 
