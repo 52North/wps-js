@@ -14,7 +14,7 @@ var InputGenerator = Class
 			/**
 			 * the following parameters are mandatory: identifier and value
 			 * 
-			 * the rest might be null!
+			 * the rest might be set to 'undefined'!
 			 */
 			createLiteralDataInput_wps_1_0_and_2_0 : function(identifier, dataType,
 					uom, value) {
@@ -33,7 +33,7 @@ var InputGenerator = Class
 			 * the following parameters are mandatory: identifier and
 			 * complexPayload
 			 * 
-			 * the rest might be null!
+			 * the rest might be set to 'undefined'!
 			 * 
 			 * @complexPayload the complex payload (XML tags) as String
 			 * @asReference boolean, either "true" or "false", indicating
@@ -59,7 +59,7 @@ var InputGenerator = Class
 			 * the following parameters are mandatory: identifier, crs,
 			 * lowerCorner and upperCorner
 			 * 
-			 * the rest might be null!
+			 * the rest might be set to 'undefined'!
 			 * 
 			 * @crs coordinate reference system URI
 			 * @dimension number of dimensions in this CRS

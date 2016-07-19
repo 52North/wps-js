@@ -13,7 +13,7 @@ var OutputGenerator = Class.extend({
 	/**
 	 * the following parameters are mandatory: identifier
 	 * 
-	 * the rest might be null!
+	 * the rest might be set to 'undefined'!
 	 * 
 	 * @asReference boolean, "true" or "false"
 	 */
@@ -37,7 +37,7 @@ var OutputGenerator = Class.extend({
 	/**
 	 * the following parameters are mandatory: identifier
 	 * 
-	 * the rest might be null!
+	 * the rest might be set to 'undefined'!
 	 * 
 	 * @asReference boolean, "true" or "false"
 	 */
@@ -53,7 +53,7 @@ var OutputGenerator = Class.extend({
 	/**
 	 * the following parameters are mandatory: identifier
 	 * 
-	 * the rest might be null!
+	 * the rest might be set to 'undefined'!
 	 * 
 	 * @transmission either "value" or "reference"
 	 */
@@ -74,7 +74,7 @@ var OutputGenerator = Class.extend({
 	/**
 	 * the following parameters are mandatory: identifier
 	 * 
-	 * the rest might be null!
+	 * the rest might be set to 'undefined'!
 	 * 
 	 * @transmission either "value" or "reference"
 	 */
