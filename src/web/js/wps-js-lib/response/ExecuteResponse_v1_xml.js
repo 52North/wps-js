@@ -27,7 +27,7 @@ var ExecuteResponse_v1_xml = ExecuteResponse
 					 * else return the response directly
 					 */
 					var rawOutput;
-					if($(wpsResponse).length > 0)
+					if(!(typeof wpsResponse === 'string') && ($(wpsResponse).length > 0))
 						rawOutput = (new XMLSerializer()).serializeToString(wpsResponse);
 					else
 						rawOutput = wpsResponse;
