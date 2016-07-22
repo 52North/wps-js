@@ -229,6 +229,7 @@ module.exports = function (grunt) {
     grunt.registerTask('test', ['jshint']);
     grunt.registerTask('env-build', ['tags']);
     grunt.registerTask('default', ['clean', 'concat', 'uglify', 'cssmin', 'copy', 'processhtml']);
+	grunt.registerTask('buildDebugScript', ['clean', 'concat']);
 
 	grunt.registerTask('buildWar', ['default', 'war']);
 //  grunt.registerTask('buildWar', ['test', 'default', 'war']);
