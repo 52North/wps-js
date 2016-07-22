@@ -20,7 +20,19 @@ var ExecuteResponse_v1_xml = ExecuteResponse
 					 */
 					this.executeResponse.serviceVersion = "1.0.0";
 					this.executeResponse.type = "rawOutput";
-					this.executeResponse.responseDocument = wpsResponse;
+
+					/*
+					 * check whether response is an XML document. 
+					 * In that case return the xmlString, 
+					 * else return the response directly
+					 */
+					var rawOutput;
+					if($(wpsResponse).length > 0)
+						rawOutput = (new XMLSerializer()).serializeToString(wpsResponse);
+					else
+						rawOutput = wpsResponse;
+					
+					this.executeResponse.responseDocument = rawOutput;
 				}
 			},
 
