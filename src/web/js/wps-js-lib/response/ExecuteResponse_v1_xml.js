@@ -4,7 +4,7 @@
 var ExecuteResponse_v1_xml = ExecuteResponse
 		.extend({
 			instantiate : function(wpsResponse) {
-				if ($(wpsResponse).find("ExecuteResponse")) {
+				if ($(wpsResponse).find("ExecuteResponse").length > 0) {
 					/*
 					 * response document!
 					 * 
