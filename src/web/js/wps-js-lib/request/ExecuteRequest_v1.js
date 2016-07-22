@@ -173,7 +173,7 @@ var ExecuteRequest_v1 = ExecuteRequest
 		        <ows:Identifier>${identifier}</ows:Identifier>\
 		      </wps:Output>';
 
-				EXECUTE_REQUEST_XML_LITERAL_OUTPUT = '<wps:Output>\
+				EXECUTE_REQUEST_XML_LITERAL_OUTPUT = '<wps:Output asReference="${asReference}">\
 		    <ows:Identifier>${identifier}</ows:Identifier>\
 		  </wps:Output>';
 			},

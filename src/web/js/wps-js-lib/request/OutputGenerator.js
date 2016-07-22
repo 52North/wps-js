@@ -39,10 +39,11 @@ var OutputGenerator = Class.extend({
 	 * 
 	 * @asReference boolean, "true" or "false"
 	 */
-	createLiteralOutput_WPS_1_0 : function(identifier) {
+	createLiteralOutput_WPS_1_0 : function(identifier, asReference) {
 		var output = new Object({
 			type : "literal",
 			identifier : identifier,
+			asReference : asReference || false
 		});
 
 		return output;
@@ -63,7 +64,7 @@ var OutputGenerator = Class.extend({
 			mimeType : mimeType || undefined,
 			schema : schema || undefined,
 			encoding : encoding || undefined,
-			transmission : transmission  || "value",
+			transmission : transmission  || "value"
 		});
 
 		return output;
@@ -78,7 +79,7 @@ var OutputGenerator = Class.extend({
 		var output = new Object({
 			type : "literal",
 			identifier : identifier,
-			transmission : transmission  || "value",
+			transmission : transmission  || "value"
 		});
 
 		return output;
