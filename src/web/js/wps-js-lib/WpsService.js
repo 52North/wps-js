@@ -12,7 +12,7 @@ var WpsService = Class.extend({
 	init : function(settings) {
 		this.settings = settings;
 
-		if (!this.settings.version)
+		if (!this.settings.version || (this.settings.version != '1.0.0' && this.settings.version != '2.0.0'))
 			this.settings.version = defaultWpsVersion;
 	},
 

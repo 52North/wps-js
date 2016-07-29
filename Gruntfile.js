@@ -4,11 +4,7 @@ module.exports = function (grunt) {
         name: 'wps-js',
         context_name: '<%= name %>##<%= pkg.version %>-<%= grunt.template.today("yyyymmddHHMM")%>',
         lib_scripts: [
-            'src/web/bower_components/jquery/dist/jquery.min.js',
-		  	'src/web/bower_components/jquery-ui/jquery-ui.min.js'
-        ],
-        lib_styles: [
-            
+            'src/web/bower_components/jquery/dist/jquery.min.js'
         ],
         wps_js: [
             'src/web/js/wps-js-lib/lib/Class.js',
@@ -45,9 +41,6 @@ module.exports = function (grunt) {
 			'src/web/js/wps-js-lib/WpsService.js'
 			
         ],
-        wps_styles: [
-            'src/web/css/**/*.css'
-        ],
         copy_files: [
             //the path prefix 'src/web/' will be set in the copy-command itself! Thus is omitted here.
             'config/*',
@@ -79,22 +72,6 @@ module.exports = function (grunt) {
                 },
                 src: ['<%= wps_js %>'],
                 dest: 'src/web/example.html'
-            },
-            build_lib_styles: {
-                options: {
-                    openTag: '<!-- start lib style tags -->',
-                    closeTag: '<!-- end lib style tags -->'
-                },
-                src: ['<%= lib_styles %>'],
-                dest: 'src/web/example.html'
-            },
-            build_client_styles: {
-                options: {
-                    openTag: '<!-- start client style tags -->',
-                    closeTag: '<!-- end client style tags -->'
-                },
-                src: ['<%= wps_styles %>'],
-                dest: 'src/web/example.html'
             }
         },
         concat: {
@@ -105,14 +82,6 @@ module.exports = function (grunt) {
             wps: {
                 src: '<%= wps_js %>',
                 dest: 'dist/js/wps-js-all.js'
-            },
-            styles: {
-                src: 'src/web/css/**/*.css',
-                dest: 'dist/css/<%= name %>.css'
-            },
-            libStyles: {
-                src: '<%= lib_styles %>',
-                dest: 'dist/css/deps.<%= name %>.css'
             }
         },
         uglify: {
@@ -127,20 +96,6 @@ module.exports = function (grunt) {
             appJs: {
                 files: {
                     'dist/wps-js-all.min.js': ['<%= concat.wps.dest %>']
-                }
-            }
-        },
-        cssmin: {
-            options: {
-            },
-            styles: {
-                files: {
-                    'dist/css/<%= name %>.min.css': ['<%= concat.styles.dest %>']
-                }
-            },
-            depStyles: {
-                files: {
-                    'dist/css/deps.<%= name %>.min.css': ['<%= concat.libStyles.dest %>']
                 }
             }
         },
@@ -215,7 +170,6 @@ module.exports = function (grunt) {
     });
 
     grunt.loadNpmTasks('grunt-contrib-uglify');
-    grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-concat');
@@ -228,7 +182,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('test', ['jshint']);
     grunt.registerTask('env-build', ['tags']);
-    grunt.registerTask('default', ['clean', 'concat', 'uglify', 'cssmin', 'copy', 'processhtml']);
+    grunt.registerTask('default', ['clean', 'concat', 'uglify', 'copy', 'processhtml']);
 	grunt.registerTask('buildDebugScript', ['clean', 'concat']);
 
 	grunt.registerTask('buildWar', ['default', 'war']);
