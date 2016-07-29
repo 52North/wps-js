@@ -202,6 +202,7 @@ var WpsService = Class.extend({
 	 * 
 	 * @callbackFunction a callback function that will be triggered with the
 	 *                   parsed StatusInfo document as argument
+	 * @jobId the ID of the asynchronously executed job                  
 	 */
 	getStatus_WPS_2_0 : function(callbackFunction, jobId) {
 		if (this.settings.version == WPS_VERSION_2_0_0) {
@@ -230,6 +231,7 @@ var WpsService = Class.extend({
 	 * 
 	 * @callbackFunction a callback function that will be triggered with the
 	 *                   parsed StatusInfo document as argument
+	 * @jobId the ID of the asynchronously executed job
 	 */
 	getResult_WPS_2_0 : function(callbackFunction, jobId) {
 		if (this.settings.version == WPS_VERSION_2_0_0) {
