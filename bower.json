@@ -26,7 +26,6 @@
     "tests"
   ],
   "dependencies": {
-    "jquery": "3.0.0",
-    "jquery-ui": "1.8.23"
+    "jquery": "3.0.0"
   }
 }
