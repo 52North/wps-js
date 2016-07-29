@@ -340,7 +340,7 @@ wps-js is published under Apache Software License, Version 2.0
 
 The used libraries are:
 
--	jQuery - MIT License (https://jquery.org/license/\)
+-	jQuery - MIT License - https://jquery.org/license/
 
 Contact / Support
 -----------------
