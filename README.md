@@ -347,6 +347,6 @@ Contact / Support
 
 To get help in running wps-js, please use the Geoprocessing community mailing list and forum: http://geoprocessing.forum.52north.org/
 
-Please leave an issue on GitHub if you have any bug reports or feature requests: https://github.com/52North/sos-js/issues
+Please leave an issue on GitHub if you have any bug reports or feature requests: https://github.com/52North/wps-js/issues
 
 Contact: Benjamin Proß (b.pross@52north.org)
