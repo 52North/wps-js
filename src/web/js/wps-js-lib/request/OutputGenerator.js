@@ -15,7 +15,15 @@ var OutputGenerator = Class.extend({
 	 * 
 	 * the rest might be set to 'undefined'!
 	 * 
+	 * @identifier output identifier
+	 * @mimeType MIME type of the input; may be 'undefined'
+	 * @schema reference to a schema; may be 'undefined'
+	 * @encoding encoding; may be 'undefined'
+	 * @uom unit of measure; may be 'undefined'
 	 * @asReference boolean, "true" or "false"
+	 * @title new title
+	 * @abstractValue new description as text of the 'Abstract' element
+	 * 				  of the response document
 	 */
 	createComplexOutput_WPS_1_0 : function(identifier, mimeType, schema,
 			encoding, uom, asReference, title, abstractValue) {
@@ -37,6 +45,7 @@ var OutputGenerator = Class.extend({
 	/**
 	 * the following parameters are mandatory: identifier
 	 * 
+	 * @identifier output identifier
 	 * @asReference boolean, "true" or "false"
 	 */
 	createLiteralOutput_WPS_1_0 : function(identifier, asReference) {
@@ -54,6 +63,10 @@ var OutputGenerator = Class.extend({
 	 * 
 	 * the rest might be set to 'undefined'!
 	 * 
+	 * @identifier output identifier
+	 * @mimeType MIME type of the input; may be 'undefined'
+	 * @schema reference to a schema; may be 'undefined'
+	 * @encoding encoding; may be 'undefined'
 	 * @transmission either "value" or "reference"
 	 */
 	createComplexOutput_WPS_2_0 : function(identifier, mimeType, schema,
@@ -73,6 +86,7 @@ var OutputGenerator = Class.extend({
 	/**
 	 * the following parameters are mandatory: identifier and transmission
 	 * 
+	 * @identifier output identifier
 	 * @transmission either "value" or "reference"
 	 */
 	createLiteralOutput_WPS_2_0 : function(identifier, transmission) {

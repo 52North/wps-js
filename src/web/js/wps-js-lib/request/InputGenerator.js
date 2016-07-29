@@ -15,6 +15,11 @@ var InputGenerator = Class
 			 * the following parameters are mandatory: identifier and value
 			 * 
 			 * the rest might be set to 'undefined'!
+			 * 
+			 * @identifier input identifier
+			 * @dataType data type of the input; may be 'undefined'
+			 * @uom unit of measure; may be 'undefined'
+			 * @value the literal value of the input
 			 */
 			createLiteralDataInput_wps_1_0_and_2_0 : function(identifier, dataType,
 					uom, value) {
@@ -35,6 +40,10 @@ var InputGenerator = Class
 			 * 
 			 * the rest might be set to 'undefined'!
 			 * 
+			 * @identifier input identifier
+			 * @mimeType MIME type of the input; may be 'undefined'
+			 * @schema reference to a schema; may be 'undefined'
+			 * @encoding encoding; may be 'undefined'
 			 * @complexPayload the complex payload (XML tags) as String
 			 * @asReference boolean, either "true" or "false", indicating
 			 *              whether parameter body contains a URL as reference
@@ -61,6 +70,7 @@ var InputGenerator = Class
 			 * 
 			 * the rest might be set to 'undefined'!
 			 * 
+			 * @identifier input identifier
 			 * @crs coordinate reference system URI
 			 * @dimension number of dimensions in this CRS
 			 * @lowerCorner orderedSequence of double values
