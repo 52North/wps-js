@@ -70,13 +70,47 @@ wpsService.setUrl(url);
 
 Once initialized, you may use new variable to execute typical WPS requests. The following subsections describe each operation.
 
+#### Info on Response
+
+For each subsequent request, a callback function has to be defined, which is called with the corresponding response of the WPS. This structure of the response object depends on the following two cases:
+
+-	success: the request was successful and a valid response was generated. Then the callback function is called with a parameter 'response', which contains two properties, 'responseDocument' (the raw XML response from the WPS) and a request-specific JavaScript Object representation of the WPS response. E.g. a valid Capabilities request responds with:
+
+```
+// call callback function
+callbackFunction(response);
+
+------------------------------
+
+// where response has structure:
+response.responseDocument // raw response of WPS (XML encoded response).
+response.capabilities // all properties of the WPS Capabilities response encoded as JavaScript properties.
+
+```
+
+Clearly, for each different request type, the second property will differ (see method details below).
+
+-	error: an error occurred. Then no valid response object could be constructed and the response will include two error properties (which are simply forwarded from the failing WPS request):
+
+```
+// call callback function
+callbackFunction(errorObject);
+
+------------------------------
+
+// where errorObject has structure:
+errorObject.textStatus
+errorObject.errorThrown
+
+```
+
 #### GetCapabilities Request
 
 ```
 /**
  * getCapabilities via HTTP GET
  *
- * @callbackFunction is triggered on success-event of JQuery.ajax method
+ * @callbackFunction is called with a parameter 'wpsResponse' after the WPS was contacted. The parameter 'wpsResponse' either comprises a JavaScript Object representation of the WPS response or, if an error occured, error properties 'textStatus' and/or 'errorThrown'!
  */
 wpsService.getCapabilities_GET(callbackFunction);
 ```
@@ -85,9 +119,23 @@ wpsService.getCapabilities_GET(callbackFunction);
 /**
  * getCapabilities via HTTP POST
  *
- * @callbackFunction is triggered on success-event of JQuery.ajax method
+ * @callbackFunction is called with a parameter 'wpsResponse' after the WPS was contacted. The parameter 'wpsResponse' either comprises a JavaScript Object representation of the WPS response or, if an error occured, error properties 'textStatus' and/or 'errorThrown'!
  */
 wpsService.getCapabilities_POST(callbackFunction);
+```
+
+#### GetCapabilities Response
+
+```
+// call callback function
+callbackFunction(response);
+
+------------------------------
+
+// where response has structure:
+response.responseDocument // raw response of WPS (XML encoded response).
+response.capabilities // all properties of the WPS Capabilities response encoded as JavaScript properties according to WPS 2.0 standard.
+
 ```
 
 #### DescribeProcess Request
@@ -96,7 +144,7 @@ wpsService.getCapabilities_POST(callbackFunction);
 /**
  * process description via HTTP GET
  *
- * @callbackFunction is triggered on success-event of JQuery.ajax method.
+ * @callbackFunction is called with a parameter 'wpsResponse' after the WPS was contacted. The parameter 'wpsResponse' either comprises a JavaScript Object representation of the WPS response or, if an error occured, error properties 'textStatus' and/or 'errorThrown'! .
  *                   Takes the response object as argument
  * @processIdentifier the identifier of the process
  */
@@ -107,11 +155,24 @@ wpsService.describeProcess_GET(callbackFunction, processIdentifier);
 /**
  * process description via HTTP POST
  *
- * @callbackFunction is triggered on success-event of JQuery.ajax method.
+ * @callbackFunction is called with a parameter 'wpsResponse' after the WPS was contacted. The parameter 'wpsResponse' either comprises a JavaScript Object representation of the WPS response or, if an error occured, error properties 'textStatus' and/or 'errorThrown'! .
  *                   Takes the response object as argument
  * @processIdentifier the identifier of the process
  */
 wpsService.describeProcess_POST(callbackFunction, processIdentifier);
+```
+
+#### DescribeProcess Response
+
+```
+// call callback function
+callbackFunction(response);
+
+------------------------------
+
+// where response has structure:
+response.responseDocument // raw response of WPS (XML encoded response).
+response.processOffering // all properties of the WPS DescribeProcess response encoded as JavaScript properties according to WPS 2.0 standard.
 ```
 
 #### Execute Request
@@ -120,7 +181,7 @@ wpsService.describeProcess_POST(callbackFunction, processIdentifier);
 /**
  * WPS execute request via HTTP POST
  *
- * @callbackFunction is triggered on success-event of JQuery.ajax method.
+ * @callbackFunction is called with a parameter 'wpsResponse' after the WPS was contacted. The parameter 'wpsResponse' either comprises a JavaScript Object representation of the WPS response or, if an error occured, error properties 'textStatus' and/or 'errorThrown'! .
  *                   Takes the response object as argument
  * @processIdentifier the identifier of the process
  * @responseFormat either "raw" or "document", default is "document"
@@ -137,6 +198,53 @@ wpsService.execute(callbackFunction, processIdentifier, responseFormat, executio
 
 As you notice, to create the arrays of `inputs` and `outputs`, you have to use the JavaScript class `InputGenerator` and `OutputGenerator`. A description of those can be found further below.
 
+#### Execute Response
+
+Whereas in the previous requests/responses there were no differences between different WPS versions, an execute response is very different for WPS 1.0 and 2.0 services.
+
+In general, the a response has the following basic structure:
+
+```
+// call callback function
+callbackFunction(response);
+
+------------------------------
+
+// basic structure of execute response:
+response.type // is set to one of { responseDocument | resultDocument | statusInfoDocument | rawOutput }
+response.serviceVersion // is set to one of { 1.0.0 | 2.0.0 }
+response.responseDocument // property that stores the contents of response (structure depends on type!)
+```
+
+-	type 'rawOutput' stands for raw output
+-	type 'responseDocument' stands for a WPS 1.0.0 response document
+-	type 'resultDocument' stands for a WPS 2.0.0 result document (in response to a synchronous execution)
+-	type 'resultDocument' stands for a WPS 2.0.0 status info document (in response to an asynchronous execution)
+
+In accordance to the 'type' property, the structure of the property 'responseDocument' varies, as shown in the subsequent request descriptions.
+
+#### WPS 1.0.0 Execute Response
+
+```
+// call callback function
+callbackFunction(response);
+
+------------------------------
+
+// where response has structure:
+response.type = "responseDocument"
+response.serviceVersion = "1.0.0"
+response.responseDocument.service = "WPS"
+response.responseDocument.version = "1.0.0"
+response.responseDocument.lang = "EN" // language
+response.responseDocument.statusLocation = "url" // URL to statuslocation in case of asynchronous execution or 'undefined'
+response.responseDocument.process.identifier = "processId"
+response.responseDocument.process.title = "processTitle"
+response.responseDocument.status.creationTime = "creationTime"
+response.responseDocument.status.info = "infoMessage"
+response.responseDocument.outputs // array of outputs
+```
+
 #### Retrieve Stored ExecuteResponse (WPS 1.0.0)
 
 For WPS 1.0.0 execute operation you may define to execute it asynchronously and store a status document on the server, which is updated by the WPS. With the following method you can retrieve the updated document.
@@ -150,7 +258,31 @@ For WPS 1.0.0 execute operation you may define to execute it asynchronously and 
  * @storedExecuteResponseLocation the url, where the execute response document
  *                                is located / can be retrieved from
  */
-wpsService.execute(callbackFunction, storedExecuteResponseLocation);
+wpsService.parseStoredExecuteResponse_WPS_1_0(callbackFunction, storedExecuteResponseLocation);
+```
+
+#### Retrieve Stored ExecuteResponse (WPS 1.0.0) - Response
+
+identical to WPS 1.0.0 Execute Response
+
+```
+// call callback function
+callbackFunction(response);
+
+------------------------------
+
+// where response has structure:
+response.type = "responseDocument"
+response.serviceVersion = "1.0.0"
+response.responseDocument.service = "WPS"
+response.responseDocument.version = "1.0.0"
+response.responseDocument.lang = "EN" // language
+response.responseDocument.statusLocation = "url" // URL to statuslocation in case of asynchronous execution or 'undefined'
+response.responseDocument.process.identifier = "processId"
+response.responseDocument.process.title = "processTitle"
+response.responseDocument.status.creationTime = "creationTime"
+response.responseDocument.status.info = "infoMessage"
+response.responseDocument.outputs // array of outputs
 ```
 
 #### GetStatus (WPS 2.0.0)
@@ -167,7 +299,26 @@ The `GetStatus` operation is only defined for WPS 2.0.0 and retrieves a `StatusI
  *                   parsed StatusInfo document as argument
  * @jobId the ID of the asynchronously executed job
  */
-wpsService.execute(callbackFunction, jobId);
+wpsService.getStatus_WPS_2_0(callbackFunction, jobId);
+```
+
+#### GetStatus Response
+
+```
+// call callback function
+callbackFunction(response);
+
+------------------------------
+
+// where response has structure:
+response.type = "statusInfoDocument"
+response.serviceVersion = "2.0.0"
+response.responseDocument.jobId = "jobId" // job id of executed process
+response.responseDocument.status = "status" // job status
+response.responseDocument.expirationDate = "jobId" // expiration date of job
+response.responseDocument.estimatedCompletion = "estimatedCompletion" // estimated completion
+response.responseDocument.nextPoll = "nextPoll" // next poll
+response.responseDocument.percentCompleted = "42" // job completion in percent
 ```
 
 #### GetResult (WPS 2.0.0)
@@ -176,7 +327,7 @@ The `GetResult` operation is only defined for WPS 2.0.0 and retrieves a `ResultD
 
 ```
 /**
- * WPS 2.0 getStatus operation to retrieve the status of an executed job
+ * WPS 2.0 getResult operation to retrieve the status of an executed job
  *
  * Not usable with WPS 1.0
  *
@@ -184,7 +335,21 @@ The `GetResult` operation is only defined for WPS 2.0.0 and retrieves a `ResultD
  *                   parsed StatusInfo document as argument
  * @jobId the ID of the asynchronously executed job
  */
-wpsService.execute(callbackFunction, jobId);
+wpsService.getResult_WPS_2_0(callbackFunction, jobId);
+```
+
+####GetResult Response
+
+```
+// call callback function
+callbackFunction(response);
+
+------------------------------
+
+// where response has structure:
+response.jobId = "jobId" // job id of finished job
+response.expirationDate = "expirationDate" // expiration date of job
+response.responseDocument.outputs // array of outputs
 ```
 
 ### InputGenerator Interface
