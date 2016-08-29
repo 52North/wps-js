@@ -1,15 +1,15 @@
 var CapabilitiesResponse_v2_xml = CapabilitiesResponse_xml.extend({
 	
 	extractAllLanguages : function(xmlCapabilities){
-		return xmlCapabilities.find("Languages");
+		return xmlCapabilities.find("ows\\:Languages, Languages");
 	},
 	
 	extractProcessOfferings : function(xmlCapabilities){
-		return xmlCapabilities.find("Contents");
+		return xmlCapabilities.find("wps\\:Contents, Contents");
 	},
 	
 	extractAllProcesses : function(processOfferingsXml){
-		return processOfferingsXml.find("ProcessSummary");
+		return processOfferingsXml.find("wps\\:ProcessSummary, ProcessSummary");
 	},
 	
 	extractJobControlOptions : function(xmlProcess){

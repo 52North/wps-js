@@ -13,7 +13,7 @@ var CapabilitiesResponse_xml = CapabilitiesResponse.extend({
 		 * set values
 		 */
 		
-		var xmlCapabilities = $(wpsResponse).find("Capabilities");
+		var xmlCapabilities = $(wpsResponse).find("wps\\:Capabilities, Capabilities");
 		
 		/*
 		 * version and service
@@ -24,43 +24,43 @@ var CapabilitiesResponse_xml = CapabilitiesResponse.extend({
 		/*
 		 * service identification
 		 */
-		var xmlServiceIdentification = xmlCapabilities.find("ServiceIdentification");
-		this.capabilities.serviceIdentification.title = xmlServiceIdentification.find("Title").text();
-		this.capabilities.serviceIdentification.abstractValue = xmlServiceIdentification.find("Abstract").text();
-		this.capabilities.serviceIdentification.keywords = this.createArrayFromTextValues(xmlServiceIdentification.find("Keyword"));
-		this.capabilities.serviceIdentification.serviceType = xmlServiceIdentification.find("ServiceType").text();
-		this.capabilities.serviceIdentification.serviceTypeVersions = this.createArrayFromTextValues(xmlServiceIdentification.find("ServiceTypeVersion"));
-		this.capabilities.serviceIdentification.fees = xmlServiceIdentification.find("Fees").text();
-		this.capabilities.serviceIdentification.accessConstraints = xmlServiceIdentification.find("AccessConstraints").text();
+		var xmlServiceIdentification = xmlCapabilities.find("ows\\:ServiceIdentification, ServiceIdentification");
+		this.capabilities.serviceIdentification.title = xmlServiceIdentification.find("ows\\:Title , Title").text();
+		this.capabilities.serviceIdentification.abstractValue = xmlServiceIdentification.find("ows\\:Abstract, Abstract").text();
+		this.capabilities.serviceIdentification.keywords = this.createArrayFromTextValues(xmlServiceIdentification.find("ows\\:Keyword, Keyword"));
+		this.capabilities.serviceIdentification.serviceType = xmlServiceIdentification.find("ows\\:ServiceType, ServiceType").text();
+		this.capabilities.serviceIdentification.serviceTypeVersions = this.createArrayFromTextValues(xmlServiceIdentification.find("ows\\:ServiceTypeVersion, ServiceTypeVersion"));
+		this.capabilities.serviceIdentification.fees = xmlServiceIdentification.find("ows\\:Fees, Fees").text();
+		this.capabilities.serviceIdentification.accessConstraints = xmlServiceIdentification.find("ows\\:AccessConstraints, AccessConstraints").text();
 		
 		/*
 		 * service provider
 		 */
-		var xmlServiceProvider = $(xmlCapabilities).find("ServiceProvider");
-		this.capabilities.serviceProvider.providerName = xmlServiceProvider.find("ProviderName").text() || undefined;
-		var providerSiteNode=xmlServiceProvider.find("ProviderSite") || undefined;
-		this.capabilities.serviceProvider.providerSite = providerSiteNode.attr("href") || providerSiteNode.attr("xlin:href") || providerSiteNode.attr("xlink:href") || undefined;
-		var serviceContact = xmlServiceProvider.find("ServiceContact") || undefined;
-		this.capabilities.serviceProvider.serviceContact.individualName = serviceContact.find("IndividualName").text() || undefined;
-		var address = serviceContact.find("Address");
-		this.capabilities.serviceProvider.serviceContact.contactInfo.address.deliveryPoint = address.find("DeliveryPoint").text() || undefined;
-		this.capabilities.serviceProvider.serviceContact.contactInfo.address.city = address.find("City").text() || undefined;
-		this.capabilities.serviceProvider.serviceContact.contactInfo.address.administrativeArea = address.find("AdministrativeArea").text() || undefined;
-		this.capabilities.serviceProvider.serviceContact.contactInfo.address.postalCode = address.find("PostalCode").text() || undefined;
-		this.capabilities.serviceProvider.serviceContact.contactInfo.address.country = address.find("Country").text() || undefined;
-		this.capabilities.serviceProvider.serviceContact.contactInfo.address.electronicMailAddress = address.find("ElectronicMailAddress").text() || undefined;
+		var xmlServiceProvider = $(xmlCapabilities).find("ows\\:ServiceProvider, ServiceProvider");
+		this.capabilities.serviceProvider.providerName = xmlServiceProvider.find("ows\\:ProviderName, ProviderName").text() || undefined;
+		var providerSiteNode=xmlServiceProvider.find("ows\\:ProviderSite, ProviderSite") || undefined;
+		this.capabilities.serviceProvider.providerSite = providerSiteNode.attr("href") || providerSiteNode.attr("xlin\\:href") || providerSiteNode.attr("xlink\\:href") || undefined;
+		var serviceContact = xmlServiceProvider.find("ows\\:ServiceContact, ServiceContact") || undefined;
+		this.capabilities.serviceProvider.serviceContact.individualName = serviceContact.find("ows\\:IndividualName, IndividualName").text() || undefined;
+		var address = serviceContact.find("ows\\:Address, Address");
+		this.capabilities.serviceProvider.serviceContact.contactInfo.address.deliveryPoint = address.find("ows\\:DeliveryPoint, DeliveryPoint").text() || undefined;
+		this.capabilities.serviceProvider.serviceContact.contactInfo.address.city = address.find("ows\\:City, City").text() || undefined;
+		this.capabilities.serviceProvider.serviceContact.contactInfo.address.administrativeArea = address.find("ows\\:AdministrativeArea, AdministrativeArea").text() || undefined;
+		this.capabilities.serviceProvider.serviceContact.contactInfo.address.postalCode = address.find("ows\\:PostalCode, PostalCode").text() || undefined;
+		this.capabilities.serviceProvider.serviceContact.contactInfo.address.country = address.find("ows\\:Country, Country").text() || undefined;
+		this.capabilities.serviceProvider.serviceContact.contactInfo.address.electronicMailAddress = address.find("ows\\:ElectronicMailAddress, ElectronicMailAddress").text() || undefined;
 		
 		/*
 		 * operations
 		 */
-		var operationsMetadata = xmlCapabilities.find("OperationsMetadata");
-		this.capabilities.operations = this.createOperationsArray(operationsMetadata.find("Operation"));
+		var operationsMetadata = xmlCapabilities.find("ows\\:OperationsMetadata, OperationsMetadata");
+		this.capabilities.operations = this.createOperationsArray(operationsMetadata.find("ows\\:Operation, Operation"));
 		
 		/*
 		 * languages
 		 */
 		var languages = this.extractAllLanguages(xmlCapabilities);
-		this.capabilities.languages = this.createArrayFromTextValues(languages.find("Language"));
+		this.capabilities.languages = this.createArrayFromTextValues(languages.find("ows\\:Language, Language"));
 		
 		/*
 		 * processes
@@ -89,7 +89,7 @@ var CapabilitiesResponse_xml = CapabilitiesResponse.extend({
 		/*
 		 * override in child class
 		 */
-		return xmlCapabilities.find("Contents");
+		return xmlCapabilities.find("wps\\:Contents, Contents");
 	},
 	
 	/**
@@ -109,10 +109,10 @@ var CapabilitiesResponse_xml = CapabilitiesResponse.extend({
 		for (var int = 0; int < nodes.length; int++) {
 			var xmlOperation = $(nodes[int]);
 			var name = xmlOperation.attr("name");
-			var getUrlNode=xmlOperation.find("Get");
-			var getUrl = getUrlNode.attr("href") || getUrlNode.attr("xlin:href") || getUrlNode.attr("xlink:href");
-			var PostUrlNode=xmlOperation.find("Post");
-			var postUrl = PostUrlNode.attr("href") || PostUrlNode.attr("xlin:href") || PostUrlNode.attr("xlink:href");
+			var getUrlNode=xmlOperation.find("ows\\:Get, Get");
+			var getUrl = getUrlNode.attr("href") || getUrlNode.attr("xlin\\:href") || getUrlNode.attr("xlink\\:href");
+			var PostUrlNode=xmlOperation.find("ows\\:Post, Post");
+			var postUrl = PostUrlNode.attr("href") || PostUrlNode.attr("xlin\\:href") || PostUrlNode.attr("xlink\\:href");
 			
 			array[int] = this.createOperation(name, getUrl, postUrl);	
 		}
@@ -125,9 +125,9 @@ var CapabilitiesResponse_xml = CapabilitiesResponse.extend({
 		for (var int = 0; int < nodes.length; int++) {
 			var xmlProcess = $(nodes[int]);
 			
-			var title = xmlProcess.find("Title").text();
-			var identifier = xmlProcess.find("Identifier").text();
-			var processVersion = xmlProcess.attr("processVersion") || xmlProcess.attr("wps:processVersion");
+			var title = xmlProcess.find("ows\\:Title, Title").text();
+			var identifier = xmlProcess.find("ows\\:Identifier, Identifier").text();
+			var processVersion = xmlProcess.attr("processVersion") || xmlProcess.attr("wps\\:processVersion");
 			var jobControlOutputs = this.extractJobControlOptions(xmlProcess);
 			var outputTransmission = this.extractOutputTransmission(xmlProcess);
 			

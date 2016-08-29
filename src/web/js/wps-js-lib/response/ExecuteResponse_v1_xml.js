@@ -4,7 +4,7 @@
 var ExecuteResponse_v1_xml = ExecuteResponse
 		.extend({
 			instantiate : function(wpsResponse) {
-				if ($(wpsResponse).find("ExecuteResponse").length > 0) {
+				if ($(wpsResponse).find("wps\\:ExecuteResponse, ExecuteResponse").length > 0) {
 					/*
 					 * response document!
 					 * 
@@ -38,7 +38,7 @@ var ExecuteResponse_v1_xml = ExecuteResponse
 
 			instantiateResponseDocument : function(wpsResponse) {
 				var executeResponse_xmlNode = $(wpsResponse).find(
-						"ExecuteResponse");
+						"wps\\:ExecuteResponse, ExecuteResponse");
 
 				/*
 				 * service
@@ -46,24 +46,24 @@ var ExecuteResponse_v1_xml = ExecuteResponse
 				var service = "WPS";
 				var version = "1.0.0";
 				var lang = executeResponse_xmlNode.attr("lang")
-						|| executeResponse_xmlNode.attr("xml:lang");
+						|| executeResponse_xmlNode.attr("xml\\:lang");
 				/*
 				 * statusLocation may not exist
 				 */
 				var statusLocation = executeResponse_xmlNode
 						.attr("statusLocation")
-						|| executeResponse_xmlNode.attr("wps:statusLocation")
+						|| executeResponse_xmlNode.attr("wps\\:statusLocation")
 						|| undefined;
 				var serviceInstance = executeResponse_xmlNode
 						.attr("serviceInstance")
-						|| executeResponse_xmlNode.attr("wps:serviceInstance");
+						|| executeResponse_xmlNode.attr("wps\\:serviceInstance");
 
 				/*
 				 * process
 				 */
-				var process_xmlNode = executeResponse_xmlNode.find("Process");
-				var processId = process_xmlNode.find("Identifier").text();
-				var processTitle = process_xmlNode.find("Title").text();
+				var process_xmlNode = executeResponse_xmlNode.find("wps\\:Process, Process");
+				var processId = process_xmlNode.find("ows\\:Identifier, Identifier").text();
+				var processTitle = process_xmlNode.find("ows\\:Title, Title").text();
 				var process = {
 					identifier : processId,
 					title : processTitle
@@ -72,33 +72,33 @@ var ExecuteResponse_v1_xml = ExecuteResponse
 				/*
 				 * status
 				 */
-				var status_xmlNode = executeResponse_xmlNode.find("Status");
+				var status_xmlNode = executeResponse_xmlNode.find("wps\\:Status, Status");
 				var statusCreationTime = status_xmlNode.attr("creationTime")
-						|| status_xmlNode.attr("wps:creationTime");
+						|| status_xmlNode.attr("wps\\:creationTime");
 				var statusInfo = null;
-				if (status_xmlNode.find("ProcessAccepted").length > 0)
-					statusInfo = status_xmlNode.find("ProcessAccepted").prop(
+				if (status_xmlNode.find("wps\\:ProcessAccepted, ProcessAccepted").length > 0)
+					statusInfo = status_xmlNode.find("wps\\:ProcessAccepted, ProcessAccepted").prop(
 							"tagName");
-				else if (status_xmlNode.find("ProcessStarted").length > 0)
-					statusInfo = status_xmlNode.find("ProcessStarted").prop(
+				else if (status_xmlNode.find("wps\\:ProcessStarted, ProcessStarted").length > 0)
+					statusInfo = status_xmlNode.find("wps\\:ProcessStarted, ProcessStarted").prop(
 							"tagName").concat(" - percentCompleted:").concat(
-							status_xmlNode.find("ProcessStarted").attr(
+							status_xmlNode.find("wps\\:ProcessStarted, ProcessStarted").attr(
 									"percentCompleted"));
-				else if (status_xmlNode.find("ProcessPaused").length > 0)
-					statusInfo = status_xmlNode.find("ProcessPaused").prop(
+				else if (status_xmlNode.find("wps\\:ProcessPaused, ProcessPaused").length > 0)
+					statusInfo = status_xmlNode.find("wps\\:ProcessPaused, ProcessPaused").prop(
 							"tagName").concat(" - percentCompleted:").concat(
-							status_xmlNode.find("ProcessPaused").attr(
+							status_xmlNode.find("wps\\:ProcessPaused, ProcessPaused").attr(
 									"percentCompleted"));
-				else if (status_xmlNode.find("ProcessSucceeded").length > 0)
-					statusInfo = status_xmlNode.find("ProcessSucceeded").prop(
+				else if (status_xmlNode.find("wps\\:ProcessSucceeded, ProcessSucceeded").length > 0)
+					statusInfo = status_xmlNode.find("wps\\:ProcessSucceeded, ProcessSucceeded").prop(
 							"tagName");
 				else
-					statusInfo = status_xmlNode.find("ProcessFailed").find(
-							"ExceptionReport").find("ExceptionText").text()
-							|| status_xmlNode.find("ProcessFailed").find(
-									"ExceptionReport").attr("exceptionCode");
+					statusInfo = status_xmlNode.find("wps\\:ProcessFailed, ProcessFailed").find(
+							"wps\\:ExceptionReport, ows\\:ExceptionReport, ExceptionReport").find("wps\\:ExceptionText, ows\\:ExceptionText, ExceptionText").text()
+							|| status_xmlNode.find("wps\\:ProcessFailed, ProcessFailed").find(
+									"wps\\:ExceptionReport, ows\\:ExceptionReport, ExceptionReport").attr("exceptionCode");
 
-				var statusInfoTest = status_xmlNode.find("ProcessSucceeded")
+				var statusInfoTest = status_xmlNode.find("wps\\:ProcessSucceeded, ProcessSucceeded")
 						.text();
 
 				var status = {
@@ -115,8 +115,8 @@ var ExecuteResponse_v1_xml = ExecuteResponse
 				 * outputs
 				 */
 				var processOutputs_xmlNode = executeResponse_xmlNode
-						.find("ProcessOutputs");
-				var outputs_xmlNodes = processOutputs_xmlNode.find("Output");
+						.find("wps\\:ProcessOutputs, ProcessOutputs");
+				var outputs_xmlNodes = processOutputs_xmlNode.find("wps\\:Output, Output");
 				var outputs = this.instantiateOutputs(outputs_xmlNodes);
 
 				/*
@@ -141,20 +141,20 @@ var ExecuteResponse_v1_xml = ExecuteResponse
 				for (var index = 0; index < outputs_xmlNodes.length; index++) {
 					var output_xmlNode = $(outputs_xmlNodes[index]);
 
-					var id = output_xmlNode.find("Identifier").text();
-					var title = output_xmlNode.find("Title").text();
-					var abstractValue = output_xmlNode.find("Abstract").text()
+					var id = output_xmlNode.find("ows\\:Identifier, Identifier").text();
+					var title = output_xmlNode.find("ows\\:Title, Title").text();
+					var abstractValue = output_xmlNode.find("ows\\:Abstract, Abstract").text()
 							|| undefined;
 
 					/*
 					 * either element "Data" or "Reference" exists
 					 */
-					var reference_xmlNode = output_xmlNode.find("Reference");
+					var reference_xmlNode = output_xmlNode.find("wps\\:Reference, Reference");
 					var reference = undefined;
 					if (reference_xmlNode.length > 0) {
 						reference = {
 							href : reference_xmlNode.attr("href")
-									|| reference_xmlNode.attr("wps:href"),
+									|| reference_xmlNode.attr("wps\\:href"),
 							format : reference_xmlNode.attr("format")
 									|| undefined,
 							encoding : reference_xmlNode.attr("encoding")
@@ -173,7 +173,7 @@ var ExecuteResponse_v1_xml = ExecuteResponse
 						/*
 						 * Data element
 						 */
-						var data_xmlNode = output_xmlNode.find("Data");
+						var data_xmlNode = output_xmlNode.find("wps\\:Data, Data");
 
 						/*
 						 * data can either be a complexData or a LiteralData or
@@ -181,11 +181,11 @@ var ExecuteResponse_v1_xml = ExecuteResponse
 						 */
 						var data;
 						var complexData_xmlNode = data_xmlNode
-								.find("ComplexData");
+								.find("wps\\:ComplexData, ComplexData");
 						var literalData_xmlNode = data_xmlNode
-								.find("LiteralData");
+								.find("wps\\:LiteralData, LiteralData");
 						var bboxData_xmlNode = data_xmlNode
-								.find("BoundingBoxData");
+								.find("wps\\:BoundingBoxData, BoundingBoxData");
 						if (complexData_xmlNode.length > 0) {
 							var data = { 
 									complexData : {
@@ -209,11 +209,11 @@ var ExecuteResponse_v1_xml = ExecuteResponse
 												|| undefined,
 										lowerCorner : bboxData_xmlNode
 												.attr("lowerCorner")
-												|| bboxData_xmlNode.find("LowerCorner")
+												|| bboxData_xmlNode.find("ows\\:LowerCorner, LowerCorner")
 														.text(),
 										upperCorner : bboxData_xmlNode
 												.attr("upperCorner")
-												|| bboxData_xmlNode.find("UpperCorner")
+												|| bboxData_xmlNode.find("ows\\:UpperCorner, UpperCorner")
 														.text()
 									}
 								

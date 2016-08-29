@@ -10,20 +10,20 @@ var DescribeProcessResponse_v1_xml = DescribeProcessResponse_xml.extend({
 	resetParameterVariables : function(){
 		PROCESS_OFFERING_VERSION = "1.0.0";
 
-		PROCESS_OFFERING_XML_TAG_NAME = "ProcessDescription";
+		PROCESS_OFFERING_XML_TAG_NAME = "wps\\:ProcessDescription, ProcessDescription";
 
-		FORMAT_MIME_TYPE_ATTR_NAME = "MimeType";
-		FORMAT_ENCODING_ATTR_NAME = "Encoding";
-		FORMAT_SCHEMA_ATTR_NAME = "Schema";
+		FORMAT_MIME_TYPE_ATTR_NAME = "ows\\:MimeType, MimeType";
+		FORMAT_ENCODING_ATTR_NAME = "ows\\:Encoding, Encoding";
+		FORMAT_SCHEMA_ATTR_NAME = "ows\\:Schema, Schema";
 		
-		LITERAL_DATA_UNIT_OF_MEASURE_TAG_NAME = "UOM";
+		LITERAL_DATA_UNIT_OF_MEASURE_TAG_NAME = "ows\\:UOM, UOM";
 
 		//SUPPORTED_CRS_TAG_NAME = "SupportedCRS";
-		CRS_TAG_NAME = "CRS";
+		CRS_TAG_NAME = "ows\\:CRS, CRS";
 		
-		LITERAL_DATA_OUTPUT_TAG_NAME = "LiteralOutput";
-		COMPLEX_DATA_OUTPUT_TAG_NAME = "ComplexOutput";
-		BBOX_DATA_OUTPUT_TAG_NAME = "BoundingBoxOutput";
+		LITERAL_DATA_OUTPUT_TAG_NAME = "wps\\:LiteralOutput, LiteralOutput";
+		COMPLEX_DATA_OUTPUT_TAG_NAME = "wps\\:ComplexOutput, ComplexOutput";
+		BBOX_DATA_OUTPUT_TAG_NAME = "wps\\:BoundingBoxOutput, BoundingBoxOutput";
 	},
 	
 	createJobControlOptions : function(processOfferingXml){
@@ -95,7 +95,7 @@ var DescribeProcessResponse_v1_xml = DescribeProcessResponse_xml.extend({
 	 * Thus, we just use the Default UOM of WPS 1.0 and loose all others.
 	 */
 	extractUnitOfMeasure : function(literalDataXml){
-		return literalDataXml.find("UOMs").find("Default").find(LITERAL_DATA_UNIT_OF_MEASURE_TAG_NAME).text() || undefined;
+		return literalDataXml.find("ows\\:UOMs, UOMs").find("ows\\:Default, Default").find(LITERAL_DATA_UNIT_OF_MEASURE_TAG_NAME).text() || undefined;
 	},
 	
 	extractFormatNodes : function(xmlNode){
@@ -104,7 +104,7 @@ var DescribeProcessResponse_v1_xml = DescribeProcessResponse_xml.extend({
 		 * To not have them listed twice, we just extract all Format Nodes from 
 		 * the Supported subtag.
 		 */
-		return xmlNode.find("Supported").find(FORMAT_TAG_NAME);
+		return xmlNode.find("ows\\:Supported, Supported").find(FORMAT_TAG_NAME);
 	},
 	
 	createAllLiteralDataDomainObjects : function(literalDataXml){

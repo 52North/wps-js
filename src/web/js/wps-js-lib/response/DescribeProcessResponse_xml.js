@@ -8,62 +8,62 @@
 
 var PROCESS_OFFERING_VERSION = "2.0.0";
 
-var PROCESS_OFFERING_XML_TAG_NAME = "ProcessOffering";
+var PROCESS_OFFERING_XML_TAG_NAME = "wps\\:ProcessOffering, ProcessOffering";
 
 var PROCESS_VERSION_ATTR_NAME = "processVersion";
-var PROCESS_VERSION_ATTR_NAME_WITH_NS = "wps:processVersion";
+var PROCESS_VERSION_ATTR_NAME_WITH_NS = "wps\\:processVersion";
 
 var JOB_CONTROL_OPTIONS_ATTR_NAME = "jobControlOptions";
-var JOB_CONTROL_OPTIONS_ATTR_NAME_WITH_NS = "wps:jobControlOptions";
+var JOB_CONTROL_OPTIONS_ATTR_NAME_WITH_NS = "wps\\:jobControlOptions";
 
 var OUTPUT_TRANSMISSION_ATTR_NAME = "outputTransmission";
-var OUTPUT_TRANSMISSION_ATTR_NAME_WITH_NS = "wps:outputTransmission";
+var OUTPUT_TRANSMISSION_ATTR_NAME_WITH_NS = "wps\\:outputTransmission";
 
-var PROCESS_TAG_NAME = "Process";
-var TITLE_TAG_NAME = "Title";
-var ABSTRACT_TAG_NAME = "Abstract";
-var IDENTIFIER_TAG_NAME = "Identifier";
+var PROCESS_TAG_NAME = "wps\\:Process, Process";
+var TITLE_TAG_NAME = "ows\\:Title, Title";
+var ABSTRACT_TAG_NAME = "ows\\:Abstract, Abstract";
+var IDENTIFIER_TAG_NAME = "ows\\:Identifier, Identifier";
 
-var PROCESS_INPUT_TAG_NAME = "Input";
-var PROCESS_OUTPUT_TAG_NAME = "Output";
+var PROCESS_INPUT_TAG_NAME = "wps\\:Input, Input";
+var PROCESS_OUTPUT_TAG_NAME = "wps\\:Output, Output";
 
-var LITERAL_DATA_TAG_NAME = "LiteralData";
-var COMPLEX_DATA_TAG_NAME = "ComplexData";
-var BBOX_DATA_TAG_NAME = "BoundingBoxData";
+var LITERAL_DATA_TAG_NAME = "wps\\:LiteralData, LiteralData";
+var COMPLEX_DATA_TAG_NAME = "wps\\:ComplexData, ComplexData";
+var BBOX_DATA_TAG_NAME = "wps\\:BoundingBoxData, BoundingBoxData";
 
-var LITERAL_DATA_OUTPUT_TAG_NAME = "LiteralData";
-var COMPLEX_DATA_OUTPUT_TAG_NAME = "ComplexData";
-var BBOX_DATA_OUTPUT_TAG_NAME = "BoundingBoxData";
+var LITERAL_DATA_OUTPUT_TAG_NAME = "wps\\:LiteralData, LiteralData";
+var COMPLEX_DATA_OUTPUT_TAG_NAME = "wps\\:ComplexData, ComplexData";
+var BBOX_DATA_OUTPUT_TAG_NAME = "wps\\:BoundingBoxData, BoundingBoxData";
 
 var MIN_OCCURS_ATTR_NAME = "minOccurs";
-var MIN_OCCURS_ATTR_NAME_WITH_NS = "wps:minOccurs";
+var MIN_OCCURS_ATTR_NAME_WITH_NS = "wps\\:minOccurs";
 
 var MAX_OCCURS_ATTR_NAME = "maxOccurs";
-var MAX_OCCURS_ATTR_NAME_WITH_NS = "wps:maxOccurs";
+var MAX_OCCURS_ATTR_NAME_WITH_NS = "wps\\:maxOccurs";
 
-var FORMAT_TAG_NAME = "Format";
+var FORMAT_TAG_NAME = "ns\\:Format, Format";
 var FORMAT_MIME_TYPE_ATTR_NAME = "mimeType";
 var FORMAT_ENCODING_ATTR_NAME = "encoding";
 var FORMAT_SCHEMA_ATTR_NAME = "schema";
 
-var LITERAL_DATA_DOMAIN_TAG_NAME = "LiteralDataDomain";
-var LITERAL_DATA_ANY_VALUE_TAG_NAME = "AnyValue";
-var LITERAL_DATA_ALLOWED_VALUES_TAG_NAME = "AllowedValues";
+var LITERAL_DATA_DOMAIN_TAG_NAME = "wps\\:LiteralDataDomain, LiteralDataDomain";
+var LITERAL_DATA_ANY_VALUE_TAG_NAME = "ows\\:AnyValue, AnyValue";
+var LITERAL_DATA_ALLOWED_VALUES_TAG_NAME = "ows\\:AllowedValues, AllowedValues";
 
-var LITERAL_DATA_ALLOWED_VALUES_VALUE_TAG_NAME = "Value";
-var LITERAL_DATA_ALLOWED_VALUES_RANGE_TAG_NAME = "Range";
-var LITERAL_DATA_ALLOWED_VALUES_RANGE_MINIMUM_VALUE_TAG_NAME = "MinimumValue";
-var LITERAL_DATA_ALLOWED_VALUES_RANGE_MAXIMUM_VALUE_TAG_NAME = "MaximumValue";
+var LITERAL_DATA_ALLOWED_VALUES_VALUE_TAG_NAME = "ows\\:Value, Value";
+var LITERAL_DATA_ALLOWED_VALUES_RANGE_TAG_NAME = "ows\\:Range, Range";
+var LITERAL_DATA_ALLOWED_VALUES_RANGE_MINIMUM_VALUE_TAG_NAME = "ows\\:MinimumValue, MinimumValue";
+var LITERAL_DATA_ALLOWED_VALUES_RANGE_MAXIMUM_VALUE_TAG_NAME = "ows\\:MaximumValue, MaximumValue";
 
-var LITERAL_DATA_DATA_TYPE_TAG_NAME = "DataType";
-var LITERAL_DATA_VALUES_REFERENCE_TAG_NAME = "ValuesReference";
+var LITERAL_DATA_DATA_TYPE_TAG_NAME = "ows\\:DataType, DataType";
+var LITERAL_DATA_VALUES_REFERENCE_TAG_NAME = "ows\\:ValuesReference, ValuesReference";
 var LITERAL_DATA_REFERENCE_ATTR_NAME = "reference";
-var LITERAL_DATA_REFERENCE_ATTR_NAME_WITH_NS = "ows:reference";
-var LITERAL_DATA_DEFAULT_VALUE_TAG_NAME = "DefaultValue";
-var LITERAL_DATA_UNIT_OF_MEASURE_TAG_NAME = "UOM";
+var LITERAL_DATA_REFERENCE_ATTR_NAME_WITH_NS = "ows\\:reference";
+var LITERAL_DATA_DEFAULT_VALUE_TAG_NAME = "ows\\:DefaultValue, DefaultValue";
+var LITERAL_DATA_UNIT_OF_MEASURE_TAG_NAME = "ows\\:UOM, UOM";
 
 //var SUPPORTED_CRS_TAG_NAME = "SupportedCRS";
-var CRS_TAG_NAME = "CRS";
+var CRS_TAG_NAME = "ows\\:CRS, CRS";
 
 
 var DescribeProcessResponse_xml = DescribeProcessResponse.extend({

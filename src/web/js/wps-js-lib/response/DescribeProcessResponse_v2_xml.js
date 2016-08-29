@@ -10,26 +10,26 @@ var DescribeProcessResponse_v2_xml = DescribeProcessResponse_xml.extend({
 		 */
 		PROCESS_OFFERING_VERSION = "2.0.0";
 		
-		PROCESS_OFFERING_XML_TAG_NAME = "ProcessOffering";
+		PROCESS_OFFERING_XML_TAG_NAME = "wps\\:ProcessOffering, ProcessOffering";
 
 		JOB_CONTROL_OPTIONS_ATTR_NAME = "jobControlOptions";
-		JOB_CONTROL_OPTIONS_ATTR_NAME_WITH_NS = "wps:jobControlOptions";
+		JOB_CONTROL_OPTIONS_ATTR_NAME_WITH_NS = "wps\\:jobControlOptions";
 
 		OUTPUT_TRANSMISSION_ATTR_NAME = "outputTransmission";
-		OUTPUT_TRANSMISSION_ATTR_NAME_WITH_NS = "wps:outputTransmission";
+		OUTPUT_TRANSMISSION_ATTR_NAME_WITH_NS = "wps\\:outputTransmission";
 		
 		FORMAT_MIME_TYPE_ATTR_NAME = "mimeType";
 		FORMAT_ENCODING_ATTR_NAME = "encoding";
 		FORMAT_SCHEMA_ATTR_NAME = "schema";
 		
-		LITERAL_DATA_DOMAIN_TAG_NAME = "LiteralDataDomain";
-		LITERAL_DATA_UNIT_OF_MEASURE_TAG_NAME = "UOM";
+		LITERAL_DATA_DOMAIN_TAG_NAME = "wps\\:LiteralDataDomain, LiteralDataDomain";
+		LITERAL_DATA_UNIT_OF_MEASURE_TAG_NAME = "ows\\:UOM, UOM";
 		
-		LITERAL_DATA_OUTPUT_TAG_NAME = "LiteralData";
-		COMPLEX_DATA_OUTPUT_TAG_NAME = "ComplexData";
-		BBOX_DATA_OUTPUT_TAG_NAME = "BoundingBoxData";
+		LITERAL_DATA_OUTPUT_TAG_NAME = "wps\\:LiteralData, LiteralData";
+		COMPLEX_DATA_OUTPUT_TAG_NAME = "wps\\:ComplexData, ComplexData";
+		BBOX_DATA_OUTPUT_TAG_NAME = "wps\\:BoundingBoxData, BoundingBoxData";
 		
-		CRS_TAG_NAME = "SupportedCRS";
+		CRS_TAG_NAME = "ows\\:SupportedCRS, SupportedCRS";
 	},
 	
 	createJobControlOptions : function(processOfferingXml){

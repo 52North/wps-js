@@ -16,7 +16,7 @@ var ExecuteResponse_v2_xml = ExecuteResponse.extend({
 		 * Hence, we must implement each possibility and return an appropriate
 		 * response
 		 */
-		if ($(wpsResponse).find("Result").length > 0) {
+		if ($(wpsResponse).find("wps\\:Result, Result").length > 0) {
 			/*
 			 * response/result document!
 			 * 
@@ -26,7 +26,7 @@ var ExecuteResponse_v2_xml = ExecuteResponse.extend({
 			this.executeResponse.type = "resultDocument"
 
 			this.instantiateResultDocument(wpsResponse);
-		} else if ($(wpsResponse).find("StatusInfo").length > 0) {
+		} else if ($(wpsResponse).find("wps\\:StatusInfo, StatusInfo").length > 0) {
 			/*
 			 * response/result document!
 			 * 
@@ -60,13 +60,13 @@ var ExecuteResponse_v2_xml = ExecuteResponse.extend({
 
 	instantiateResultDocument : function(wpsResponse) {
 
-		var result_xmlNode = $(wpsResponse).find("Result");
+		var result_xmlNode = $(wpsResponse).find("wps\\:Result, Result");
 
-		var jobId = result_xmlNode.find("JobID").text() || undefined;
-		var expirationDate = result_xmlNode.find("ExpirationDate").text()
+		var jobId = result_xmlNode.find("wps\\:JobID, JobID").text() || undefined;
+		var expirationDate = result_xmlNode.find("wps\\:ExpirationDate, ExpirationDate").text()
 				|| undefined;
 
-		var outputs = this.instantiateOutputs(result_xmlNode.find("Output"));
+		var outputs = this.instantiateOutputs(result_xmlNode.find("wps\\:Output, Output"));
 
 		this.executeResponse.responseDocument = {
 			jobId : jobId,
@@ -90,15 +90,15 @@ var ExecuteResponse_v2_xml = ExecuteResponse.extend({
 			 * - directValue for
 			 * complexOutput --> complex output does not have an own subNode!!!
 			 */
-			var data_xmlNode = output_xmlNode.find("Data");
+			var data_xmlNode = output_xmlNode.find("wps\\:Data, Data");
 
 			/*
 			 * data can either be a LiteralValue or a
 			 * BoundingBox element
 			 */
 			var data;
-			var literalData_xmlNode = data_xmlNode.find("LiteralValue");
-			var bboxData_xmlNode = data_xmlNode.find("BoundingBox");
+			var literalData_xmlNode = data_xmlNode.find("wps\\:LiteralValue, LiteralValue");
+			var bboxData_xmlNode = data_xmlNode.find("ows\\:BoundingBox, BoundingBox");
 			if (literalData_xmlNode.length > 0) {
 				
 				/*
@@ -123,9 +123,9 @@ var ExecuteResponse_v2_xml = ExecuteResponse.extend({
 						dimensions : bboxData_xmlNode.attr("dimensions")
 								|| undefined,
 						lowerCorner : bboxData_xmlNode.attr("lowerCorner")
-								|| bboxData_xmlNode.find("LowerCorner").text(),
+								|| bboxData_xmlNode.find("ows\\:LowerCorner, LowerCorner").text(),
 						upperCorner : bboxData_xmlNode.attr("upperCorner")
-								|| bboxData_xmlNode.find("UpperCorner").text()
+								|| bboxData_xmlNode.find("ows\\:UpperCorner, UpperCorner").text()
 					}
 
 				}
@@ -161,17 +161,17 @@ var ExecuteResponse_v2_xml = ExecuteResponse.extend({
 	},
 
 	instantiateStatusInfoDocument : function(wpsResponse) {
-		var statusInfo_xmlNode = $(wpsResponse).find("StatusInfo");
+		var statusInfo_xmlNode = $(wpsResponse).find("wps\\:StatusInfo, StatusInfo");
 
-		var jobId = statusInfo_xmlNode.find("JobID").text();
-		var status = statusInfo_xmlNode.find("Status").text();
-		var expirationDate = statusInfo_xmlNode.find("ExpirationDate").text()
+		var jobId = statusInfo_xmlNode.find("wps\\:JobID, JobID").text();
+		var status = statusInfo_xmlNode.find("wps\\:Status, Status").text();
+		var expirationDate = statusInfo_xmlNode.find("wps\\:ExpirationDate, ExpirationDate").text()
 				|| undefined;
 		var estimatedCompletion = statusInfo_xmlNode
-				.find("EstimatedCompletion").text()
+				.find("wps\\:EstimatedCompletion, EstimatedCompletion").text()
 				|| undefined;
-		var nextPoll = statusInfo_xmlNode.find("NextPoll").text() || undefined;
-		var percentCompleted = statusInfo_xmlNode.find("PercentCompleted")
+		var nextPoll = statusInfo_xmlNode.find("wps\\:NextPoll, NextPoll").text() || undefined;
+		var percentCompleted = statusInfo_xmlNode.find("wps\\:PercentCompleted, PercentCompleted")
 				.text()
 				|| undefined;
 

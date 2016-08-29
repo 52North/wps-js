@@ -1,18 +1,18 @@
 var CapabilitiesResponse_v1_xml = CapabilitiesResponse_xml.extend({
 	
 	extractAllLanguages : function(xmlCapabilities){
-		return xmlCapabilities.find("Languages").find("Supported");
+		return xmlCapabilities.find("wps\\:Languages, Languages").find("wps\\:Supported, Supported");
 	},
 	
 	extractProcessOfferings : function(xmlCapabilities){
 		/*
 		 * override in child class
 		 */
-		return xmlCapabilities.find("ProcessOfferings");
+		return xmlCapabilities.find("wps\\:ProcessOfferings, ProcessOfferings");
 	},
 	
 	extractAllProcesses : function(processOfferingsXml){
-		return processOfferingsXml.find("Process");
+		return processOfferingsXml.find("wps\\:Process, Process");
 	},
 	
 	extractJobControlOptions : function(xmlProcess){
