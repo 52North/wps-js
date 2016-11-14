@@ -82,80 +82,107 @@ var ExecuteResponse_v2_xml = ExecuteResponse.extend({
 			var output_xmlNode = $(outputs_xmlNodes[index]);
 
 			/*
-			 * Data node;
-			 * 
-			 * in WPS 2.0.0 this node may either have a subnode named: 
-			 * - "LiteralValue" or 
-			 * - "BoundingBox" or 
-			 * - directValue for
-			 * complexOutput --> complex output does not have an own subNode!!!
+			 * either element "Data" or "Reference" exists
 			 */
-			var data_xmlNode = output_xmlNode.find("wps\\:Data, Data");
+			var reference_xmlNode = output_xmlNode.find("wps\\:Reference, Reference");
+			var reference = undefined;
+			if (reference_xmlNode.length > 0) {
+				reference = {
+					href : reference_xmlNode.attr("href")
+							|| reference_xmlNode.attr("wps\\:href") 
+							|| reference_xmlNode.attr("xlin\\:href"),
+					format : reference_xmlNode.attr("mimeType") 
+							|| reference_xmlNode.attr("format")
+							|| undefined,
+					encoding : reference_xmlNode.attr("encoding")
+							|| undefined,
+					schema : reference_xmlNode.attr("schema")
+							|| undefined
+				}
 
-			/*
-			 * data can either be a LiteralValue or a
-			 * BoundingBox element
-			 */
-			var data;
-			var literalData_xmlNode = data_xmlNode.find("wps\\:LiteralValue, LiteralValue");
-			var bboxData_xmlNode = data_xmlNode.find("ows\\:BoundingBox, BoundingBox");
-			if (literalData_xmlNode.length > 0) {
+				outputs[index] = {
+					identifier : output_xmlNode.attr("id"),
+					reference : reference
+				};
+			}
+			else{
 				
 				/*
-				 * literalData
+				 * Data node;
+				 * 
+				 * in WPS 2.0.0 this node may either have a subnode named: 
+				 * - "LiteralValue" or 
+				 * - "BoundingBox" or 
+				 * - directValue for
+				 * complexOutput --> complex output does not have an own subNode!!!
 				 */
-				data = {
-					literalData : {
-						dataType : literalData_xmlNode.attr("dataType")
-								|| undefined,
-						uom : literalData_xmlNode.attr("uom") || undefined,
-						value : literalData_xmlNode.text()
-					}
+				var data_xmlNode = output_xmlNode.find("wps\\:Data, Data");
 
-				}
-				
-				
-			} else if (bboxData_xmlNode.length > 0) {
-
-				data = {
-					boundingBoxData : {
-						crs : bboxData_xmlNode.attr("crs") || undefined,
-						dimensions : bboxData_xmlNode.attr("dimensions")
-								|| undefined,
-						lowerCorner : bboxData_xmlNode.attr("lowerCorner")
-								|| bboxData_xmlNode.find("ows\\:LowerCorner, LowerCorner").text(),
-						upperCorner : bboxData_xmlNode.attr("upperCorner")
-								|| bboxData_xmlNode.find("ows\\:UpperCorner, UpperCorner").text()
-					}
-
-				}
-			} else {
 				/*
-				 * complex data
+				 * data can either be a LiteralValue or a
+				 * BoundingBox element
 				 */
-				data = {
-						complexData : {
-							mimeType : data_xmlNode.attr("mimeType")
+				var data;
+				var literalData_xmlNode = data_xmlNode.find("wps\\:LiteralValue, LiteralValue");
+				var bboxData_xmlNode = data_xmlNode.find("ows\\:BoundingBox, BoundingBox");
+				if (literalData_xmlNode.length > 0) {
+					
+					/*
+					 * literalData
+					 */
+					data = {
+						literalData : {
+							dataType : literalData_xmlNode.attr("dataType")
 									|| undefined,
-							schema : data_xmlNode.attr("schema")
-									|| undefined,
-							encoding : data_xmlNode.attr("encoding")
-									|| undefined,
-							value : data_xmlNode.html()
+							uom : literalData_xmlNode.attr("uom") || undefined,
+							value : literalData_xmlNode.text()
 						}
 
 					}
-			}
+					
+					
+				} else if (bboxData_xmlNode.length > 0) {
 
-			/*
-			 * TODO nested Output!
-			 */
+					data = {
+						boundingBoxData : {
+							crs : bboxData_xmlNode.attr("crs") || undefined,
+							dimensions : bboxData_xmlNode.attr("dimensions")
+									|| undefined,
+							lowerCorner : bboxData_xmlNode.attr("lowerCorner")
+									|| bboxData_xmlNode.find("ows\\:LowerCorner, LowerCorner").text(),
+							upperCorner : bboxData_xmlNode.attr("upperCorner")
+									|| bboxData_xmlNode.find("ows\\:UpperCorner, UpperCorner").text()
+						}
 
-			outputs[index] = {
-				identifier : output_xmlNode.attr("id"),
-				data : data
-			};
-		}
+					}
+				} else {
+					/*
+					 * complex data
+					 */
+					data = {
+							complexData : {
+								mimeType : data_xmlNode.attr("mimeType")
+										|| undefined,
+								schema : data_xmlNode.attr("schema")
+										|| undefined,
+								encoding : data_xmlNode.attr("encoding")
+										|| undefined,
+								value : data_xmlNode.html()
+							}
+
+						}
+				}
+
+				/*
+				 * TODO nested Output!
+				 */
+
+				outputs[index] = {
+					identifier : output_xmlNode.attr("id"),
+					data : data
+				};			
+			} // end else data or reference
+		} // end for
 
 		return outputs;
 	},
