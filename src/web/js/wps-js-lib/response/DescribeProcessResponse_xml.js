@@ -27,13 +27,13 @@ var IDENTIFIER_TAG_NAME = "ows\\:Identifier, Identifier";
 var PROCESS_INPUT_TAG_NAME = "wps\\:Input, Input";
 var PROCESS_OUTPUT_TAG_NAME = "wps\\:Output, Output";
 
-var LITERAL_DATA_TAG_NAME = "wps\\:LiteralData, LiteralData";
-var COMPLEX_DATA_TAG_NAME = "wps\\:ComplexData, ComplexData";
-var BBOX_DATA_TAG_NAME = "wps\\:BoundingBoxData, BoundingBoxData";
+var LITERAL_DATA_TAG_NAME = "wps\\:LiteralData, ns\\:LiteralData, LiteralData";
+var COMPLEX_DATA_TAG_NAME = "wps\\:ComplexData, ns\\:ComplexData, ComplexData";
+var BBOX_DATA_TAG_NAME = "wps\\:BoundingBoxData, ns\\:BoundingBoxData, BoundingBoxData";
 
-var LITERAL_DATA_OUTPUT_TAG_NAME = "wps\\:LiteralData, LiteralData";
-var COMPLEX_DATA_OUTPUT_TAG_NAME = "wps\\:ComplexData, ComplexData";
-var BBOX_DATA_OUTPUT_TAG_NAME = "wps\\:BoundingBoxData, BoundingBoxData";
+var LITERAL_DATA_OUTPUT_TAG_NAME = "wps\\:LiteralData, ns\\:LiteralData, LiteralData";
+var COMPLEX_DATA_OUTPUT_TAG_NAME = "wps\\:ComplexData, ns\\:ComplexData, ComplexData";
+var BBOX_DATA_OUTPUT_TAG_NAME = "wps\\:BoundingBoxData, ns\\:BoundingBoxData, BoundingBoxData";
 
 var MIN_OCCURS_ATTR_NAME = "minOccurs";
 var MIN_OCCURS_ATTR_NAME_WITH_NS = "wps\\:minOccurs";
@@ -41,7 +41,7 @@ var MIN_OCCURS_ATTR_NAME_WITH_NS = "wps\\:minOccurs";
 var MAX_OCCURS_ATTR_NAME = "maxOccurs";
 var MAX_OCCURS_ATTR_NAME_WITH_NS = "wps\\:maxOccurs";
 
-var FORMAT_TAG_NAME = "ns\\:Format, Format";
+var FORMAT_TAG_NAME = "ns\\:Format, wps\\:Format, Format";
 var FORMAT_MIME_TYPE_ATTR_NAME = "mimeType";
 var FORMAT_ENCODING_ATTR_NAME = "encoding";
 var FORMAT_SCHEMA_ATTR_NAME = "schema";
@@ -63,7 +63,7 @@ var LITERAL_DATA_DEFAULT_VALUE_TAG_NAME = "ows\\:DefaultValue, DefaultValue";
 var LITERAL_DATA_UNIT_OF_MEASURE_TAG_NAME = "ows\\:UOM, UOM";
 
 //var SUPPORTED_CRS_TAG_NAME = "SupportedCRS";
-var CRS_TAG_NAME = "ows\\:CRS, CRS";
+var CRS_TAG_NAME = "ows\\:CRS, wps\\:CRS, CRS";
 
 
 var DescribeProcessResponse_xml = DescribeProcessResponse.extend({

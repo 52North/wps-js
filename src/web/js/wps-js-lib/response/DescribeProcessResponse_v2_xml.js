@@ -25,11 +25,11 @@ var DescribeProcessResponse_v2_xml = DescribeProcessResponse_xml.extend({
 		LITERAL_DATA_DOMAIN_TAG_NAME = "wps\\:LiteralDataDomain, LiteralDataDomain";
 		LITERAL_DATA_UNIT_OF_MEASURE_TAG_NAME = "ows\\:UOM, UOM";
 		
-		LITERAL_DATA_OUTPUT_TAG_NAME = "wps\\:LiteralData, LiteralData";
-		COMPLEX_DATA_OUTPUT_TAG_NAME = "wps\\:ComplexData, ComplexData";
-		BBOX_DATA_OUTPUT_TAG_NAME = "wps\\:BoundingBoxData, BoundingBoxData";
+		LITERAL_DATA_OUTPUT_TAG_NAME = "wps\\:LiteralData, ns\\:LiteralData, LiteralData";
+		COMPLEX_DATA_OUTPUT_TAG_NAME = "wps\\:ComplexData, ns\\:ComplexData, ComplexData";
+		BBOX_DATA_OUTPUT_TAG_NAME = "wps\\:BoundingBoxData, ns\\:BoundingBoxData, BoundingBoxData";
 		
-		CRS_TAG_NAME = "ows\\:SupportedCRS, SupportedCRS";
+		CRS_TAG_NAME = "ows\\:SupportedCRS, wps\\:SupportedCRS, SupportedCRS";
 	},
 	
 	createJobControlOptions : function(processOfferingXml){
@@ -102,7 +102,7 @@ var DescribeProcessResponse_v2_xml = DescribeProcessResponse_xml.extend({
 	
 	extractFormatNodes : function(xmlNode){
 		/*
-		 * simplay use all occurences
+		 * simply use all occurrences
 		 */
 		return xmlNode.find(FORMAT_TAG_NAME);
 	}
