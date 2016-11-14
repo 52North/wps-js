@@ -155,7 +155,8 @@ var ExecuteResponse_v1_xml = ExecuteResponse
 						reference = {
 							href : reference_xmlNode.attr("href")
 									|| reference_xmlNode.attr("wps\\:href"),
-							format : reference_xmlNode.attr("mimeType")
+							format : reference_xmlNode.attr("mimeType") 
+									|| reference_xmlNode.attr("format")
 									|| undefined,
 							encoding : reference_xmlNode.attr("encoding")
 									|| undefined,
