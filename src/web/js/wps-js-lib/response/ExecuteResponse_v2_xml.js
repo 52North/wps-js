@@ -89,6 +89,10 @@ var ExecuteResponse_v2_xml = ExecuteResponse.extend({
 			if (reference_xmlNode.length > 0) {
 				reference = {
 					href : reference_xmlNode.attr("href")
+							|| reference_xmlNode.attr("wps:href")
+							|| reference_xmlNode.attr("xlin:href")
+							|| reference_xmlNode.attr("xlink:href")
+							|| reference_xmlNode.attr("ows:href")
 							|| reference_xmlNode.attr("wps\\:href") 
 							|| reference_xmlNode.attr("xlin\\:href"),
 					format : reference_xmlNode.attr("mimeType") 
