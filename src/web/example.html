@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<!-- build:js js/deps.wps-js.min.js -->
+<!-- start lib script tags -->
+<script src="bower_components/jquery/dist/jquery.js" type="text/javascript"></script>
+<!-- end lib script tags -->
+<!-- /build -->
+
+<!-- build:js wps-js-all.min.js -->
+<!-- start client script tags -->
+<script src="js/wps-js-lib/lib/Class.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/Constants.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/Utility.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/response/BaseResponse.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/CapabilitiesResponse.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/CapabilitiesResponse_xml.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/CapabilitiesResponse_v1_xml.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/CapabilitiesResponse_v2_xml.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/DescribeProcessResponse.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/DescribeProcessResponse_xml.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/DescribeProcessResponse_v1_xml.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/DescribeProcessResponse_v2_xml.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/ExecuteResponse.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/ExecuteResponse_v1_xml.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/ExecuteResponse_v2_xml.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/ResponseFactory.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/response/ExceptionReportResponse.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/BaseRequest.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/GetRequest.js" type="text/javascript"></script>
+<script src="js/wps-js-lib/request/PostRequest.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/InputGenerator.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/OutputGenerator.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/ExecuteRequest.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/ExecuteRequest_v1.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/ExecuteRequest_v2.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/DescribeProcessGetRequest.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/GetCapabilitiesGetRequest.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/DescribeProcessPostRequest.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/GetCapabilitiesPostRequest.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/GetStatusGetRequest.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/request/GetResultGetRequest.js"
+	type="text/javascript"></script>
+<script src="js/wps-js-lib/WpsService.js" type="text/javascript"></script>
+<!-- end client script tags -->
+<!-- /build -->
+
+
+<title>wps-js example</title>
+<link rel="shortcut icon" href="favicon.ico" />
+</head>
+<body>
+	<div id="wrapper">
+		<div>
+			<h1>wps-js example</h1>
+			<p>wps-js is an <a href="https://github.com/52North/wps-js/" title="wps-js on GitHub">open source client library</a> for connecting Javascript client to <a href="http://www.opengeospatial.org/standards/wps" title="WPS @ Open Geospatial Consortium">OGC Web Processing</a> services. This page demonstrates how you can use it. More documentation is available in the <a href="https://wiki.52north.org/bin/view/Geoprocessing/Wps-js" title="wps-js wiki page">52&deg;North Wiki</a> and on <a href="https://github.com/52North/wps-js/blob/master/README.md" title="wps-js readme">GitHub</a>.</p>
+		</div>
+		<hl>
+		<div>
+			<h3>
+				Capabilities
+			</h3>
+			<div class="wps-container">
+				<select id="wps">
+					<option>Select a WPS</option>
+					<option>http://geoprocessing.demo.52north.org:8080/wps/WebProcessingService</option>
+					<option>http://geostatistics.demo.52north.org/wps/WebProcessingService</option>
+				</select>
+				<label>
+					<input type="checkbox" id="wps-version" value="2.0.0">
+					use version '2.0.0'?
+				</label>
+			</div>
+			<h1></h1>
+			<div class="wps-container">
+				<textarea rows="20" cols="100" id="capabilitiesText">empty</textarea>
+			</div>
+		</div>
+		<div>
+			<h3>
+				DescribeProcess
+			</h3>
+			<div class="wps-container">
+				<select id="processes"><option>Select a Process</option></select>
+			</div>
+			<h1></h1>
+			<div class="wps-container">
+				<textarea rows="20" cols="100" id="processDescriptionText">empty</textarea>
+			</div>
+		</div>
+		<div>
+			<h3>Execute Process - TODO NO CLIENT INTERFACE YET</h3>
+			<div class="wps-container">
+				<select id="processes_execute"><option>Select a Process</option></select>
+				<span id="processDescriptionLink"></span>
+				<div class="wps-execute-container" id="wps-execute-container"></div>
+			</div>
+			<p></p>
+			<div class="wps-container">
+			    <div id="auto-update-container"></div>
+				<div id="executeProcess"></div>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+	// initialize wpsService
+	var wpsService = new WpsService({
+		url: "http://geoprocessing.demo.52north.org:8080/wps/WebProcessingService",
+		version: "2.0.0"
+	});	
+	
+	var capabilities,
+		processDescription; // the process description
+		
+		var capabilitiesCallback = function(response) {
+			
+			capabilities = response;
+			
+			// extract processes, add them to process-list
+			//array of processes
+			var processes = response.capabilities.processes;
+			
+			var _select = $('<select>');
+			$.each(processes, function(index, process) {
+			    _select.append(
+			            $('<option></option>').val(process.identifier).html(process.identifier)
+			        );
+			});
+			$('#processes').append(_select.html());
+			$('#processes_execute').append(_select.html());
+			
+			// set value of textarea
+			var capabilitiesDocument = capabilities.responseDocument;
+			
+			$("textarea#capabilitiesText").val((new XMLSerializer()).serializeToString(capabilitiesDocument));
+		};
+		
+		var describeProcessCallback = function(response) {
+			
+			processDescription = response;
+			
+			//set value of textarea
+			var processDocument = processDescription.responseDocument;
+			
+			$("textarea#processDescriptionText").val((new XMLSerializer()).serializeToString(processDocument));
+			
+		};
+		
+		var clearForms = function(){
+			
+			//clear select
+			$("#processes option").remove();
+			$("#processes_execute option").remove();
+			
+			
+			$("#processes").append($('<option></option>').val("default").html("Select a Process"));
+			$("#processes_execute").append($('<option></option>').val("default").html("Select a Process"));
+			
+			//clear textareas
+			$("textarea#capabilitiesText").val("empty");
+			$("textarea#processDescriptionText").val("empty");
+		};
+		
+		$(document).ready(function() {
+
+			$("#wps").change(function() {
+				//clear old textarea values
+				clearForms();
+				
+				// get selected wps (url)
+				var wpsUrl = $('#wps option:selected').text();
+
+				// only eexecute if wpsUrl is a http url
+				if(wpsUrl.startsWith("http")){
+					if($("#wps-version").prop("checked"))
+						wps = new WpsService({url : wpsUrl, version : "2.0.0"});
+					else
+						wps = new WpsService({url : wpsUrl, version : "1.0.0"});
+				
+					wps.getCapabilities_GET(capabilitiesCallback);
+				}
+
+			});
+			
+			$("#processes").change(function() {
+				// get selected wps (url)
+				var processId = $('#processes option:selected').text();
+				
+				// only eexecute if id != default value "Select a Process"
+				if(! processId.startsWith("Select"))
+					wps.describeProcess_GET(describeProcessCallback, processId);
+
+			});
+			
+			$("#wps-version").change(function(){
+				if (wpsService){
+					if($("#wps-version").prop("checked"))
+						wpsService.version = "2.0.0";
+					else
+						wpsService.version = "1.0.0";
+				}		
+			});
+		});
+		
+	</script>
+
+	<!-- build:template
+	<div>
+		<p class="infotext"><%= message %></p>
+	</div>
+	/build -->
+	
+</body>
+</html>

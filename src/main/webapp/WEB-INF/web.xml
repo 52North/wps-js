@@ -1,7 +1,0 @@
-<web-app version="3.0">
-	<display-name>Javascript WPS Client | #${build-commit-abbrev} as of ${build-tstamp}, build at ${buildTimestamp}</display-name>
-	
-	<welcome-file-list>
-		<welcome-file>/example.html</welcome-file>
-	</welcome-file-list>
-</web-app>
