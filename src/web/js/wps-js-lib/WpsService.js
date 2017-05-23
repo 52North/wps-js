@@ -1,5 +1,6 @@
 // refers to Constant.js
 var defaultWpsVersion = WPS_VERSION_1_0_0;
+var defaultIsRest = false;
 
 /**
  * requires Constants.js!
@@ -14,6 +15,9 @@ var WpsService = Class.extend({
 
 		if (!this.settings.version || (this.settings.version != '1.0.0' && this.settings.version != '2.0.0'))
 			this.settings.version = defaultWpsVersion;
+		
+		if (!this.settings.isRest || typeof this.settings.isRest != "boolean")
+			this.settings.isRest = defaultIsRest;
 	},
 
 	/**
@@ -31,6 +35,15 @@ var WpsService = Class.extend({
 	 */
 	setUrl : function(url) {
 		this.settings.url = url;
+	},
+
+	/**
+	 * allowed values : true or false
+	 * 
+	 * set global variable to whether the REST binding is used or not (if not, XML will be used)
+	 */
+	setIsRest : function(isRest) {
+		this.settings.isRest = isRest;
 	},
 
 	/**
