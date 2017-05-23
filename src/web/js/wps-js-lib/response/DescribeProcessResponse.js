@@ -169,5 +169,3 @@ var DescribeProcessResponse = BaseResponse.extend({
 	},
 
 });
-
-
