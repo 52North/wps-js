@@ -47,81 +47,61 @@ var WpsService = Class.extend({
 	},
 
 	/**
-	 * getCapabilities via HTTP GET
+	 * getCapabilities, per default via HTTP GET
 	 * 
-	 * @callbackFunction is triggered on success-event of JQuery.ajax method
+	 * @callbackFunction is triggered on success-event of JQuery.ajax method.
+	 *                   Takes the response object as argument
+	 * @usePOST if set to TRUE, the request will be executed via HTTP POST instead of HTTP GET
 	 */
-	getCapabilities_GET : function(callbackFunction) {
+	getCapabilities : function(callbackFunction, usePOST /*only supported in ECMAScript2015: = false*/) {
+		if(usePOST == undefined) usePOST = false;
+		
 		var capabilitiesRequest;
 
-		/**
-		 * getCapabilities via HTTP GET
-		 * 
-		 * @callbackFunction is triggered on success-event of JQuery.ajax
-		 *                   method. Takes the response object as argument
-		 */
-		capabilitiesRequest = new GetCapabilitiesGetRequest({
-			url : this.settings.url,
-			version : this.settings.version
-		});
+		if(usePOST) {
+			/*
+			 * TODO has to be instantiated depending on the version
+			 */
+			capabilitiesRequest = new GetCapabilitiesPostRequest({
+				url : this.settings.url,
+				version : this.settings.version
+			});
+		} else {
+			capabilitiesRequest = new GetCapabilitiesGetRequest({
+				url : this.settings.url,
+				version : this.settings.version
+			});
+		}
 
 		capabilitiesRequest.execute(callbackFunction);
 	},
 
 	/**
-	 * getCapabilities via HTTP POST
-	 * 
-	 * @callbackFunction is triggered on success-event of JQuery.ajax method.
-	 *                   Takes the response object as argument
-	 */
-	getCapabilities_POST : function(callbackFunction) {
-		var capabilitiesRequest;
-
-		/*
-		 * TODO has to be instantiated depending on the version
-		 */
-		capabilitiesRequest = new GetCapabilitiesPostRequest({
-			url : this.settings.url,
-			version : this.settings.version
-		});
-
-		capabilitiesRequest.execute(callbackFunction);
-	},
-
-	/**
-	 * process description via HTTP GET
+	 * process description, per default via HTTP GET
 	 * 
 	 * @callbackFunction is triggered on success-event of JQuery.ajax method.
 	 *                   Takes the response object as argument
 	 * @processIdentifier the identifier of the process
+	 * @usePOST if set to TRUE, the request will be executed via HTTP POST instead of HTTP GET
 	 */
-	describeProcess_GET : function(callbackFunction, processIdentifier) {
+	describeProcess : function(callbackFunction, processIdentifier, usePOST /*only supported in ECMAScript2015: = false*/) {
+		if(usePOST == undefined) usePOST = false;
+		
 		var processDescriptionRequest;
 
-		processDescriptionRequest = new DescribeProcessGetRequest({
-			url : this.settings.url,
-			version : this.settings.version,
-			processIdentifier : processIdentifier
-		});
-
-		processDescriptionRequest.execute(callbackFunction);
-	},
-
-	/**
-	 * process description via HTTP POST
-	 * 
-	 * @callbackFunction is triggered on success-event of JQuery.ajax method.
-	 *                   Takes the response object as argument
-	 * @processIdentifier the identifier of the process
-	 */
-	describeProcess_POST : function(callbackFunction, processIdentifier) {
-		var processDescriptionRequest;
-
-		processDescriptionRequest = new DescribeProcessPostRequest({
-			url : this.settings.url,
-			version : this.settings.version,
-			processIdentifier : processIdentifier
-		});
+		if(usePOST) {
+			processDescriptionRequest = new DescribeProcessPostRequest({
+				url : this.settings.url,
+				version : this.settings.version,
+				processIdentifier : processIdentifier
+			});
+		} else {
+			processDescriptionRequest = new DescribeProcessGetRequest({
+				url : this.settings.url,
+				version : this.settings.version,
+				processIdentifier : processIdentifier
+			});
+		}
 
 		processDescriptionRequest.execute(callbackFunction);
 	},
