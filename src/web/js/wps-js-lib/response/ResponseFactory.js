@@ -18,9 +18,12 @@ var ResponseFactory = Class.extend({
 		 */
 		var version = requestObject.settings.version;
 		var requestType = requestObject.settings.requestType;
+		var isRest = requestObject.settings.isRest;
 
 		if (requestType == GET_CAPABILITIES_TYPE) {
-			if (version == WPS_VERSION_1_0_0)
+			if(isRest)
+				return new CapabilitiesResponse_json(wpsResponse);
+			else if (version == WPS_VERSION_1_0_0)
 				return new CapabilitiesResponse_v1_xml(wpsResponse);
 			else if (version == WPS_VERSION_2_0_0)
 				return new CapabilitiesResponse_v2_xml(wpsResponse);
@@ -29,7 +32,9 @@ var ResponseFactory = Class.extend({
 			}
 		} else if (requestType == DESCRIBE_PROCESS_TYPE) {
 
-			if (version == WPS_VERSION_1_0_0)
+			if(isRest)
+				return new DescribeProcessResponse_json(wpsResponse);
+			else if (version == WPS_VERSION_1_0_0)
 				return new DescribeProcessResponse_v1_xml(wpsResponse);
 			else if (version == WPS_VERSION_2_0_0)
 				return new DescribeProcessResponse_v2_xml(wpsResponse);
@@ -37,8 +42,9 @@ var ResponseFactory = Class.extend({
 				return null;
 			}
 		} else if (requestType == EXECUTE_TYPE) {
-
-			if (version == WPS_VERSION_1_0_0)
+			if(isRest)
+				return new ExecuteResponse_json(wpsResponse);
+			else if (version == WPS_VERSION_1_0_0)
 				return new ExecuteResponse_v1_xml(wpsResponse);
 			else if (version == WPS_VERSION_2_0_0)
 				return new ExecuteResponse_v2_xml(wpsResponse);
@@ -46,9 +52,15 @@ var ResponseFactory = Class.extend({
 				return null;
 			}
 		} else if (requestType == GET_STATUS_TYPE) {
+			if(isRest)
+				return new ExecuteResponse_json(wpsResponse);
+			else
 				return new ExecuteResponse_v2_xml(wpsResponse);
 
 		} else if (requestType == GET_RESULT_TYPE) {
+			if(isRest)
+				return new CapabilitiesResponse_json(wpsResponse);
+			else
 				return new ExecuteResponse_v2_xml(wpsResponse);
 
 		}else {

@@ -10,7 +10,7 @@ var PostRequest = BaseRequest.extend({
 		return {
 			type : "POST",
 			data : payload,
-			contentType : "text/xml"
+			contentType : (this.settings.isRest ? "application/json" : "text/xml")
 		};
 	},
 	

@@ -58,7 +58,13 @@ var WpsService = Class.extend({
 		
 		var capabilitiesRequest;
 
-		if(usePOST) {
+		if(this.settings.isRest) {
+			capabilitiesRequest = new GetCapabilitiesJsonRequest({
+				url : this.settings.url,
+				version : this.settings.version,
+				isRest : true
+			});
+		} else if(usePOST) {
 			/*
 			 * TODO has to be instantiated depending on the version
 			 */
@@ -89,7 +95,14 @@ var WpsService = Class.extend({
 		
 		var processDescriptionRequest;
 
-		if(usePOST) {
+		if(this.settings.isRest) {
+			processDescriptionRequest = new DescribeProcessJsonRequest({
+				url : this.settings.url,
+				version : this.settings.version,
+				processIdentifier : processIdentifier,
+				isRest : true
+			});
+		} else if(usePOST) {
 			processDescriptionRequest = new DescribeProcessPostRequest({
 				url : this.settings.url,
 				version : this.settings.version,
@@ -125,7 +138,18 @@ var WpsService = Class.extend({
 			executionMode, lineage, inputs, outputs) {
 		var executeRequest;
 
-		if (this.settings.version == WPS_VERSION_1_0_0) {
+		if(this.settings.isRest) {
+			executeRequest = new ExecuteRequest_json({
+				url : this.settings.url,
+				version : this.settings.version,
+				processIdentifier : processIdentifier,
+				responseFormat : responseFormat,
+				executionMode : executionMode,
+				inputs : inputs,
+				outputs : outputs,
+				isRest : true
+			});
+		} else if (this.settings.version == WPS_VERSION_1_0_0) {
 			executeRequest = new ExecuteRequest_v1({
 				url : this.settings.url,
 				version : this.settings.version,
@@ -198,7 +222,18 @@ var WpsService = Class.extend({
 	 * @jobId the ID of the asynchronously executed job                  
 	 */
 	getStatus_WPS_2_0 : function(callbackFunction, jobId) {
-		if (this.settings.version == WPS_VERSION_2_0_0) {
+		if(this.settings.isRest) {
+			var getStatusRequest;
+
+			getStatusRequest = new GetStatusJsonRequest({
+				url : this.settings.url,
+				version : this.settings.version,
+				jobId : jobId,
+				isRest : true
+			});
+
+			getStatusRequest.execute(callbackFunction);
+		} else if (this.settings.version == WPS_VERSION_2_0_0) {
 			var getStatusRequest;
 
 			getStatusRequest = new GetStatusGetRequest({
@@ -227,7 +262,18 @@ var WpsService = Class.extend({
 	 * @jobId the ID of the asynchronously executed job
 	 */
 	getResult_WPS_2_0 : function(callbackFunction, jobId) {
-		if (this.settings.version == WPS_VERSION_2_0_0) {
+		if (this.settings.isRest) {
+			var getResultRequest;
+
+			getResultRequest = new GetResultJsonRequest({
+				url : this.settings.url,
+				version : this.settings.version,
+				jobId : jobId,
+				isRest : true
+			});
+
+			getResultRequest.execute(callbackFunction);
+		} else if (this.settings.version == WPS_VERSION_2_0_0) {
 			var getResultRequest;
 
 			getResultRequest = new GetResultGetRequest({
