@@ -87,7 +87,7 @@ var DescribeProcessResponse_v2_xml = DescribeProcessResponse_xml.extend({
 		var literalDataDomainArray = new Array(literalDataDomain_xmlNodes.length);
 		
 		for(var index = 0; index < literalDataDomain_xmlNodes.length; index++){
-			literalDataDomainArray[index] = this.createLiteralDataDomainObject($(literalDataDomain_xmlNodes[index]));
+			literalDataDomainArray[index] = this.createLiteralDataDomainObjectFromXml($(literalDataDomain_xmlNodes[index]));
 		}
 		
 		return literalDataDomainArray;

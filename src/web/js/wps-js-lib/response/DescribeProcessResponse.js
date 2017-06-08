@@ -54,6 +54,54 @@ var DescribeProcessResponse = BaseResponse.extend({
 		
 		return literalDataInput;
 	},
+	
+	/**
+	 * @param type must be one of (anyValue|allowedValues|valuesReference) [i.e. must match that regex, case-sensitive]
+	 * @param typespecificExtraInfo is used when type is 'allowedValues' (to add literalDataDomain) or
+	                                'valuesReference' (to add valueReference._text).
+									Simply set to undefined when type is 'anyValue'.
+	 * @param dataTypeObject        use createDataTypeObject function, can be undefined
+	 * @param defaultValue          can be undefined
+	 * @param unitOfMeasure         can be undefined
+	 */
+	createLiteralDataDomainObject : function(type, typespecificExtraInfo, dataTypeObject, defaultValue, unitOfMeasure){
+	
+		var literalDataDomainObject = new Object();
+		
+		/*
+		 * on of the three tags for allowed value specification can occur:
+		 * 
+		 * 1: AnyValue 
+		 * 
+		 * 2: AllowedValues
+		 * 
+		 * 3: ValuesReference
+		 */
+		literalDataDomainObject.anyValue = (type == 'anyValue');
+		
+		if(type == 'allowedValues')
+			literalDataDomainObject.allowedValues = typespecificExtraInfo;
+		else
+			literalDataDomainObject.valuesReference = typespecificExtraInfo;
+		
+		literalDataDomainObject.dataType = dataTypeObject;
+		literalDataDomainObject.defaultValue = defaultValue;
+		literalDataDomainObject.unitOfMeasure = unitOfMeasure;
+		
+		return literalDataDomainObject;
+	},
+	
+	/**
+	 * creates dataTypeObject to use in literalDataDomain object construction
+	 * @param type can be undefined (determined from example responses - really true?)
+	 * @param reference mandatory (determined from example responses - really true?)
+	 */
+	createDataTypeObject : function(type, reference) {
+		var dataTypeObject = new Object();
+		dataTypeObject.type = type;
+		dataTypeObject.reference = reference;
+		return dataTypeObject;
+	},
 
 	createComplexDataInput : function(title, abstractValue, identifier,
 			minOccurs, maxOccurs, formatArray) {
@@ -88,6 +136,11 @@ var DescribeProcessResponse = BaseResponse.extend({
 
 	},
 
+	/**
+	 * @param mimeType mandatory
+	 * @param encoding can be undefined
+	 * @param schema can be undefined
+	 */
 	createFormat : function(mimeType, encoding, schema) {
 		var format = new Object();
 		format.mimeType = mimeType;

@@ -192,8 +192,7 @@ var DescribeProcessResponse_xml = DescribeProcessResponse.extend({
 			
 //		this.createLiteralDataDomainArray(xmlNode.find(LITERAL_DATA_DOMAIN_TAG_NAME));
 	
-		return this.createLiteralDataInput(title, abstractValue, identifier, minOccurs, 
-				maxOccurs, formatArray, literalDataDomainArray);
+		return this.createLiteralDataInput(title, abstractValue, identifier, minOccurs, maxOccurs, formatArray, literalDataDomainArray);
 	},
 	
 	/**
@@ -231,9 +230,9 @@ var DescribeProcessResponse_xml = DescribeProcessResponse.extend({
 	 * regardsles of the WPS version, this method should provide the expected results
 	 * to instantiate an instance of literalDataObject!
 	 */
-	createLiteralDataDomainObject : function(literalDataDomain_xml){
-	
-		var literalDataDomainObject = new Object();
+	createLiteralDataDomainObjectFromXml : function(literalDataDomain_xml){
+		
+		var type, typespecificExtraInfo, dataTypeObject, defaultValue, unitOfMeasure;
 		
 		/*
 		 * on of the three tags for allowed value specification can occur:
@@ -244,34 +243,35 @@ var DescribeProcessResponse_xml = DescribeProcessResponse.extend({
 		 * 
 		 * 3: ValuesReference
 		 */
-		literalDataDomainObject.anyValue = false;
-		
-		if(literalDataDomain_xml.find(LITERAL_DATA_ANY_VALUE_TAG_NAME).length > 0)
-			literalDataDomainObject.anyValue = true;
-		
-		else if(literalDataDomain_xml.find(LITERAL_DATA_ALLOWED_VALUES_TAG_NAME).length > 0)
-			literalDataDomainObject.allowedValues = this.createAllowedValues(literalDataDomain_xml.find(LITERAL_DATA_ALLOWED_VALUES_TAG_NAME));
-		
-		else
-			literalDataDomainObject.valuesReference = literalDataDomain_xml.find(LITERAL_DATA_VALUES_REFERENCE_TAG_NAME).text();
+		if(literalDataDomain_xml.find(LITERAL_DATA_ANY_VALUE_TAG_NAME).length > 0) {
+			type = 'anyValue';
+			typespecificExtraInfo = undefined;
+		}
+		else if(literalDataDomain_xml.find(LITERAL_DATA_ALLOWED_VALUES_TAG_NAME).length > 0) {
+			type = 'allowedValues';
+			typespecificExtraInfo = this.createAllowedValues(literalDataDomain_xml.find(LITERAL_DATA_ALLOWED_VALUES_TAG_NAME));
+		}
+		else {
+			type = 'valuesReference';
+			typespecificExtraInfo = literalDataDomain_xml.find(LITERAL_DATA_VALUES_REFERENCE_TAG_NAME).text();
+		}
 		
 		var dataType_xml = literalDataDomain_xml.find(LITERAL_DATA_DATA_TYPE_TAG_NAME);
 		
-		var dataTypeObject = new Object();
-		dataTypeObject.type = dataType_xml.text()  || undefined;
-		dataTypeObject.reference = dataType_xml.attr(LITERAL_DATA_REFERENCE_ATTR_NAME) || dataType_xml.attr(LITERAL_DATA_REFERENCE_ATTR_NAME_WITH_NS);
+		dataTypeObject = createDataTypeObject(
+			dataType_xml.text()  || undefined,
+			dataType_xml.attr(LITERAL_DATA_REFERENCE_ATTR_NAME) || dataType_xml.attr(LITERAL_DATA_REFERENCE_ATTR_NAME_WITH_NS)
+		);
 		
-		literalDataDomainObject.dataType = dataTypeObject;
-		
-		literalDataDomainObject.defaultValue = literalDataDomain_xml.find(LITERAL_DATA_DEFAULT_VALUE_TAG_NAME).text() || undefined;
+		defaultValue = literalDataDomain_xml.find(LITERAL_DATA_DEFAULT_VALUE_TAG_NAME).text() || undefined;
 		/*
 		 * uom = unit of measure
 		 * 
 		 * TODO create new extraction method that is overridden in child classes
 		 */
-		literalDataDomainObject.unitOfMeasure = this.extractUnitOfMeasure(literalDataDomain_xml);
+		unitOfMeasure = this.extractUnitOfMeasure(literalDataDomain_xml);
 		
-		return literalDataDomainObject;
+		return createLiteralDataDomainObject(type, typespecificExtraInfo, dataTypeObject, defaultValue, unitOfMeasure);
 	},
 	
 	/**
@@ -295,35 +295,35 @@ var DescribeProcessResponse_xml = DescribeProcessResponse.extend({
 		 * have a child node called "Range".
 		 */
 		var object = new Object();
-				
-			var values_xml = allowedValues_xml.find(LITERAL_DATA_ALLOWED_VALUES_VALUE_TAG_NAME);
-			var numberOfValues = values_xml.length;
 		
+		var values_xml = allowedValues_xml.find(LITERAL_DATA_ALLOWED_VALUES_VALUE_TAG_NAME);
+		var numberOfValues = values_xml.length;
+
+		/*
+		 * case Value array
+		 */
+		if (numberOfValues > 0){
 			/*
-			 * case Value array
+			 * return an array with all values
 			 */
-			if (numberOfValues > 0){
-				/*
-				 * return an array with all values
-				 */
-				object.values = new Array(numberOfValues);
-			
-				for (var i=0; i < numberOfValues; i++){
-					object.values[i] = $(values_xml[i]).text();
-				}
+			object.values = new Array(numberOfValues);
+
+			for (var i=0; i < numberOfValues; i++){
+				object.values[i] = $(values_xml[i]).text();
 			}
-		
-			/*
-			 * case Range child node
-			 */
-			else{
-				object.range = new Object();
-			
-				var range_xml = allowedValues_xml.find(LITERAL_DATA_ALLOWED_VALUES_RANGE_TAG_NAME);
-			
-				object.range.minimumValue = range_xml.find(LITERAL_DATA_ALLOWED_VALUES_RANGE_MINIMUM_VALUE_TAG_NAME).text();
-				object.range.maximumValue = range_xml.find(LITERAL_DATA_ALLOWED_VALUES_RANGE_MAXIMUM_VALUE_TAG_NAME).text();
-			}
+		}
+
+		/*
+		 * case Range child node
+		 */
+		else{
+			object.range = new Object();
+
+			var range_xml = allowedValues_xml.find(LITERAL_DATA_ALLOWED_VALUES_RANGE_TAG_NAME);
+
+			object.range.minimumValue = range_xml.find(LITERAL_DATA_ALLOWED_VALUES_RANGE_MINIMUM_VALUE_TAG_NAME).text();
+			object.range.maximumValue = range_xml.find(LITERAL_DATA_ALLOWED_VALUES_RANGE_MAXIMUM_VALUE_TAG_NAME).text();
+		}
 		
 		return object;	
 	},
