@@ -27,7 +27,10 @@ var GetRequest = BaseRequest.extend({
 	},
 	
 	buildTargetUrl : function(targetUrl, targetUrlQuery) {
-		if(!this.settings.isRest) {
+		if(this.settings.isRest) {
+			targetUrl = targetUrl + targetUrlQuery;
+		}
+		else {
 			if (targetUrl.indexOf("?") == -1) {
 				targetUrl += "?";
 			}

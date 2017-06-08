@@ -1,3 +1,8 @@
+// TODO-CF: This class should be refactored to reduce the amount of duplicated code.
+// Inputs and outputs are almost identical, but there is independent code for each.
+// The functions could interact like the _json variant does: Create inputs and outputs
+// the same way and only add inputs' special stuff at the very end.
+
 /*
  * definition of parameter names and values that will be used for 
  * generating the process description. Values will have standard values 
