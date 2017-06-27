@@ -1,7 +1,7 @@
 /**
  * Inspects XML response of WPS 2.0 execute request
  */
-var ExecuteResponse_v2_xml = ExecuteResponse.extend({
+var ExecuteResponse_v2_xml = ExecuteResponse_xml.extend({
 
 	instantiate : function(wpsResponse) {
 		/*
@@ -108,9 +108,7 @@ var ExecuteResponse_v2_xml = ExecuteResponse.extend({
 					identifier : output_xmlNode.attr("id"),
 					reference : reference
 				};
-			}
-			else{
-				
+			} else{
 				/*
 				 * Data node;
 				 * 
@@ -130,51 +128,11 @@ var ExecuteResponse_v2_xml = ExecuteResponse.extend({
 				var literalData_xmlNode = data_xmlNode.find("wps\\:LiteralValue, LiteralValue");
 				var bboxData_xmlNode = data_xmlNode.find("ows\\:BoundingBox, BoundingBox");
 				if (literalData_xmlNode.length > 0) {
-					
-					/*
-					 * literalData
-					 */
-					data = {
-						literalData : {
-							dataType : literalData_xmlNode.attr("dataType")
-									|| undefined,
-							uom : literalData_xmlNode.attr("uom") || undefined,
-							value : literalData_xmlNode.text()
-						}
-
-					}
-					
-					
+					data = this.extractLiteralDataFromXml(literalData_xmlNode);
 				} else if (bboxData_xmlNode.length > 0) {
-
-					data = {
-						boundingBoxData : {
-							crs : bboxData_xmlNode.attr("crs") || undefined,
-							dimensions : bboxData_xmlNode.attr("dimensions")
-									|| undefined,
-							lowerCorner : bboxData_xmlNode.attr("lowerCorner")
-									|| bboxData_xmlNode.find("ows\\:LowerCorner, LowerCorner").text(),
-							upperCorner : bboxData_xmlNode.attr("upperCorner")
-									|| bboxData_xmlNode.find("ows\\:UpperCorner, UpperCorner").text()
-						}
-
-					}
+					data = this.extractBboxDataFromXml(bboxData_xmlNode);
 				} else {
-					/*
-					 * complex data
-					 */
-					data = {
-							complexData : {
-								mimeType : data_xmlNode.attr("mimeType")
-										|| undefined,
-								schema : data_xmlNode.attr("schema")
-										|| undefined,
-								encoding : data_xmlNode.attr("encoding")
-										|| undefined,
-								value : data_xmlNode.html()
-							}
-
-						}
+					data = this.extractComplexDataFromXml(data_xmlNode);
 				}
 
 				/*

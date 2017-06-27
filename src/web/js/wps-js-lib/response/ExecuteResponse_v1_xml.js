@@ -1,7 +1,7 @@
 /**
  * Inspects XML response of WPS 1.0 execute request
  */
-var ExecuteResponse_v1_xml = ExecuteResponse.extend({
+var ExecuteResponse_v1_xml = ExecuteResponse_xml.extend({
 	instantiate : function(wpsResponse) {
 		if ($(wpsResponse).find("wps\\:ExecuteResponse, ExecuteResponse").length > 0) {
 			/*
@@ -180,58 +180,15 @@ var ExecuteResponse_v1_xml = ExecuteResponse.extend({
 				 * a BoundingBoxData element
 				 */
 				var data;
-				var complexData_xmlNode = data_xmlNode
-						.find("wps\\:ComplexData, ComplexData");
-				var literalData_xmlNode = data_xmlNode
-						.find("wps\\:LiteralData, LiteralData");
-				var bboxData_xmlNode = data_xmlNode
-						.find("wps\\:BoundingBoxData, BoundingBoxData");
+				var literalData_xmlNode = data_xmlNode.find("wps\\:LiteralData, LiteralData");
+				var bboxData_xmlNode = data_xmlNode.find("wps\\:BoundingBoxData, BoundingBoxData");
+				var complexData_xmlNode = data_xmlNode.find("wps\\:ComplexData, ComplexData");
 				if (complexData_xmlNode.length > 0) {
-					var data = { 
-							complexData : {
-								mimeType : complexData_xmlNode.attr("mimeType")
-									|| undefined,
-								schema : complexData_xmlNode.attr("schema")
-									|| undefined,
-								encoding : complexData_xmlNode.attr("encoding")
-									|| undefined,
-								value : complexData_xmlNode.html()
-							}
-
-					}
+					data = this.extractComplexDataFromXml(complexData_xmlNode);
 				} else if (bboxData_xmlNode.length > 0) {
-
-					var data = {
-							boundingBoxData : {
-								crs : bboxData_xmlNode.attr("crs") || undefined,
-								dimensions : bboxData_xmlNode
-										.attr("dimensions")
-										|| undefined,
-								lowerCorner : bboxData_xmlNode
-										.attr("lowerCorner")
-										|| bboxData_xmlNode.find("ows\\:LowerCorner, LowerCorner")
-												.text(),
-								upperCorner : bboxData_xmlNode
-										.attr("upperCorner")
-										|| bboxData_xmlNode.find("ows\\:UpperCorner, UpperCorner")
-												.text()
-							}
-
-					}
+					data = this.extractBboxDataFromXml(bboxData_xmlNode);
 				} else {
-					/*
-					 * literalData
-					 */
-					var data = {
-							literalData : {
-								dataType : literalData_xmlNode.attr("dataType")
-									|| undefined,
-								uom : literalData_xmlNode.attr("uom")
-									|| undefined,
-								value : literalData_xmlNode.text()
-							}
-
-					}
+					data = this.extractLiteralDataFromXml(literalData_xmlNode);
 				}
 
 				outputs[index] = {
@@ -240,9 +197,9 @@ var ExecuteResponse_v1_xml = ExecuteResponse.extend({
 					abstractValue : abstractValue,
 					data : data,
 				};
-			}
-
+			} // end else data or reference
 		} // end for
+		
 		return outputs;
 	}
 });

@@ -22,6 +22,7 @@ module.exports = function (grunt) {
 			'src/web/js/wps-js-lib/response/DescribeProcessResponse_v1_xml.js',
 			'src/web/js/wps-js-lib/response/DescribeProcessResponse_v2_xml.js',
 			'src/web/js/wps-js-lib/response/ExecuteResponse.js',
+			'src/web/js/wps-js-lib/response/ExecuteResponse_xml.js',
 			'src/web/js/wps-js-lib/response/ExecuteResponse_v1_xml.js',
 			'src/web/js/wps-js-lib/response/ExecuteResponse_v2_xml.js',
 			'src/web/js/wps-js-lib/response/ResponseFactory.js',
