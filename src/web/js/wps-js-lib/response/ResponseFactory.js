@@ -43,7 +43,8 @@ var ResponseFactory = Class.extend({
 			}
 		} else if (requestType == EXECUTE_TYPE) {
 			if(isRest)
-				return new ExecuteResponse_json(wpsResponse);
+				// For restful Execute responses, some information is conveyed via HTTP status codes and HTTP headers
+				return new ExecuteResponse_json(wpsResponse, requestObject);
 			else if (version == WPS_VERSION_1_0_0)
 				return new ExecuteResponse_v1_xml(wpsResponse);
 			else if (version == WPS_VERSION_2_0_0)

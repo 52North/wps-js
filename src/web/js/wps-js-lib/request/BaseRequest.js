@@ -48,11 +48,18 @@ var BaseRequest = Class.extend({
 		var self = this;
 
 		var combinedRequestSettings = jQuery.extend({
-			success : function(responseData) {
+			success : function(responseData, textStatus, jqXhrObject) {
 				/*
 				 * create an appropriate response document (which depends on the
 				 * request type)
 				 */
+				
+				// ExecuteResponse_json needs more information than just the response body
+				// all headers as an array: jqXHRobject.getAllResponseHeaders().split("\r\n").filter((e)=>e!=''));
+				// just the Location header: jqXhrObject.getResponseHeader('Location'));
+				// most useful: the entire jQuery-XMLHttpRequest object
+				self.jqXhrObject = jqXhrObject;
+				
 				var respFactory = new ResponseFactory();
 				var response = respFactory.resolveResponseHandler(responseData,
 						self);
