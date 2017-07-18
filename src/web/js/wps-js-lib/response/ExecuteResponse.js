@@ -1,6 +1,6 @@
 var ExecuteResponse = BaseResponse.extend({
 
-	init : function(wpsResponse) {
+	init : function(wpsResponse, requestObject) {
 		this.responseDocument = wpsResponse;
 
 		/*
@@ -24,7 +24,10 @@ var ExecuteResponse = BaseResponse.extend({
 			responseDocument : {}
 		};
 
-		this.instantiate(wpsResponse);
+		if(requestObject != null)
+			this.instantiate(wpsResponse, requestObject);
+		else
+			this.instantiate(wpsResponse);
 	},
 
 	instantiate : function(wpsResponse) {
