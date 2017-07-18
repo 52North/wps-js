@@ -50,7 +50,8 @@ var ExecuteRequest_json = ExecuteRequest.extend({
 			"Execute": {
 				"Identifier": this.settings.processIdentifier,
 				"Input": sendInputs,
-				"Output": sendOutputs,
+				"output": sendOutputs,
+				"_response" : this.settings.responseFormat,
 				"_service": "WPS",
 				"_version": "2.0.0"
 			}
@@ -59,6 +60,8 @@ var ExecuteRequest_json = ExecuteRequest.extend({
 	
 	preRequestExecution : function() {
 		this.settings.url += '/processes/' + this.settings.processIdentifier + '/jobs';
+		if(this.settings.executionMode == 'sync')
+			this.settings.url += '?sync-execute=true';
 		this.settings.isRest = true;
 	}
 });
