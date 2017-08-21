@@ -17,6 +17,15 @@ var ExecuteResponse_json = ExecuteResponse.extend({
 				};
 			}
 		
+		// explicit GetStatusRequestJson request -> response is statusInfoDocument, but with a body
+		} else if(requestObject.jqXhrObject.status == 200 && wpsResponse.StatusInfo) {
+			this.executeResponse.type = "statusInfoDocument";
+			this.executeResponse.serviceVersion = "2.0.0";
+			this.executeResponse.responseDocument = {
+				"jobId": wpsResponse.StatusInfo.JobID,
+				"status": wpsResponse.StatusInfo.Status
+			};
+		
 		// sync -> response is resultDocument
 		} else if(requestObject.jqXhrObject.status == 200) {
 			this.executeResponse.type = "resultDocument";

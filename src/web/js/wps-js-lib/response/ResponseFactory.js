@@ -54,13 +54,13 @@ var ResponseFactory = Class.extend({
 			}
 		} else if (requestType == GET_STATUS_TYPE) {
 			if(isRest)
-				return new ExecuteResponse_json(wpsResponse);
+				return new ExecuteResponse_json(wpsResponse, requestObject);
 			else
 				return new ExecuteResponse_v2_xml(wpsResponse);
 
 		} else if (requestType == GET_RESULT_TYPE) {
 			if(isRest)
-				return new CapabilitiesResponse_json(wpsResponse);
+				return new ExecuteResponse_json(wpsResponse, requestObject);
 			else
 				return new ExecuteResponse_v2_xml(wpsResponse);
 

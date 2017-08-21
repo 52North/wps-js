@@ -44,7 +44,9 @@ module.exports = function (grunt) {
 			'src/web/js/wps-js-lib/request/DescribeProcessPostRequest.js',
 			'src/web/js/wps-js-lib/request/GetCapabilitiesPostRequest.js',
 			'src/web/js/wps-js-lib/request/GetStatusGetRequest.js',
+			'src/web/js/wps-js-lib/request/GetStatusJsonRequest.js',      
 			'src/web/js/wps-js-lib/request/GetResultGetRequest.js',
+			'src/web/js/wps-js-lib/request/GetResultJsonRequest.js',
 			'src/web/js/wps-js-lib/WpsService.js'
 			
         ],
