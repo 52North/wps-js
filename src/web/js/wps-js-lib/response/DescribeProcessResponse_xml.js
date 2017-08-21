@@ -263,7 +263,7 @@ var DescribeProcessResponse_xml = DescribeProcessResponse.extend({
 		
 		var dataType_xml = literalDataDomain_xml.find(LITERAL_DATA_DATA_TYPE_TAG_NAME);
 		
-		dataTypeObject = createDataTypeObject(
+		dataTypeObject = this.createDataTypeObject(
 			dataType_xml.text()  || undefined,
 			dataType_xml.attr(LITERAL_DATA_REFERENCE_ATTR_NAME) || dataType_xml.attr(LITERAL_DATA_REFERENCE_ATTR_NAME_WITH_NS)
 		);
@@ -276,7 +276,7 @@ var DescribeProcessResponse_xml = DescribeProcessResponse.extend({
 		 */
 		unitOfMeasure = this.extractUnitOfMeasure(literalDataDomain_xml);
 		
-		return createLiteralDataDomainObject(type, typespecificExtraInfo, dataTypeObject, defaultValue, unitOfMeasure);
+		return this.createLiteralDataDomainObject(type, typespecificExtraInfo, dataTypeObject, defaultValue, unitOfMeasure);
 	},
 	
 	/**
