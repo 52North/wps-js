@@ -53,7 +53,8 @@ var WpsService = Class.extend({
 	 *                   Takes the response object as argument
 	 * @usePOST if set to TRUE, the request will be executed via HTTP POST instead of HTTP GET
 	 */
-	getCapabilities : function(callbackFunction, usePOST /*only supported in ECMAScript2015: = false*/) {
+	getCapabilities : function(callbackFunction, usePOST /*default values for parameters only supported in ECMAScript2015 and later: = false*/) {
+		// "manual default parameter"
 		if(usePOST == undefined) usePOST = false;
 		
 		var capabilitiesRequest;
@@ -81,6 +82,20 @@ var WpsService = Class.extend({
 
 		capabilitiesRequest.execute(callbackFunction);
 	},
+	
+	/**
+	 * alias for getCapabilities with usePOST=false (for backwards compatibility)
+	 */
+	getCapabilities_GET : function(callbackFunction) {
+		return this.getCapabilities(callbackFunction, false);
+	},
+	
+	/**
+	 * alias for getCapabilities with usePOST=true (for backwards compatibility)
+	 */
+	getCapabilities_POST : function(callbackFunction) {
+		return this.getCapabilities(callbackFunction, true);
+	},
 
 	/**
 	 * process description, per default via HTTP GET
@@ -90,7 +105,8 @@ var WpsService = Class.extend({
 	 * @processIdentifier the identifier of the process
 	 * @usePOST if set to TRUE, the request will be executed via HTTP POST instead of HTTP GET
 	 */
-	describeProcess : function(callbackFunction, processIdentifier, usePOST /*only supported in ECMAScript2015: = false*/) {
+	describeProcess : function(callbackFunction, processIdentifier, usePOST /*default values for parameters only supported in ECMAScript2015 and later: = false*/) {
+		// "manual default parameter"
 		if(usePOST == undefined) usePOST = false;
 		
 		var processDescriptionRequest;
@@ -117,6 +133,20 @@ var WpsService = Class.extend({
 		}
 
 		processDescriptionRequest.execute(callbackFunction);
+	},
+	
+	/**
+	 * alias for describeProcess with usePOST=false (for backwards compatibility)
+	 */
+	describeProcess_GET : function(callbackFunction, processIdentifier) {
+		return this.describeProcess(callbackFunction, processIdentifier, false);
+	},
+	
+	/**
+	 * alias for describeProcess with usePOST=true (for backwards compatibility)
+	 */
+	describeProcess_POST : function(callbackFunction, processIdentifier) {
+		return this.describeProcess(callbackFunction, processIdentifier, true);
 	},
 
 	/**
