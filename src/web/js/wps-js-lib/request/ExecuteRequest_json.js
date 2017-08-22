@@ -51,7 +51,7 @@ var ExecuteRequest_json = ExecuteRequest.extend({
 				"Identifier": this.settings.processIdentifier,
 				"Input": sendInputs,
 				"output": sendOutputs,
-				"_response" : this.settings.responseFormat,
+				"_response" : this.settings.responseFormat,  // TODO-CF Couldn't test responseFormat='raw' yet as the proxy only replies with an error message. Supporting responseFormat='raw' is simply not yet implemented in the proxy.
 				"_service": "WPS",
 				"_version": "2.0.0"
 			}

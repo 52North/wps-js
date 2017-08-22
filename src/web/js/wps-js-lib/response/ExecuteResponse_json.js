@@ -1,4 +1,33 @@
 var ExecuteResponse_json = ExecuteResponse.extend({
+	
+  /*
+	NOTE-CF:
+	The Execute command is rather complex:
+	  - execution mode can be sync/async
+	  - responseFormat can be raw/document
+	  - inputs can be transmitted by value/reference
+	  - outputs can be received by value/reference
+	  - inputs can be literal/complex (or bbox, but that is not implemented yet by the server)
+	  - outputs can be literal/complex (or bbox, but that is not implemented yet by the server)
+	  - lineage can be true/false (although that is only relevant for WPS 1.0 and the RESTful version uses WPS 2.0 ONLY)
+
+	In my self-written testclient (see src/web/comparison-of-classic-and-restful-responses.html), the following combinations were tested:
+	  - async + document + value + value     + complex&literal + complex + false (testExec)
+	  -  sync + document + value + value     + complex&literal + complex + false (testExecSync)
+	  -  sync + document + value + value     +         literal + literal + false (testExecLiteralSync)
+	  -  sync + document + value + reference + complex&literal + complex + false (testExecReferenceSync)
+
+	As mentioned before, lineage is not of intereset, so it was not varied.
+	Constructing input by reference was too much hassle, so it was not varied.
+	Raw could not be tested because the proxy replied with error messages only (responseFormat=raw is simply not yet implemented by the server).
+
+	Some more handy info:
+	  - When using output by value, the full output data (e.g. some huge GeoJSON) is contained in the ResultDocument (may make it very large)
+	  - When using output by reference, the ResultDocument will only contain a link through which the data can be obtained (may be annoying when it's only small anyways)
+	  - When trying to output literal data by reference, the response is by value anyways (because having a link for nothing more than e.g. a number is pointless)
+	  - Requesting with responseFormat=raw, the response will be just the result data without any ResultDocument
+	  - Requesting output by reference is dominant, i.e. requesting "output by reference with responseFormat=raw" will give you a normal ResultDocument with a link to the data as if responseFormat was set to "document", ignoring the request for "raw" data.
+  */
 
 	instantiate : function(wpsResponse, requestObject) {
 		// async -> response is statusInfoDocument
@@ -51,6 +80,7 @@ var ExecuteResponse_json = ExecuteResponse.extend({
 		}
 		
 		// raw -> response is rawOutput
+		// } else if(???) { ...
 		// TODO-CF: handle responseFormat=raw requests
 	}
 });

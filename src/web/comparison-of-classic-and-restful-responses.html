@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="author" content="Christoph Friedrich <c.friedrich@52north.org>">
+    <title>wps-js testclient for comparison of classic and restful responses</title>
+    <script src="../../dist/js/wps-js-all.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="comparison-of-classic-and-restful-responses.js"></script>
+    <style>
+      div {
+        display:flex;
+      }
+      textarea {
+        flex: 1;
+        height:75vh
+      }
+    </style>
+  </head>
+  <body>
+    <h1>wps-js testclient for comparison of classic and restful responses</h1>
+    <p>Clicking one of the buttons will cause the wps-js library to make the very same call to both a classic, XML-based WPS and a restful, JSON-based WPS proxy. The response objects the library returns to the end user after the calls are finished will be displayed below: <strong>on the left is the classic version, on the right the restful version.</strong> See also comment in <em>src/web/js/wps-js-lib/response/ExecuteResponse_json.js</em>. Contact: <a href="mailto:c.friedrich@52north.org">Christoph Friedrich</a></p>
+    <button onclick="testGetCap()">GetCap</button>
+    <button onclick="testDescProc()">DescProc</button>
+    <button onclick="testExec()">Exec</button>
+    <button onclick="testExecSync()">Exec (Sync)</button>
+    <button onclick="testExecLiteralSync()">Exec (Literal Sync)</button>
+    <button onclick="testExecReferenceSync()">Exec (Reference Sync)</button>
+    <button onclick="testExecRaw()">Exec (Raw)</button>
+    <button onclick="testExecRawSync()">Exec (Raw Sync)</button>
+    <button onclick="testGetStatus()">GetStatus</button>
+    <button onclick="testGetResult()">GetResult</button>
+    <div>
+      <textarea id="output1"></textarea>
+      <textarea id="output2"></textarea>
+    </div>
+  </body>
+</html>

@@ -1,6 +1,9 @@
 /**
  * Inspects XML response of WPS 1.0 execute request
  */
+
+// TODO-CF: Duplicated code in the _v1_ and _v2_ classes was massively reduced in commit ee2b6dbf046a566f3549f698b026ff13747bba32. A final check whether that was really COMPLETELY "lossless" was not conducted yet.
+
 var ExecuteResponse_v1_xml = ExecuteResponse_xml.extend({
 	instantiate : function(wpsResponse) {
 		if ($(wpsResponse).find("wps\\:ExecuteResponse, ExecuteResponse").length > 0) {
