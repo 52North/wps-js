@@ -73,9 +73,27 @@ var BaseRequest = Class.extend({
 				 * object
 				 */
 
+				var errorsText = [];
+				if(jqXHR.responseXML){
+					var excepionTag = jqXHR.responseXML.getElementsByTagName("ows:Exception")[0];
+					if(excepionTag){
+						var errorTitle = excepionTag.getAttribute("exceptionCode");
+						var excepionContentTag = excepionTag.getElementsByTagName("ows:ExceptionText")[0];
+						var errorsText;
+						errorsText.push(excepionContentTag ? errorTitle + ": " + excepionContentTag.textContent : errorTitle)
+					}
+				}
+				
+				var errorText;
+				if(errorsText.length > 0){
+					errorText = errorsText.join("\n\n");
+				} else {
+					errorText = errorThrown;
+				}
+
 				var errorResponse = {
 					textStatus : textStatus,
-					errorThrown : errorThrown
+					errorThrown : errorText
 				}
 				
 				/*
