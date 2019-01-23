@@ -169,59 +169,63 @@ var EXECUTE_REQUEST_XML_COMPLEX_ENCODING_OUTPUT = '<wps:Output \
 	asReference="${asReference}" mimeType="${mimeType}" encoding="${encoding}">\
         <ows:Identifier>${identifier}</ows:Identifier>\
       </wps:Output>';
-	
+
 var EXECUTE_REQUEST_XML_LITERAL_OUTPUT = '<wps:Output>\
     <ows:Identifier>${identifier}</ows:Identifier>\
   </wps:Output>';
+  
+var EXECUTE_REQUEST_XML_COMPLEX_GENERIC_FORMAT_OUTPUT = '<wps:Output id="${identifier}" \
+transmission="${transmission}" ${format}>\
+		</wps:Output>';
 
 var ExecuteRequest = PostRequest.extend({
-	
-	addRequestTypeToSettings : function() {
+
+	addRequestTypeToSettings: function () {
 
 		// set new requestType parameter to a fixed value from Constants.js
 		this.settings.requestType = EXECUTE_TYPE;
 	},
 
-	createPostPayload : function() {
-		
+	createPostPayload: function () {
+
 		/*
 		 * used to reset all templates to reflect differences in different WPS version.
 		 */
 		this.overrideTemplates();
-		
+
 		/*
 		 * used to analyze the given request parameters and, if needed, 
 		 * add additional parameters to properly instantiate the templates.
 		 */
 		this.addVersionDependentProperties();
-		
+
 		/**
 		 * instantiate templates
 		 */
 		return this.fillTemplates();
 	},
-	
+
 	/**
 	 * will adjust the templates stored in aforementioned variables to reflect 
 	 * the WPS version dependent execute request POST body
 	 */
-	overrideTemplates : function(){
+	overrideTemplates: function () {
 		/*
 		 * override in child methods
 		 */
 	},
-	
+
 
 	/**
 	* used to analyze the given request parameters and, if needed,
 	* add additional parameters to properly instantiate the
 	* templates.
 	*/
-	addVersionDependentProperties : function(){
+	addVersionDependentProperties: function () {
 		/*
 		 * override in child methods
 		 */
-		
+
 		/*
 		 * inspect missing values and instantiate with defaults
 		 */
@@ -231,48 +235,48 @@ var ExecuteRequest = PostRequest.extend({
 		if (!this.settings.responseFormat)
 			this.settings.responseFormat = "document";
 	},
-	
+
 	/**
 	 * add certain parameters, if necessary, to the given object
 	 */
-	addVersionDependentPropertiesToFinalExecuteProperties : function(finalExecuteProperties){
+	addVersionDependentPropertiesToFinalExecuteProperties: function (finalExecuteProperties) {
 		/*
 		 * override in child classes
 		 */
 		return finalExecuteProperties;
 	},
-	
+
 	/**
 	 * instantiate all templates and concat them to create the POST body
 	 */
-	fillTemplates : function(){
+	fillTemplates: function () {
 		var inputs = this.settings.inputs;
 		var outputs = this.settings.outputs;
-		
+
 		var dataInputsMarkup = "";
 		if (inputs) {
 			dataInputsMarkup = this.createDataInputsMarkup(inputs);
 		}
-		
+
 		var responseFormMarkup = "";
 		if (outputs) {
 			responseFormMarkup = this.createResponseFormMarkup(outputs, this.settings.outputStyle);
 		}
-		
+
 		var finalExecuteProperties = {
-				processIdentifier: this.settings.processIdentifier,
-				dataInputs: dataInputsMarkup,
-				responseForm: responseFormMarkup
+			processIdentifier: this.settings.processIdentifier,
+			dataInputs: dataInputsMarkup,
+			responseForm: responseFormMarkup
 		};
-		
+
 		finalExecuteProperties = this.addVersionDependentPropertiesToFinalExecuteProperties(finalExecuteProperties);
-		
+
 		var result = this.fillTemplate(EXECUTE_REQUEST_XML_START, finalExecuteProperties);
-		
+
 		return result;
 	},
-	
-	createDataInputsMarkup : function(inputs) {
+
+	createDataInputsMarkup: function (inputs) {
 		var result = "";
 		for (var i = 0; i < inputs.length; i++) {
 			var markup = "";
@@ -287,10 +291,10 @@ var ExecuteRequest = PostRequest.extend({
 			}
 			result += markup;
 		}
-		
+
 		return result;
 	},
-	
+
 	/*
 	 * example 'input' objects:
 	 * 
@@ -306,10 +310,10 @@ var ExecuteRequest = PostRequest.extend({
 	 * }
 	 * 
 	 */
-	createLiteralDataInput : function(input) {
+	createLiteralDataInput: function (input) {
 		var markup;
 		if (input.dataType) {
-			if(input.uom)
+			if (input.uom)
 				markup = this.fillTemplate(EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT_ALL, input);
 			else
 				markup = this.fillTemplate(EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT_TYPE, input);
@@ -317,10 +321,10 @@ var ExecuteRequest = PostRequest.extend({
 		else {
 			markup = this.fillTemplate(EXECUTE_REQUEST_XML_LITERAL_DATA_NO_TYPE_INPUT, input);
 		}
-		
+
 		return markup;
 	},
-	
+
 	/*
 	 * example 'input' objects:
 	 * 
@@ -338,46 +342,46 @@ var ExecuteRequest = PostRequest.extend({
 	 * }
 	 * 
 	 */
-	createComplexDataInput : function(input) {
+	createComplexDataInput: function (input) {
 		var markup;
 		if (input.asReference) {
 			if (input.schema && input.encoding) {
 				markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_ALL_INPUT, input);
 			}
-			
+
 			else if (input.schema && !input.encoding) {
 				markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_SCHEMA_INPUT, input);
 			}
-			
+
 			else if (!input.schema && input.encoding) {
 				markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_ENCODING_INPUT, input);
 			}
-			
+
 			else {
-			    markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_INPUT, input);
+				markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_BY_REFERENCE_INPUT, input);
 			}
 		}
 		else {
 			if (input.schema && input.encoding) {
 				markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_ALL_INPUT, input);
 			}
-			
+
 			else if (input.schema && !input.encoding) {
 				markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_SCHEMA_INPUT, input);
 			}
-			
+
 			else if (!input.schema && input.encoding) {
 				markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_ENCODING_INPUT, input);
 			}
-			
+
 			else {
 				markup = this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_DATA_MIME_TYPE_INPUT, input);
 			}
 		}
-		
+
 		return markup;
 	},
-	
+
 	/*
 	 * example 'input' objects:
 	 * 
@@ -395,23 +399,23 @@ var ExecuteRequest = PostRequest.extend({
 	 * }
 	 * 
 	 */
-	createBoundingBoxDataInput : function(input) {
+	createBoundingBoxDataInput: function (input) {
 		/*
 		 * set some default values
 		 */
 		if (!input.crs) {
 			input.crs = "EPSG:4326";
 		}
-		
+
 		if (!input.dimension) {
 			input.dimension = 2;
 		}
-		
+
 		var markup = this.fillTemplate(EXECUTE_REQUEST_XML_BOUNDING_BOX_INPUT, input);
-		
+
 		return markup;
 	},
-	
+
 	/*
 	 * example 'outputStyle' objects:
 	 * 
@@ -439,31 +443,52 @@ var ExecuteRequest = PostRequest.extend({
 	 * ]
 	 * 
 	 */
-	createResponseFormMarkup : function(outputs, outputStyle) {
+	createResponseFormMarkup: function (outputs, outputStyle) {
 		var outputString = "";
 		var result;
-		
-		if(this.settings.responseFormat == "raw" && outputs.length == 1){
+
+		if (this.settings.responseFormat == "raw" && outputs.length == 1) {
 			/*
 			 * raw output requested, only one output allowed. So take the first one.
 			 */
 			var rawOutput = outputs[0];
-			
-			if (rawOutput.encoding && rawOutput.schema && rawOutput.mimeType && rawOutput.uom){
+			var generic_format = "";
+			if (rawOutput.mimeType) {
+				generic_format = generic_format + 'mimeType="' + rawOutput.mimeType + '"';
+			} 
+			if (rawOutput.encoding) {
+				generic_format = generic_format + ' encoding="' + rawOutput.encoding + '"';
+			}
+			if (rawOutput.schema) {
+				generic_format = generic_format + ' schema="' + rawOutput.schema + '"';
+			}
+			if (rawOutput.uom) {
+				generic_format = generic_format + ' uom="' + rawOutput.uom + '"';
+			}
+			if (rawOutput.mimeType || rawOutput.schema || rawOutput.encoding || rawOutput.uom) {
+				result = this.fillTemplateGenericFormat(EXECUTE_REQUEST_XML_COMPLEX_GENERIC_FORMAT_OUTPUT, rawOutput, generic_format);
+			} else {
+				result = this.fillTemplate(EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW_TYPE, rawOutput);
+			}
+
+
+
+/**
+			if (rawOutput.encoding && rawOutput.schema && rawOutput.mimeType && rawOutput.uom) {
 				result = this.fillTemplate(EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW_ALL, rawOutput);
 			}
-			else if (rawOutput.encoding && rawOutput.mimeType && rawOutput.uom){
+			else if (rawOutput.encoding && rawOutput.mimeType && rawOutput.uom) {
 				result = this.fillTemplate(EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW_TYPE_ENCODING_UOM, rawOutput);
 			}
-			else if (rawOutput.mimeType && rawOutput.uom){
+			else if (rawOutput.mimeType && rawOutput.uom) {
 				result = this.fillTemplate(EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW_TYPE_UOM, rawOutput);
 			}
 			else {
 				result = this.fillTemplate(EXECUTE_REQUEST_XML_RESPONSE_FORM_RAW_TYPE, rawOutput);
-			}
-			
+			}*/
+
 		}
-		else{
+		else {
 			/*
 			 * response document with additional attributes and multiple outputs!
 			 */
@@ -475,30 +500,30 @@ var ExecuteRequest = PostRequest.extend({
 					if (outputs[i].encoding && outputs[i].schema && outputs[i].mimeType) {
 						outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_ALL_OUTPUT, outputs[i]);
 					}
-				
+
 					else if (outputs[i].encoding && !outputs[i].schema && outputs[i].mimeType) {
 						outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_ENCODING_OUTPUT, outputs[i]);
 					}
-				
+
 					else if (!outputs[i].encoding && outputs[i].schema && outputs[i].mimeType) {
 						outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_SCHEMA_OUTPUT, outputs[i]);
 					}
-				
-					else if (outputs[i].mimeType){
+
+					else if (outputs[i].mimeType) {
 						outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_MIME_TYPE_OUTPUT, outputs[i]);
 					}
-					else{
+					else {
 						outputString += this.fillTemplate(EXECUTE_REQUEST_XML_COMPLEX_OUTPUT, outputs[i]);
 					}
 				}
 			}
-			
+
 			outputStyle.outputs = outputString;
-			
+
 			result = this.fillTemplate(EXECUTE_REQUEST_XML_RESPONSE_FORM_DOCUMENT, outputStyle);
-		}	
-		
+		}
+
 		return result;
 	}
-	
+
 });

@@ -20,10 +20,23 @@ function fillXMLTemplate(template, properties) {
 	
 	for (var key in properties) {
 		if (properties.hasOwnProperty(key)) {
-			result = result.replace("${"+key+"}", properties[key]);	
+			result = result.replace("${"+key+"}", properties[key]);
 		}
 	}
 	
+	return result;
+}
+
+function fillXMLTemplateGenericFormat(template, properties, generic_format) {
+	var result = template;
+
+	for (var key in properties) {
+		if (properties.hasOwnProperty(key) && key != 'encoding' && key != 'schema' && key != 'mimeType' && key != 'uom') {
+			result = result.replace("${"+key+"}", properties[key]);
+		}
+	}
+	result = result.replace("${format}", generic_format);
+
 	return result;
 }
 

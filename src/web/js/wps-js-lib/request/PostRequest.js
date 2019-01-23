@@ -23,6 +23,10 @@ var PostRequest = BaseRequest.extend({
 	
 	fillTemplate : function(template, properties) {
 		return fillXMLTemplate(template, properties);
+	},
+
+	fillTemplateGenericFormat : function(template, properties, generic_format) {
+		return fillXMLTemplateGenericFormat(template, properties, generic_format);
 	}
 
 });
