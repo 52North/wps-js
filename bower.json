@@ -16,7 +16,7 @@
     "JavaScript client"
   ],
   "license": "Apache2",
-  "private": true,
+  "private": false,
   "ignore": [
     "**/.*",
     "node_modules",
