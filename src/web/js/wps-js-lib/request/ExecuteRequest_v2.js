@@ -74,19 +74,19 @@ var ExecuteRequest_v2 = ExecuteRequest
 				 * 
 				 */
 				EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT_TYPE = '<wps:Input id="${identifier}">\
-		    <wps:Data>\
+		    <wps:Data mimeType="text/xml">\
 				<wps:LiteralValue dataType="${dataType}">${value}</wps:LiteralValue>\
 			</wps:Data>\
 		  </wps:Input>';
 
 				EXECUTE_REQUEST_XML_LITERAL_DATA_INPUT_ALL = '<wps:Input id="${identifier}">\
-		    <wps:Data>\
+		    <wps:Data mimeType="text/xml">\
 				<wps:LiteralValue dataType="${dataType}" uom="${uom}">${value}</wps:LiteralValue>\
 			</wps:Data>\
 		  </wps:Input>';
 
 				EXECUTE_REQUEST_XML_LITERAL_DATA_NO_TYPE_INPUT = '<wps:Input id="${identifier}">\
-		    <wps:Data>\
+		    <wps:Data mimeType="text/xml">\
 				<wps:LiteralValue>${value}</wps:LiteralValue>\
 			</wps:Data>\
 		  </wps:Input>';
