@@ -1,6 +1,6 @@
 {
-  "name": "wps-js",
-  "version": "2.0.1",
+  "name": "wps-js-52-north",
+  "version": "2.0.2",
   "private": false,
   "description": "Web Processing Service JavaScrict library",
   "main": "TBD",
@@ -41,5 +41,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "postinstall": "bower install",
     "prestart": "npm install"
-  }
+  },
+  "dependencies": {},
+  "author": "52north"
 }
