@@ -16,7 +16,11 @@ Requirements to develop or build the client
 
 Get ready to start
 ------------------
+- npm install wps-js-52-north
+Run the above command to fetch the module directly from npm.
 
+Or Clone directly
+------------------
 -	`git clone` this repository
 -	run `npm install` to get all dependencies
 
