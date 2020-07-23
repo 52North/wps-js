@@ -39,6 +39,20 @@ wps-js is a plain Javascipt API. To try out examples follow these steps:
 -	Note that wps-js requires JQuery! So you should include this as well in your application before wps-js.
 -	To see how to use the API, please refer to the subsequent Documentation.
 
+Updating wps-js on NPM
+----------------------------
+Currently, the library wps-js could be found on NPM: https://www.npmjs.com/package/wps-js-52-north
+
+To update update this library on npm, perform the following steps:
+
+-	Check out the code: `git clone https://github.com/52North/wps-js.git`
+-	Change to the directory and perform `npm install` and `grunt` to build the API (which will create a new `dist` folder)
+-	Add the file `dist/wps-js-all.min.js` and `dist/wps-js-all.js` in the [lib](src/web/lib) folder. (Please add both files as current users use both the files.)
+-   Finally, run `npm login` and `npm publish`
+
+Note: This action requires maintainer permission on npm for this library.
+ 
+
 Documentation
 -------------
 
