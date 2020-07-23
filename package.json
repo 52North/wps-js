@@ -1,6 +1,6 @@
 {
   "name": "wps-js-52-north",
-  "version": "2.0.3",
+  "version": "2.0.5",
   "private": false,
   "description": "Web Processing Service JavaScrict library",
   "main": "TBD",
@@ -42,6 +42,9 @@
     "postinstall": "bower install",
     "prestart": "npm install"
   },
-  "dependencies": {},
-  "author": "52north"
+  "dependencies": {
+    "@types/npm": "^2.0.31"
+  },
+  "author": "52north",
+  "types": "types/index.d.ts"
 }
