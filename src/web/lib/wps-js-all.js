@@ -3664,7 +3664,7 @@ var WpsService = Class.extend({
 	init : function(settings) {
 		this.settings = settings;
 
-		if (!this.settings.version || (this.settings.version != '1.0.0' && this.settings.version != '2.0.0'))
+		if (!this.settings.version || (this.settings.version !== '1.0.0' && this.settings.version !== '2.0.0'))
 			this.settings.version = defaultWpsVersion;
 	},
 
@@ -3674,7 +3674,7 @@ var WpsService = Class.extend({
 	 * requires Constant.js
 	 */
 	setVersion : function(version) {
-		if (version == WPS_VERSION_1_0_0 || version == WPS_VERSION_2_0_0)
+		if (version === WPS_VERSION_1_0_0 || version === WPS_VERSION_2_0_0)
 			this.settings.version = version;
 	},
 
@@ -3784,7 +3784,7 @@ var WpsService = Class.extend({
 			executionMode, lineage, inputs, outputs) {
 		var executeRequest;
 
-		if (this.settings.version == WPS_VERSION_1_0_0) {
+		if (this.settings.version === WPS_VERSION_1_0_0) {
 			executeRequest = new ExecuteRequest_v1({
 				url : this.settings.url,
 				version : this.settings.version,
@@ -3857,7 +3857,7 @@ var WpsService = Class.extend({
 	 * @jobId the ID of the asynchronously executed job                  
 	 */
 	getStatus_WPS_2_0 : function(callbackFunction, jobId) {
-		if (this.settings.version == WPS_VERSION_2_0_0) {
+		if (this.settings.version === WPS_VERSION_2_0_0) {
 			var getStatusRequest;
 
 			getStatusRequest = new GetStatusGetRequest({
@@ -3878,15 +3878,15 @@ var WpsService = Class.extend({
 	
 	/**
 	 * WPS 2.0 getStatus operation to retrieve the status of an executed job
-	 * 
+	 *
 	 * Not usable with WPS 1.0
-	 * 
+	 *
 	 * @callbackFunction a callback function that will be triggered with the
 	 *                   parsed StatusInfo document as argument
 	 * @jobId the ID of the asynchronously executed job
 	 */
 	getResult_WPS_2_0 : function(callbackFunction, jobId) {
-		if (this.settings.version == WPS_VERSION_2_0_0) {
+		if (this.settings.version === WPS_VERSION_2_0_0) {
 			var getResultRequest;
 
 			getResultRequest = new GetResultGetRequest({
@@ -3904,5 +3904,48 @@ var WpsService = Class.extend({
 			throw "Get Result operation is only supported for WPS 2.0!";
 		}
 	},
+
+	/**
+	 * WPS execute request via HTTP POST
+	 *
+	 * @processIdentifier the identifier of the process
+	 * @responseFormat either "raw" or "document", default is "document"
+	 * @executionMode either "sync" or "async";
+	 * @lineage only relevant for WPS 1.0; boolean, if "true" then returned
+	 *          response will include original input and output definition
+	 * @inputs an array of needed Input objects, use JS-object InputGenerator to
+	 *         create inputs
+	 * @outputs an array of requested Output objects, use JS-object
+	 *          OutputGenerator to create inputs
+	 */
+	getXmlRequestExecuteProcess : function (processIdentifier , responseFormat , executionMode,
+							  lineage , inputs , outputs ) {
+		var executeRequest;
+
+		if (this.settings.version === WPS_VERSION_1_0_0) {
+			executeRequest = new ExecuteRequest_v1({
+				url: this.settings.url,
+				version: this.settings.version,
+				processIdentifier: processIdentifier,
+				responseFormat: responseFormat,
+				executionMode: executionMode,
+				lineage: lineage,
+				inputs: inputs,
+				outputs: outputs
+			});
+		} else {
+			executeRequest = new ExecuteRequest_v2({
+				url: this.settings.url,
+				version: this.settings.version,
+				processIdentifier: processIdentifier,
+				responseFormat: responseFormat,
+				executionMode: executionMode,
+				inputs: inputs,
+				outputs: outputs
+			});
+		}
+
+		return executeRequest.createPostPayload();
+	}
 
 });
