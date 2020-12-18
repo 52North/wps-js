@@ -9,7 +9,7 @@ Standalone Javascript OGC Web Processing Service (WPS) API with the following fu
 Requirements to develop or build the client
 -------------------------------------------
 
--	git
+-	[git](https://git-scm.com/)
 -	[nodejs](https://nodejs.org)
 -	[npm](https://www.npmjs.com/)
 -	[grunt](http://gruntjs.com/)
